@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         perror("Error opening input file");
         return 1;
     }
-    
+
     // Initialize symbol table and other data structures
     // Read input assembly code line by line
     // Tokenize the line and process labels, opcodes, and operands
@@ -36,5 +36,6 @@ int main(int argc, char *argv[])
     // Write entries and externals to separate files
     // ...
 
+    fclose(inputFile);
     return 0;
 }
