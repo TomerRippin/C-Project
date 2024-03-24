@@ -18,7 +18,7 @@ void initializeList(LinkedList *list);
 void insertToList(LinkedList *list, char *name, char *data, int line_number);
 
 /* Function to search for a node name in the linked list */ 
-ListNode *searchList(const LinkedList *list, const char *target_name);
+ListNode *searchList(LinkedList *list, char *target_name);
 
 /* Function to free memory allocated for the list */
 void freeList(LinkedList *list);
