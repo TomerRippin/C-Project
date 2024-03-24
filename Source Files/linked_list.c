@@ -7,7 +7,7 @@ void initializeList(LinkedList *list) {
     list->head = NULL;
 }
 
-ListNode *searchList(const LinkedList *list, const char *target_name) {
+ListNode *searchList(LinkedList *list, char *target_name) {
     ListNode *current = list->head;
     while (current != NULL) {
         if (strcmp(current->name, target_name) == 0) {
