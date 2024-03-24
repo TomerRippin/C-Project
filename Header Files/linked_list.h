@@ -14,11 +14,11 @@ typedef struct {
 /* Function to initialize an empty linked list */
 void initializeList(LinkedList *list);
 
-/* Function to insert data at the beginning of the list */ 
+/* Function to insert a node at the beginning of the list */ 
 void insertToList(LinkedList *list, char *name, char *data, int line_number);
 
-/* Function to search for data in the list */ 
-ListNode *searchList(const LinkedList *list, const char *target_name, int *found);
+/* Function to search for a node name in the linked list */ 
+ListNode *searchList(const LinkedList *list, const char *target_name);
 
 /* Function to free memory allocated for the list */
 void freeList(LinkedList *list);
