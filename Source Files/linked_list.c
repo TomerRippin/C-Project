@@ -17,7 +17,7 @@ ListNode *search_list(const LinkedList *list, const char *target_name, int *foun
         }
         current = current->next;
     }
-    // Target not found
+    /* Target not found */
     return NULL;
 }
 
