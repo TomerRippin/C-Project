@@ -62,7 +62,7 @@ void replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     removeMacrosFromFile(inputFile, outputFile);
 
-    /* Replace the macro names with their content */
+    /* Replaces the macro names with their content */
     char line[MAX_LINE_LEN];
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     int replaced = 0;
