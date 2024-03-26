@@ -39,4 +39,4 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile);
  * @param inputFile A pointer to the input file.
  * @param outputFile A pointer to the output file where the new content will be written.
  */
-void replaceMacrosInFile(FILE *inputFile, FILE *outputFile);
+int replaceMacrosInFile(FILE *inputFile, FILE *outputFile);

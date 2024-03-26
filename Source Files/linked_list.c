@@ -19,10 +19,11 @@ LinkedList *createList()
     return list;
 }
 
-ListNode *searchList(LinkedList *list, char *target_name) {
+ListNode *searchList(LinkedList *list, char *targetName) {
     ListNode *current = list->head;
     while (current != NULL) {
-        if (strcmp(current->name, target_name) == 0) {
+        if (strcmp(current->name, targetName) == 0)
+        {
             /* Found the target, return the node */
             return current;
         }
@@ -53,10 +54,10 @@ void insertToList(LinkedList *list, char *name, char *data, int line_number)
         exit(EXIT_FAILURE);
     }
 
-    /* Set data and next pointer */ 
-    new_node->data = data;
+    /* Set data and next pointer */
+    new_node->name = strdup(name);
+    new_node->data = strdup(data);
     new_node->line_number = line_number;
-    new_node->name = name;
     new_node->next = list->head;
 
     /* Update head to point to the new node */ 
@@ -64,7 +65,6 @@ void insertToList(LinkedList *list, char *name, char *data, int line_number)
 }
 
 void freeNode(ListNode *node){
-    /* Free memory allocated for the name, content and node */
     free(node->name);
     free(node->data);
     free(node);
@@ -75,10 +75,8 @@ void freeList(LinkedList *list) {
     while (current != NULL) {
         ListNode *temp = current;
         current = current->next;
-        /* Free the node itself */
         freeNode(temp);
     }
-    /* Set head to NULL to indicate an empty list */
     list->head = NULL;
 }
 
@@ -87,7 +85,7 @@ void printList(LinkedList *list)
     ListNode *current = list->head;
     while (current != NULL)
     {
-        printf("Name: %s, Data: %s\n", current->name, current->data);
+        printf("Name: %s\nData: %s\n", current->name, current->data);
         current = current->next;
     }
 }

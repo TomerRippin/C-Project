@@ -1,28 +1,30 @@
-#include "pre_assembler.h"
+#include "../Header Files/pre_assembler.h"
 
 void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList)
 {
     char line[MAX_LINE_LEN];
-    char macro[MAX_MACRO_LEN] = "";  /* TODO: maybe don't assume the macro size and use realloc? */ 
+    char macroData[MAX_MACRO_LEN] = "";  /* TODO: maybe don't assume the macro size and use realloc? */ 
     int macroSection = 0;
     char macroName[MAX_LINE_LEN] = "";
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
-        if (strstr(line, MACRO_START) != NULL)
+        if (strncmp(line, MACRO_START, strlen(MACRO_START)) == 0)
         {
             macroSection = 1;
-            strcpy(macroName, line);
+            strtok(line, " ");
+            strcpy(macroName, strtok(NULL, " ")); /* Get the second word */
+            /* TODO: copy the specific length of the name, without null bytes */
         }
-        else if (strstr(line, MACRO_END) != NULL)
+        else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
             macroSection = 0;
-            strcpy(macro, "");
-            insert_to_list(macrosList, macroName, macro, -1);  /* TODO: decide if give line number or not */
+            insertToList(macrosList, macroName, macroData, -1);
+            /* TODO: decide if give line number or not */
         }
         else if (macroSection)
         {
-            strcat(macro, line);
+            strcat(macroData, line);
         }
     }
 }
@@ -34,17 +36,16 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
-        if (strstr(line, MACRO_START) != NULL)
+        if (strncmp(line, MACRO_START, strlen(MACRO_START)) == 0)
         {
             macroSection = 1;
             continue;
         }
-        else if (strstr(line, MACRO_START) != NULL)
+        else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
             macroSection = 0;
             continue;
         }
-
         if (!macroSection)
         {
             fprintf(outputFile, "%s", line);
@@ -52,25 +53,31 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
     }
 }
 
-void replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
+/* TODO: maybe return int and many return options (different errors) */
+int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
 {
-    LinkedList *macrosList;
-    initialize_list(macrosList);
+    LinkedList *macrosList = createList();
 
-    extractMacrosFromFile(inputFile, &macrosList);
+    extractMacrosFromFile(inputFile, macrosList);
 
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    removeMacrosFromFile(inputFile, outputFile);
+    FILE *tempFile = tmpfile();
+    if (tempFile == NULL)
+    {
+        printf("Error creating temporary file.\n");
+        return -1;
+    }
+    removeMacrosFromFile(inputFile, tempFile);
 
     /* Replaces the macro names with their content */
     char line[MAX_LINE_LEN];
-    fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    int replaced = 0;
+    fseek(tempFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     ListNode *result;
+    int index = 0;
 
-    while (fgets(line, sizeof(line), inputFile) != NULL)
+    while (fgets(line, sizeof(line), tempFile) != NULL)
     {
-        result = searchList(macrosList, line);
+        result = searchList(macrosList, line); /* TODO: now not working because null bytes... */
         if (result != NULL) {
             /* Replaces line with macro content */
             fprintf(outputFile, "%s", result->data);
@@ -78,4 +85,12 @@ void replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
             /* Writes original line to output file */
             fprintf(outputFile, "%s", line);
         }
+        index += 1;
+    }
+
+    fclose(tempFile);
+    freeList(macrosList);
+    free(macrosList);
+    
+    return 0;
 }
