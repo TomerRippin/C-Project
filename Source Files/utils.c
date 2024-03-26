@@ -11,7 +11,10 @@ void removeExtraSpacesTabs(char *str) {
     for (i = 0, j = 0; str[i]; i++) {
         if (str[i] == ' ' || str[i] == '\t') {
             if (!isSpace) {
-                str[j++] = ' ';
+                /* Check if it's the first character of the line */
+                if (i != 0) {  
+                    str[j++] = ' ';
+                }
                 isSpace = 1;
             }
         } else {
@@ -21,6 +24,7 @@ void removeExtraSpacesTabs(char *str) {
     }
     str[j] = '\0';
 }
+
 
 /* Function to remove comments (lines starting with ';') from a string */
 void removeComments(char *str) {
