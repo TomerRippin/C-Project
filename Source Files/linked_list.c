@@ -1,10 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "../Header Files/linked_list.h"
+#include "linked_list.h"
 
 
 void initializeList(LinkedList *list) {
     list->head = NULL;
+}
+
+LinkedList *createList()
+{
+    LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
+    if (list == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    initializeList(list);
+    return list;
 }
 
 ListNode *searchList(LinkedList *list, char *target_name) {

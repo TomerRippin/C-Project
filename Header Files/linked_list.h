@@ -1,4 +1,8 @@
-/* Define a structure for the linked list node */ 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Defines a structure for the linked list node */ 
 typedef struct ListNode {
     char *name;            /* Name associated with the Node */
     char *data;            /* The data stored in the Node */
@@ -6,18 +10,25 @@ typedef struct ListNode {
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
-/* Define a structure for the linked list */ 
+/* Defines a structure for the linked list */ 
 typedef struct {
     ListNode *head;
 } LinkedList;
 
-/* Function to initialize an empty linked list */
+/** Creates a new LinkedList - allocates memory, initializes it and returns a pointer to the head
+ * @warning If memory allocation fails, the program will terminate with an error message.
+ */
+LinkedList *createList();
+
+/** Initializes an empty linked list 
+ * TODO: consider delete this
+ */
 void initializeList(LinkedList *list);
 
-/* Function to insert a node at the beginning of the list */ 
+/* Inserts a node at the beginning of the list */ 
 void insertToList(LinkedList *list, char *name, char *data, int line_number);
 
-/* Function to search for a node name in the linked list */ 
+/* Searches for a node name in the linked list */ 
 ListNode *searchList(LinkedList *list, char *target_name);
 
 /* Function to free memory allocated for the list */
