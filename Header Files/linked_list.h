@@ -1,9 +1,9 @@
 /* Define a structure for the linked list node */ 
 typedef struct ListNode {
-    char *name; // Name associated with the Node
-    char *data; // The data stored in the Node  
-    int line_number; // Line number of the Node
-    struct ListNode *next; // Pointer to the next node
+    char *name;            /* Name associated with the Node */
+    char *data;            /* The data stored in the Node */
+    int line_number;       /* Line number of the Node */
+    struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
 /* Define a structure for the linked list */ 
