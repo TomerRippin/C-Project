@@ -35,28 +35,12 @@ void removeComments(char *str) {
 }
 
 /* Function to remove extra spaces, tabs, and comments from a file and create a modified file */
-int removeExtraSpacesTabsAndComments(const char *inputFilename, const char *outputFilename) {
-    FILE *inputFile = fopen(inputFilename, "r");
-    if (inputFile == NULL) {
-        fprintf(stderr, "Error opening input file %s\n", inputFilename); /* TODO: use a general function to handel files */
-        return 0;
-    }
-
-    FILE *outputFile = fopen(outputFilename, "w");
-    if (outputFile == NULL) {
-        fprintf(stderr, "Error creating output file %s\n", outputFilename); /* TODO: use a general function to handel files */
-        fclose(inputFile);
-        return 0;
-    }
-
+int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     char line[MAX_LINE_LEN]; /* Assuming maximum line length of MAX_LINE_LEN characters */ 
     while (fgets(line, sizeof(line), inputFile)) {
         removeExtraSpacesTabs(line);
         removeComments(line);
         fprintf(outputFile, "%s", line); /*  Write the modified line to the output file */
     }
-
-    fclose(inputFile);
-    fclose(outputFile);
     return 1;
 }
