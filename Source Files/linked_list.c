@@ -28,7 +28,7 @@ void insertToList(LinkedList *list, char *name, char *data, int line_number)
     searchResult = searchList(list, name);
 
     if(searchResult != NULL && strcmp(searchResult->data, data) != 0){
-        fprintf(stderr, "Internal Error"); // TODO: assign an Error Code
+        fprintf(stderr, "Internal Error"); /* TODO: assign an Error Code */
         free(name);
         free(data);
         return;
