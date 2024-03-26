@@ -6,7 +6,7 @@
 typedef struct ListNode {
     char *name;            /* Name associated with the Node */
     char *data;            /* The data stored in the Node */
-    int line_number;       /* Line number of the Node */
+    int line_number;       /* Line number of the Node  - TODO: decide if needed*/
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
@@ -36,3 +36,6 @@ void freeList(LinkedList *list);
 
 /* Function to free memory from a node */
 void freeNode(ListNode *node);
+
+/* Iterates over the nodes of the Link and prints them */
+void printList(LinkedList *list);

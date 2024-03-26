@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "linked_list.h"
 
 
@@ -80,3 +82,12 @@ void freeList(LinkedList *list) {
     list->head = NULL;
 }
 
+void printList(LinkedList *list)
+{
+    ListNode *current = list->head;
+    while (current != NULL)
+    {
+        printf("Name: %s, Data: %s\n", current->name, current->data);
+        current = current->next;
+    }
+}
