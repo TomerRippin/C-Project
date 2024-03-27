@@ -4,7 +4,6 @@
 #include "../Header Files/constants.h"
 #include "../Header Files/utils.h"
 
-/* Function to remove extra spaces and tabs from a string */
 void removeExtraSpacesTabs(char *str) {
     int i, j;
     int isSpace = 0;
@@ -25,8 +24,6 @@ void removeExtraSpacesTabs(char *str) {
     str[j] = '\0';
 }
 
-
-/* Function to remove comments (lines starting with ';') from a string */
 void removeComments(char *str) {
     char *commentStart = strchr(str, ';');
     if (commentStart != NULL) {
@@ -34,13 +31,12 @@ void removeComments(char *str) {
     }
 }
 
-/* Function to remove extra spaces, tabs, and comments from a file and create a modified file */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
-    char line[MAX_LINE_LEN]; /* Assuming maximum line length of MAX_LINE_LEN characters */ 
+    char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile)) {
         removeExtraSpacesTabs(line);
         removeComments(line);
-        fprintf(outputFile, "%s", line); /*  Write the modified line to the output file */
+        fprintf(outputFile, "%s", line);
     }
     return 1;
 }
