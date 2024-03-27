@@ -38,4 +38,5 @@ void freeList(LinkedList *list);
 void freeNode(ListNode *node);
 
 /* Iterates over the nodes of the Link and prints them */
+/* TODO: consider deleting this */
 void printList(LinkedList *list);
