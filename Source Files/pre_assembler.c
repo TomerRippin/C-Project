@@ -92,5 +92,5 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     freeList(macrosList);
     free(macrosList);
     
-    return 0;
+    return 1;
 }
