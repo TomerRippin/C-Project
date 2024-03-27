@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Read file
+    /* Read file */
     const char *inputFileName = argv[1];
     FILE *inputFile = fopen(inputFileName, "r");
     if (!inputFile)
@@ -16,26 +16,24 @@ int main(int argc, char *argv[])
         perror("Error opening input file");
         return 1;
     }
+    /* Initialize symbol table and other data structures */
+    /* Read input assembly code line by line */
+    /* Tokenize the line and process labels, opcodes, and operands */
+    /* ... */
 
-    // Initialize symbol table and other data structures
-    // Read input assembly code line by line
-    // Tokenize the line and process labels, opcodes, and operands
-    // ...
+    /* Generate machine code */
+    /* ... */
 
-    // Generate machine code
-    // ...
+    /* Update symbol table */
+    /* ... */
+    /* Write object code to output file */
+    /* ... */
 
-    // Update symbol table
-    // ...
-    // Write object code to output file
-    // ...
+    /* Identify entries and externals */
+    /* ... */
 
-    // Identify entries and externals
-    // ...
-
-    // Write entries and externals to separate files
-    // ...
-
+    /* Write entries and externals to separate files */
+    /* ... */
     fclose(inputFile);
     return 0;
 }
