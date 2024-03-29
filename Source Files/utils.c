@@ -31,6 +31,7 @@ void removeComments(char *str) {
     }
 }
 
+/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndComments */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile)) {
