@@ -6,7 +6,8 @@ typedef enum ErrorCode
     SUCCESS = 0,
     ERROR_FILE_NOT_FOUND,
     ERROR_PARSE_DEFINE_INSTRUCTION,
-    ERROR_SYMBOL_ALREADY_EXIST
+    ERROR_SYMBOL_ALREADY_EXIST,
+    ERROR_OPCODE_NOT_FOUND
 };
 
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */
@@ -34,6 +35,8 @@ const char *get_error_name(ErrorCode code)
         return "ERROR_PARSE_DEFINE_INSTRUCTION";
     case ERROR_SYMBOL_ALREADY_EXIST:
         return "ERROR_SYMBOL_ALREADY_EXIST";
+    case ERROR_OPCODE_NOT_FOUND:
+        return "OPCODE_NOT_FOUND";
     default:
         return "UNKNOWN_ERROR";
     }

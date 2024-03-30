@@ -32,3 +32,7 @@ Opcode OPCODES[] = {
     {"jsr", 1},
     {"rts", 0},
     {"hlt", 0}};
+
+
+/* Define the registers */
+char *REGS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
