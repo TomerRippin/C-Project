@@ -4,6 +4,8 @@
 #include "../Header Files/constants.h"
 #include "../Header Files/linked_list.h"
 
+/* TODO: add .h file + rename this file*/
+
 int handleDefine(char *line, LinkedList *symbolTable)
 {
     printf("handleDefine");
@@ -37,6 +39,9 @@ int getOpcodeOperandsNum(char *opcode) {
     }
     return -1;
 }
+
+/* Hanhaia, maybe dlete */
+int isInstructionLine(char *line)
 {
     for (int i = 0; i < NUM_INSTRUCTIONS; i++)
     {
@@ -148,8 +153,7 @@ int firstPass(FILE *inputFile, FILE *outputFile)
         else if (parsedLine.instruction == ".entry") {
             continue;
         }
-
-        if (isSymbol) {
+        else if (isSymbol) {
             insertToList(symbolTable, parsedLine.label, ".code", IC + 100);
         }
 

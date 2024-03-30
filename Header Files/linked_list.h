@@ -24,8 +24,8 @@ typedef struct ListNode {
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
-/* Defines a structure for the linked list */ 
-typedef struct {
+/* Defines a structure for the linked list */
+typedef struct LinkedList {
     ListNode *head;
 } LinkedList;
 
