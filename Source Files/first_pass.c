@@ -122,6 +122,7 @@ int getInstructionNumber(char instruction){
 
 int parseOperands(struct AssemblyLine *parsedLine){
     char *potSrc, *potDest;
+    Operand *srcOperand, *destOperand;
     int opcodeOperandsNum = getOpcodeOperandsNum(parsedLine->instruction);
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1){
@@ -173,7 +174,9 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Success, No more to check */
         return 1;
     }
-
+    destOperand->type = parseOperandAdressing(potDest);
+    srcOperand->type = parseOperandAdressing(potSrc);
+    
     /* Check if potentioal arguments are correct */
     switch (getInstructionNumber(parsedLine->instruction))
         {
@@ -185,9 +188,11 @@ int parseOperands(struct AssemblyLine *parsedLine){
         3 is register -> adds 1 line with the number of the register. NOTICE! if both src and dest are registers the line will contain both.
         */
         /* MOV (1), ADD (3), SUB (4)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
+        
         case 1: 
         case 3:
         case 4:
+
             /* code */
             break;
         

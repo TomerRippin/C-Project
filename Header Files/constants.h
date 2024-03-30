@@ -36,3 +36,9 @@ Opcode OPCODES[] = {
 
 /* Define the registers */
 char *REGS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
+
+typedef struct Operand
+{
+    int type; /* what type of adressing the operand has (0, 1, 2, 3) */
+    char *value; /* the value of the operand  (r8, sz, LOOP, ARR[0] etc... )*/
+} Operand;

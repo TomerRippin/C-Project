@@ -28,8 +28,14 @@ int countOccurrences(char *str, char target);
  * @return 1 if the string is a number, 0 otherwise.
  * 
  */
-int isNumber(const char *str) {
-    char *endptr;
-    strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
-    return *endptr == '\0'; /*Return 1 if the conversion reaches the end of the string */
-} 
+int isNumber(const char *str);
+
+/**
+ * Function to parse the type of operand.
+ * @param operand The input operand string to be parsed.
+ * @param immediateValue Output parameter to store the immediate value if applicable.
+ * @param label Output parameter to store the label if applicable.
+ * @param index Output parameter to store the index if applicable.
+ * @return An integer representing the type of operand (0 for immediate, 1 for straight, 2 for index, 3 for register, -1 for invalid).
+ */
+int parseOperandAdressing(const char *operand, int *immediateValue, char *label, int *index);
