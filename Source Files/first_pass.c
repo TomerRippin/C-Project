@@ -29,17 +29,14 @@ int handleDataInstruction(char *line, LinkedList *symbolTable, int isSymbol)
     /* TODO */
 }
 
-int getOpcodeInd(char *opcode) {
+int getOpcodeOperandsNum(char *opcode) {
     for (int i = 0; i < NUM_OPCODES; i++) {
         if (opcode == OPCODES[i].name) {
-            return SUCCESS;
+            return OPCODES[i].operandsNum;
         }
     }
-    return ERROR_OPCODE_NOT_FOUND;
+    return -1;
 }
-
-/* Hanhaia, maybe dlete */
-int isInstructionLine(char *line)
 {
     for (int i = 0; i < NUM_INSTRUCTIONS; i++)
     {
@@ -156,22 +153,11 @@ int firstPass(FILE *inputFile, FILE *outputFile)
             insertToList(symbolTable, parsedLine.label, ".code", IC + 100);
         }
 
-        /* If we are here - this is a line of operations */
-        for (int i = 0; i < NUM_OPCODES; i++)
-        {
-            if (parsedLine.instruction == OPCODES[i].name)
-            {
-                return SUCCESS;
-            }
+        operandsNum = getOpcodeOperandsNum(parsedLine.instruction);
+        if (operandsNum == -1) {
+            return ERROR_OPCODE_NOT_FOUND;
         }
 
-            if (isValidOpcode)
-
-            /**
-             * if (isInstructionLine(*line))
-            {
-                handleInstruction(*line, symbolTable);
-                continue;
-            }
-            */
-        }
+        /* TODO - section 14-17 */
+    }
+}

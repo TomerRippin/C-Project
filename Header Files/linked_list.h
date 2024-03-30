@@ -2,11 +2,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+/** TODO: change line_number to type, in order to use in the symbol table 
+ * for now:
+ * name = symbolName
+ * data = symbolType
+ * line_number = symbolValue
+*/
+typedef struct SymbolNode
+{
+    char *symbolName;            /* Symbol name */
+    char *symbolType;            /* Symbol Value */
+    int symbolValue;             /* Line number of the Node  - TODO: decide if needed*/
+    struct SymbolNode *next;     /* Pointer to the next node */
+};
+
 /* Defines a structure for the linked list node */ 
 typedef struct ListNode {
     char *name;            /* Name associated with the Node */
     char *data;            /* The data stored in the Node */
-    int line_number;       /* Line number of the Node  - TODO: decide if needed*/
+    int line_number;       /* Line number of the Node  - TODO: decide if needed and change to titled*/
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
