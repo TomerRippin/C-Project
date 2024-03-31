@@ -58,8 +58,8 @@ int isInstructionLine(char *line)
 struct AssemblyLine {
     char *label;
     char *instruction;
-    char *src;
-    char *dst;
+    Operand *src;
+    Operand *dst;
     char *operands;
 };
 
@@ -176,7 +176,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
     }
     destOperand->type = parseOperandAdressing(potDest);
     srcOperand->type = parseOperandAdressing(potSrc);
-    
+
     /* Check if potentioal arguments are correct */
     switch (getInstructionNumber(parsedLine->instruction))
         {
@@ -192,36 +192,54 @@ int parseOperands(struct AssemblyLine *parsedLine){
         case 1: 
         case 3:
         case 4:
-
+            if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
             /* code */
             break;
         
         /* CMP (2) has a dest instruction 0,1,2,3 and src instruction 0,1,2,3 */
         case 2:
-
+            if (!(destOperand->type >= 0 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
             break;
         
         /* LEA (5) has dst instructions 1,2,3 and src instruction 1,2*/
         case 5:
-
+            if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 1 && srcOperand->type <=2)){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
         /* NOT (6), CLR (7), INC(8), DEC(9), RED(12) have dst instruction 1,2,3 and no src instruction */
         case 6:
         case 7:
         case 8:
         case 9:
         case 12:
-
+            if (!(destOperand->type >= 1 && destOperand->type <= 3)){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
             break;
         /* JMP (), BNE (), JSR() have dst instruction 1,3 and no src instruction */
         case 10:
         case 11:
         case 14:
-
+            if (!(destOperand->type == 1 || destOperand->type == 3)){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
             break;
 
         /* PRN (13) has dst instruction 0,1,2,3 and no src instruction */
         case 13:
-
+            if (!(destOperand->type >= 0 && destOperand->type <= 3)){
+                /* TODO: Add error code on "Bad addressing type for instruction"  */
+                return 0;
+            }
         /* RTS (15), HLT (16) have no dst and src instructions */
         case 15:
         case 16:
@@ -233,6 +251,11 @@ int parseOperands(struct AssemblyLine *parsedLine){
         default:
             break;
         }
+        /* Succesfully inserted parsed operands, now save them in the parsed line */
+        destOperand->value = potDest;
+        srcOperand->value = potSrc;
+        parsedLine->dst = destOperand;
+        parsedLine->src = srcOperand;
 }
 
 void printAssemblyLine(struct AssemblyLine *parsedLine)
