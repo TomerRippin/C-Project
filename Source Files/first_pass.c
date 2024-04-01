@@ -1,15 +1,15 @@
-#include "../Header Files/first_pass.h"
+#include "first_pass.h"
 
 /* TODO: rename this file */
 
 int handleDefine(char *line, LinkedList *symbolTable)
 {
     printf("handleDefine");
-    char symbol[MAX_LINE_LEN];
+    char *symbol[MAX_LINE_LEN];
     int value;
     if (sscanf(line, ".define %80s = %d", symbol, &(value)))
     {
-        if (searchList(symbolTable, *symbol) != NULL) {
+        if (searchList(symbolTable, symbol) != NULL) {
             return ERROR_SYMBOL_ALREADY_EXIST;
         } else {
             insertToList(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, value);
@@ -20,10 +20,10 @@ int handleDefine(char *line, LinkedList *symbolTable)
         return ERROR_PARSE_DEFINE_INSTRUCTION;
     }
 }
-
+ 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable, int *DC)
 {
-    printf("handleDataDirective");
+    DEBUG_PRINT("handleDataDirective");
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
     int value;
@@ -48,7 +48,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char 
             value = atoi(token);
         }
 
-        DEBUG_PRINT("Inserting to codes table: <%s>, at location: <%d>", value, *DC);
+        printf("Inserting to codes table: <%d>, at location: <%d>", value, *DC);
         binaryCodesTable[*DC] = value;
         *DC++;
 
@@ -56,6 +56,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char 
     }
     return SUCCESS;
 }
+
 
 int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable, int *DC) {
     printf("handleStringDirective");
@@ -65,7 +66,7 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, cha
     /* TODO: validate string - starts with "" */
 
     for (i = 0; i < stringLen - 1; i++) {
-        DEBUG_PRINT("Inserting to codes table: <%s>, at location: <%d>", parsedLine->operands[i], *DC);
+        printf("Inserting to codes table: <%d>, at location: <%d>", parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
         *DC++;
     }
@@ -80,18 +81,21 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, cha
 
     /* TODO: validate label */
     /* TODO: handle multiple labales */
-    DEBUG_PRINT("Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
-    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, NULL);
+    printf("Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
+    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
 }
 
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable) {
+    printf("handleDataDirective");
     return SUCCESS;
 }
 
 int isDirectiveLine(char *line)
 {
-    for (int i = 0; i < NUM_DIRECTIVES; i++)
+    int i;
+    for (i = 0; i < NUM_DIRECTIVES; i++)
     {
         if (strstr(line, DIRECTIVES[i]) != NULL)
         {
@@ -103,7 +107,8 @@ int isDirectiveLine(char *line)
 
 int getOpcodeOperandsNum(char *opcode)
 {
-    for (int i = 0; i < NUM_OPCODES; i++)
+    int i;
+    for (i = 0; i < NUM_OPCODES; i++)
     {
         if (opcode == OPCODES[i].name)
         {
@@ -129,8 +134,11 @@ int firstPass(FILE *inputFile, FILE *outputFile)
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         DEBUG_PRINT("read line: %s>", line);
-        parsedLine = parseAssemblyLine(line);
-        if (parsedLine.label != NULL) 
+        /* parsedLine = parseAssemblyLine(line); */
+        /* printAssemblyLine(&parsedLine); */
+
+        /**
+        if (parsedLine.label != NULL)
         {
             isLabel = 1;
             if (searchList(symbolTable, parsedLine.label))
@@ -168,7 +176,7 @@ int firstPass(FILE *inputFile, FILE *outputFile)
                 handlerRetVal = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
             }
             else {
-                /* TODO; not supposed to come here, but just in case */
+                * TODO; not supposed to come here, but just in case *
                 return GENERAL_ERROR;
             }
 
@@ -189,10 +197,11 @@ int firstPass(FILE *inputFile, FILE *outputFile)
             } else if (operandsNum != parsedLine.operandsNum) {
                 return ERROR_TOO_FEW_OPERANDS_GIVEN;
             }
-            /* TODO - section 14-17 */
+            * TODO - section 14-17 *
         }
         freeAssemblyLine(&parsedLine);
+        */
     }
-
     /* TODO - free things */
+    return 0;
 }

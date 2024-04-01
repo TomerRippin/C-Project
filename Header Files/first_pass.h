@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "../Header Files/errors.h"
 #include "../Header Files/utils.h"
 #include "../Header Files/constants.h"

@@ -44,4 +44,4 @@ const char *get_error_name(ErrorCode code)
     }
 }
 
-#endif // ERRORS_H
+#endif

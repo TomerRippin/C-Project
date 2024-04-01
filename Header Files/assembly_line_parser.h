@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct AssemblyLine
 {
@@ -11,9 +12,9 @@ typedef struct AssemblyLine
 
 struct AssemblyLine parseAssemblyLine(const char *line);
 
-void printAssemblyLine(struct AssemblyLine *parsedLine);
+void printAssemblyLine(AssemblyLine *parsedLine);
 
-void freeAssemblyLine(struct AssemblyLine *line);
+void freeAssemblyLine(AssemblyLine *line);
 
 /* Idea - validations */
 int isValidLabel(char *str);

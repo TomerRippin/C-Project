@@ -12,4 +12,4 @@
 #define DEBUG_PRINT(fmt, ...) ((void)0)
 #endif
 
-#endif // DEBUG_H
+#endif

@@ -33,7 +33,7 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     }
 
     /* --- Setting operands --- */
-    result.operands = (*strdup(line));
+    result.operands = *(strdup(line));
 
     /* --- Setting operandsNum --- */
     /* if operands contains " - there is only one operand */
@@ -43,7 +43,8 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     }
     else {
         /* Count the number of commas to determine the number of parameters */
-        for (int i = 0; result.operands; i++)
+        int i;
+        for (i = 0; result.operands; i++)
         {
             if (result.operands[i] == ',')
             {
@@ -52,15 +53,18 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
         }
         return result;
     }
+}
 
-void printAssemblyLine(struct AssemblyLine *parsedLine) {
+void printAssemblyLine(AssemblyLine *parsedLine) {
     printf("Label: %s\n", parsedLine->label ? parsedLine->label : "(none)");
     printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
     printf("Operands: %s\n", parsedLine->operands);
+    printf("Num Operands: %d\n", *(parsedLine->operandsNum));
 }
 
-void freeAssemblyLine(struct AssemblyLine *line) {
+void freeAssemblyLine(AssemblyLine *line) {
     free(line->label);
     free(line->instruction);
     free(line->operands);
+    free(line->operandsNum);
 }
