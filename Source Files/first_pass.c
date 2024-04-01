@@ -100,7 +100,10 @@ struct AssemblyLine parseAssemblyLine(const char *line)
 
     // The remaining part is the operands
     result.operands = strdup(line);
-
+    if (!parseOperands(result)){
+        /* TODO: Handle the error */
+        printf(stderr, "error");
+    }
     return result;
 }
 
@@ -123,7 +126,7 @@ int getInstructionNumber(char instruction){
 int parseOperands(struct AssemblyLine *parsedLine){
     char *potSrc, *potDest;
     Operand *srcOperand, *destOperand;
-    int opcodeOperandsNum = getOpcodeOperandsNum(parsedLine->instruction);
+    int opcodeOperandsNum = getOpcodeOperandsNum(*parsedLine->instruction);
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1){
         return ERROR_OPCODE_NOT_FOUND;
@@ -132,7 +135,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
     
     /* if two operands */
     if (opcodeOperandsNum == 2){
-        int commaOccurences =  countOccurrences(parsedLine->operands, ',');
+        int commaOccurences =  countOccurrences(parsedLine->operands, ",");
             if (commaOccurences == 0) {
             /* TODO: return "Missing comma between arguments" */
             return 0;
@@ -256,6 +259,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
         srcOperand->value = potSrc;
         parsedLine->dst = destOperand;
         parsedLine->src = srcOperand;
+        return 0;
 }
 
 void printAssemblyLine(struct AssemblyLine *parsedLine)
@@ -314,7 +318,6 @@ int firstPass(FILE *inputFile, FILE *outputFile)
         else if (isSymbol) {
             insertToList(symbolTable, parsedLine.label, ".code", IC + 100);
         }
-
 
 
         /* TODO - section 14-17 */

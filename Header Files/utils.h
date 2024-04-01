@@ -33,9 +33,6 @@ int isNumber(const char *str);
 /**
  * Function to parse the type of operand.
  * @param operand The input operand string to be parsed.
- * @param immediateValue Output parameter to store the immediate value if applicable.
- * @param label Output parameter to store the label if applicable.
- * @param index Output parameter to store the index if applicable.
- * @return An integer representing the type of operand (0 for immediate, 1 for straight, 2 for index, 3 for register, -1 for invalid).
+ * @return The type of operand.
  */
-int parseOperandAdressing(const char *operand, int *immediateValue, char *label, int *index);
+int parseOperandAdressing(const char *operand);
