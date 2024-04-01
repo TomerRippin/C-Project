@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-#include "../Header Files/errors.h"
-#include "../Header Files/constants.h"
-#include "../Header Files/linked_list.h"
+#include "../Header Files/first_pass.h"
 
-/* TODO: add .h file + rename this file*/
+/* TODO: rename this file */
 
 int handleDefine(char *line, LinkedList *symbolTable)
 {
@@ -53,12 +49,6 @@ int isInstructionLine(char *line)
     }
     return 0;
 }
-
-struct AssemblyLine {
-    char *label;
-    char *instruction;
-    char *operands;
-};
 
 struct AssemblyLine parseAssemblyLine(const char *line)
 {
