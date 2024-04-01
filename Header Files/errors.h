@@ -4,10 +4,15 @@
 typedef enum ErrorCode
 {
     SUCCESS = 0,
+    GENERAL_ERROR,
     ERROR_FILE_NOT_FOUND,
     ERROR_PARSE_DEFINE_INSTRUCTION,
-    ERROR_SYMBOL_ALREADY_EXIST
-};
+    ERROR_SYMBOL_ALREADY_EXIST,
+    ERROR_GIVEN_SYMBOL_NOT_EXIST,
+    ERROR_SYMBOL_WRONG_TYPE,
+    ERROR_OPCODE_NOT_FOUND,
+    ERROR_TOO_FEW_OPERANDS_GIVEN
+} ErrorCode;
 
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */
 

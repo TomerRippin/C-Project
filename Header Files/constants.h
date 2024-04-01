@@ -1,13 +1,27 @@
+#include "debug.h"
+
+#define MAX_LINES_NUM 1024  /* TODO: decide if size ok */
 #define MAX_LINE_LEN 81
+#define MAX_LABEL_LEN 31
 #define MAX_MACRO_LEN 1024
 #define MACRO_START "mcr"
 #define MACRO_END "endmcr"
 
 #define DEFINE_DIRECTIVE ".define"
-#define NUM_INSTRUCTIONS 4
+#define DATA_DIRECTIVE ".data"
+#define STRING_DIRECTIVE ".string"
+#define EXTERN_DIRECTIVE ".extern"
+#define ENTRY_DIRECTIVE ".entry"
+
+#define SYMBOL_TYPE_MDEFINE "mdefine"
+#define SYMBOL_TYPE_DATA "data"
+#define SYMBOL_TYPE_EXTERNAL "external"
+#define SYMBOL_TYPE_CODE "code"
+
+#define NUM_DIRECTIVES 4
 #define NUM_OPCODES 15
 
-char *INSTRUCTIONS[] = {".data", ".string", ".extern", ".entry"};
+char *DIRECTIVES[] = {".data", ".string", ".extern", ".entry"};
 
 typedef struct Opcode
 {

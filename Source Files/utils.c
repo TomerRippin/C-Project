@@ -31,7 +31,7 @@ void removeComments(char *str) {
     }
 }
 
-/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndComments */
+/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndCommentsFromFile */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile)) {
@@ -40,4 +40,24 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
         fprintf(outputFile, "%s", line);
     }
     return 1;
+}
+
+/* TODO: maybe return a new string and not modify the same string */
+/* TODO: remove whitespaces only if str not starts and ends with "" */
+void removeSpacesAndTabsFromString(char *str)
+{
+    char *i = str; /* Pointer to iterate through the string */
+    char *j = str; /* Pointer to track the position to insert non-space characters */
+
+    while (*i != '\0')
+    {
+        if (*i != ' ' && *i != '\t')
+        {
+            *j = *i;
+            j++;
+        }
+        i++;
+    }
+
+    *j = '\0';
 }
