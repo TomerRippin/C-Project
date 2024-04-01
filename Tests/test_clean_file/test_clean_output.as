@@ -6,7 +6,7 @@ cmp r3,#sz
 bne END
 endmcr
 prn #-5
-mov STR[5] ,STR[2]
+mov STR[5],STR[2]
 sub r1,r4
 m_mcr
 L1: inc K

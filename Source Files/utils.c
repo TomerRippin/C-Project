@@ -11,14 +11,19 @@ void removeExtraSpacesTabs(char *str) {
     for (i = 0, j = 0; str[i]; i++) {
         if (str[i] == ' ' || str[i] == '\t') {
             if (!isSpace) {
-                if (i != 0) {  /* Check if it's the first character of the line */ 
-                    str[j++] = ' ';  /* Keep only one space at the beginning */ 
+                if (i != 0) {  // Check if it's the first character of the line
+                    str[j++] = ' ';  // Keep only one space at the beginning
                 }
                 isSpace = 1;
             }
         } else if (str[i] == ',') {
-            str[j++] = str[i]; /*  Keep the comma */
-            isSpace = 1; /* Set the flag to remove subsequent spaces */ 
+            // Remove spaces before comma
+            if (j > 0 && str[j - 1] == ' ') {
+                j--;
+            }
+            str[j++] = ','; // Keep the comma
+            // Remove spaces after comma
+            isSpace = 1; // Set the flag to remove subsequent spaces
         } else {
             str[j++] = str[i];
             isSpace = 0;
