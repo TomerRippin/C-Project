@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../Header Files/constants.h"
 #include "../Header Files/utils.h"
-
 
 void removeExtraSpacesTabs(char *str) {
     int i, j;
@@ -50,22 +45,9 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     return 1;
 }
 
-/* TODO: maybe return a new string and not modify the same string */
-/* TODO: remove whitespaces only if str not starts and ends with "" */
-void removeSpacesAndTabsFromString(char *str)
+int isNumber(const char *str)
 {
-    char *i = str; /* Pointer to iterate through the string */
-    char *j = str; /* Pointer to track the position to insert non-space characters */
-
-    while (*i != '\0')
-    {
-        if (*i != ' ' && *i != '\t')
-        {
-            *j = *i;
-            j++;
-        }
-        i++;
-    }
-
-    *j = '\0';
+    char *endptr;
+    strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
+    return *endptr == '\0';   /*Return 1 if the conversion reaches the end of the string */
 }

@@ -1,4 +1,5 @@
-#include "debug.h"
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 #define MAX_LINES_NUM 1024  /* TODO: decide if size ok */
 #define MAX_LINE_LEN 81
@@ -21,7 +22,7 @@
 #define NUM_DIRECTIVES 4
 #define NUM_OPCODES 15
 
-char *DIRECTIVES[] = {".data", ".string", ".extern", ".entry"};
+extern const char *DIRECTIVES[NUM_DIRECTIVES];
 
 typedef struct Opcode
 {
@@ -29,20 +30,6 @@ typedef struct Opcode
     int operandsNum;
 } Opcode;
 
-Opcode OPCODES[] = {
-    {"mov", 2},
-    {"cmp", 2},
-    {"add", 2},
-    {"sub", 2},
-    {"lea", 2},
-    {"not", 1},
-    {"clr", 1},
-    {"inc", 1},
-    {"dec", 1},
-    {"jmp", 1},
-    {"bne", 1},
-    {"red", 1},
-    {"prn", 1},
-    {"jsr", 1},
-    {"rts", 0},
-    {"hlt", 0}};
+extern const Opcode OPCODES[];
+
+#endif  /* CONSTANTS_H */
