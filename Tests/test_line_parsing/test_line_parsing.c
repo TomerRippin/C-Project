@@ -17,7 +17,7 @@ int handleDefine(char *line, LinkedList *symbolTable)
         if (searchList(symbolTable, *symbol) == NULL) {
             return ERROR_SYMBOL_ALREADY_EXIST;
         } else {
-            insertToList(symbolTable, symbol, value);
+            insertToList(symbolTable, symbol, value, 0); /*TODO: insert real line number */
             return SUCCESS;
         }
     }
@@ -286,52 +286,15 @@ void freeAssemblyLine(struct AssemblyLine *line) {
 
 
 
-int firstPass(FILE *inputFile, FILE *outputFile)
+int main(int argc, char const *argv[])
 {
-    int IC = 0; /* Insturctions Counter */
-    int DC = 0; /* Data Counter */
     char line[MAX_LINE_LEN];
-    char symbol[MAX_LINE_LEN];
-    LinkedList *symbolTable = createList();
-    int isSymbol = 0;
     struct AssemblyLine parsedLine;
-    int operandsNum;
-
+    FILE *inputFile = fopen("./Tests/test_clean_file/test_clean_output.as", "r");
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         parsedLine = parseAssemblyLine(line);
         printAssemblyLine(&parsedLine);
-        if (parsedLine.instruction == DEFINE_DIRECTIVE)
-        {
-            handleDefine(*line, symbolTable);
-            continue;
-        }
-        if (parsedLine.label)
-        {
-            isSymbol = 1;
-            if (searchList(symbolTable, parsedLine.label)) {
-                return ERROR_SYMBOL_ALREADY_EXIST;
-            }
-        }
-
-        if (parsedLine.instruction == ".data" || parsedLine.instruction == ".string")
-        {
-            if (isSymbol) {
-                insertToList(symbolTable, parsedLine.label, ".data", DC);
-                /* handle .data or .string - line 9 */
-            }
-        }
-        else if (parsedLine.instruction == ".extern") {
-            continue;
-        }
-        else if (parsedLine.instruction == ".entry") {
-            continue;
-        }
-        else if (isSymbol) {
-            insertToList(symbolTable, parsedLine.label, ".code", IC + 100);
-        }
-
-
-        /* TODO - section 14-17 */
     }
+    return 0;
 }
