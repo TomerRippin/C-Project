@@ -27,7 +27,6 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
     printf("DEBUG - handleDefine\n");
     /* handles a line in format <label:> .define <symbol>=<value> */
-    int value;
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
     {
@@ -71,7 +70,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
             {
                 return ERROR_GIVEN_SYMBOL_NOT_EXIST;
             }
-            else if (searchResult->data == SYMBOL_TYPE_MDEFINE)
+            else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
             {
                 return ERROR_SYMBOL_WRONG_TYPE;
             }
@@ -161,7 +160,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
     char line[MAX_LINE_LEN];
     int isLabel = 0;
     AssemblyLine parsedLine;
-    int operandsNum;
+    /* int operandsNum; */
     int handlerRetVal;
 
     /* TODO: maybe check if line is too long */

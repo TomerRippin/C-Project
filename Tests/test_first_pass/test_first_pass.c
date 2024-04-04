@@ -3,7 +3,6 @@
 int main()
 {
     int retVal;
-    int i;
     printf("Starting main - test_first_pass!\n");
 
     LinkedList *symbolTable = createList();
@@ -42,8 +41,9 @@ int main()
     printf("Printing symbolTable\n");
     printList(symbolTable);
 
-    /** 
+    /**
     printf("Printing binaryCodesTable\n");
+    int i;
     for (i = 0; i < MAX_LINES_NUM * sizeof(int); i++)
     {
         printf("binaryCodesTable[%d]: %d\n", i, binaryCodesTable[i]);
