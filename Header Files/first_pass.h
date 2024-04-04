@@ -1,25 +1,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../Header Files/errors.h"
-#include "../Header Files/utils.h"
-#include "../Header Files/constants.h"
-#include "../Header Files/linked_list.h"
-#include "../Header Files/assembly_line_parser.h"
+#include "errors.h"
+#include "utils.h"
+#include "linked_list.h"
+#include "assembly_line_parser.h"
 
-int handleDefine(char *line, LinkedList *symbolTable);
+int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable, int *DC);
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable, int *DC);
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
 
-int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable);
+int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
 
 /* NOTE: This function does nothing and always returns true*/
-int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, char *binaryCodesTable);
+int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
 
-int isDirectiveLine(char *line);
+int isDirectiveLine(AssemblyLine *parsedLine);
 
 int getOpcodeOperandsNum(char *opcode);
 
-int firstPass(FILE *inputFile, FILE *outputFile);
+int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable);
