@@ -2,14 +2,9 @@
 #define DEBUG_H
 
 #ifdef DEBUG
-#define DEBUG_PRINT(fmt, ...)                  \
-    do                                         \
-    {                                          \
-        if (DEBUG)                             \
-            fprintf(stderr, fmt, __VA_ARGS__); \
-    } while (0)
+#define DEBUG_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
 #else
-#define DEBUG_PRINT(fmt, ...) ((void)0)
+#define DEBUG_PRINT(fmt, ...)
 #endif
 
-#endif
+#endif /* DEBUG_H */
