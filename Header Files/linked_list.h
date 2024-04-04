@@ -1,17 +1,34 @@
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/** TODO: change lineNumber to type, in order to use in the symbol table 
+ * for now:
+ * name = symbolName
+ * data = symbolType
+ * lineNumber = symbolValue
+typedef struct SymbolNode
+{
+    char *symbolName;            
+    char *symbolType;            
+    int symbolValue;             
+    struct SymbolNode *next;
+};
+*/
 
 /* Defines a structure for the linked list node */ 
 typedef struct ListNode {
     char *name;            /* Name associated with the Node */
     char *data;            /* The data stored in the Node */
-    int line_number;       /* Line number of the Node  - TODO: decide if needed*/
+    int lineNumber;       /* Line number of the Node  - TODO: decide if needed and change to titled*/
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
-/* Defines a structure for the linked list */ 
-typedef struct {
+/* Defines a structure for the linked list */
+typedef struct LinkedList {
     ListNode *head;
 } LinkedList;
 
@@ -26,7 +43,7 @@ LinkedList *createList();
 void initializeList(LinkedList *list);
 
 /* Inserts a node at the beginning of the list */ 
-void insertToList(LinkedList *list, char *name, char *data, int line_number);
+void insertToList(LinkedList *list, char *name, char *data, int lineNumber);
 
 /* Searches for a node name in the linked list */ 
 ListNode *searchList(LinkedList *list, char *target_name);
@@ -40,3 +57,5 @@ void freeNode(ListNode *node);
 /* Iterates over the nodes of the Link and prints them */
 /* TODO: consider deleting this */
 void printList(LinkedList *list);
+
+#endif /* LINKED_LIST_H */

@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../Header Files/constants.h"
 #include "../Header Files/utils.h"
-
 
 void removeExtraSpacesTabs(char *str) {
     int i, j;
@@ -39,6 +34,7 @@ void removeComments(char *str) {
     }
 }
 
+/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndCommentsFromFile */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile)) {
@@ -47,4 +43,11 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
         fprintf(outputFile, "%s", line);
     }
     return 1;
+}
+
+int isNumber(const char *str)
+{
+    char *endptr;
+    strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
+    return *endptr == '\0';   /*Return 1 if the conversion reaches the end of the string */
 }

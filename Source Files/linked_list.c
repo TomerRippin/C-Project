@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "linked_list.h"
-
+#include "../Header Files/linked_list.h"
 
 void initializeList(LinkedList *list) {
     list->head = NULL;
@@ -33,8 +30,7 @@ ListNode *searchList(LinkedList *list, char *targetName) {
     return NULL;
 }
 
-
-void insertToList(LinkedList *list, char *name, char *data, int line_number) 
+void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 {
     ListNode *searchResult;
 
@@ -42,8 +38,6 @@ void insertToList(LinkedList *list, char *name, char *data, int line_number)
 
     if(searchResult != NULL && strcmp(searchResult->data, data) != 0){
         fprintf(stderr, "Internal Error"); /* TODO: assign an Error Code */
-        free(name);
-        free(data);
         return;
     }
 
@@ -57,7 +51,7 @@ void insertToList(LinkedList *list, char *name, char *data, int line_number)
     /* Set data and next pointer */
     new_node->name = strdup(name);
     new_node->data = strdup(data);
-    new_node->line_number = line_number;
+    new_node->lineNumber = lineNumber;
     new_node->next = list->head;
 
     /* Update head to point to the new node */ 
@@ -83,9 +77,11 @@ void freeList(LinkedList *list) {
 void printList(LinkedList *list)
 {
     ListNode *current = list->head;
+    printf("|    Name    |    Data    |    LineNum    |\n");
+    printf("|------------|------------|---------------|\n");
     while (current != NULL)
     {
-        printf("Name: %s\nData: %s\n", current->name, current->data);
+        printf("|    %s    |    %s    |       %d      |\n", current->name, current->data, current->lineNumber);
         current = current->next;
     }
 }
