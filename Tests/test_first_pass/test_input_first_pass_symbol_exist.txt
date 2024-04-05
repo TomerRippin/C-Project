@@ -1,0 +1,4 @@
+.define sz=2
+LIL: .data 5
+MAIN: mov r3,LIST[sz]
+MAIN: jmp L1

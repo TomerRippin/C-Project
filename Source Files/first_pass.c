@@ -1,53 +1,138 @@
-#include <stdio.h>
-#include <string.h>
-#include "../Header Files/errors.h"
-#include "../Header Files/constants.h"
-#include "../Header Files/linked_list.h"
-#include "../Header Files/utils.h"
+#include "../Header Files/first_pass.h"
 
-/* TODO: add .h file + rename this file*/
+/* TODO: rename this file */
+/* TODO: delete all debug prints - starting with "DEBUG" */
 
-int handleDefine(char *line, LinkedList *symbolTable)
+const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry"};
+
+const Opcode OPCODES[] = {
+    {"mov", 2},
+    {"cmp", 2},
+    {"add", 2},
+    {"sub", 2},
+    {"lea", 2},
+    {"not", 1},
+    {"clr", 1},
+    {"inc", 1},
+    {"dec", 1},
+    {"jmp", 1},
+    {"bne", 1},
+    {"red", 1},
+    {"prn", 1},
+    {"jsr", 1},
+    {"rts", 0},
+    {"hlt", 0}};
+
+int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
-    printf("handleDefine");
-    char symbol[MAX_LINE_LEN];
-    int value;
-    if (sscanf(line, ".define %80s = %d", symbol, &(value)))
+    printf("DEBUG - handleDefine\n");
+    /* handles a line in format <label:> .define <symbol>=<value> */
+    char *symbol = strtok(parsedLine->operands, "=");
+    if (symbol == NULL)
     {
-        if (searchList(symbolTable, *symbol) == NULL) {
-            return ERROR_SYMBOL_ALREADY_EXIST;
-        } else {
-            insertToList(symbolTable, symbol, value);
+        return ERROR_PARSE_DEFINE_DIRECTIVE;
+    }
+    else if (searchList(symbolTable, symbol) != NULL)
+    {
+        return ERROR_SYMBOL_ALREADY_EXIST;
+    }
+    else
+    {
+        char *value = strtok(NULL, "=");
+        if ((value == NULL) || (isNumber(value) != 1))
+        {
+            return ERROR_PARSE_DEFINE_DIRECTIVE;
+        }
+        else
+        {
+            printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
+            insertToList(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
     }
-    else {
-        return ERROR_PARSE_DEFINE_INSTRUCTION;
-    }
 }
 
-int handleDataInstruction(char *line, LinkedList *symbolTable, int isSymbol)
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
 {
-    printf("handleDataInstruction");
-    /* TODO */
-}
+    printf("DEBUG - handleDataDirective\n");
+    char *token = strtok(parsedLine->operands, ",");
+    ListNode *searchResult;
+    int value;
 
-int getOpcodeOperandsNum(char *opcode) {
-    for (int i = 0; i < NUM_OPCODES; i++) {
-        if (opcode == OPCODES[i].name) {
-            return OPCODES[i].operandsNum;
-        }
-    }
-    return -1;
-}
-
-/* Hanhaia, maybe dlete */
-int isInstructionLine(char *line)
-{
-    for (int i = 0; i < NUM_INSTRUCTIONS; i++)
+    while (token != NULL)
     {
-        /* TODO: change, .data can be after : */
-        if (strncmp(line, INSTRUCTIONS[i], strlen(INSTRUCTIONS[i])) == 0)
+        /* Check if token is a a label (not a number) and doesn't exist in symbolTable */
+        /* TODO: maybe change to a function that checks if its a valid symbol */
+        /* TODO: add search to the rest of the params in linked list also */
+        if (isNumber(token) != 1) {
+            searchResult = searchList(symbolTable, token);
+            if (searchResult == NULL)
+            {
+                return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+            }
+            else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
+            {
+                return ERROR_SYMBOL_WRONG_TYPE;
+            }
+            else
+            {
+                value = searchResult->lineNumber;
+                printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>", token, value);
+            }
+        } else {
+            value = atoi(token);
+        }
+
+        printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
+        binaryCodesTable[*DC] = value;
+        *DC = *DC + 1;
+
+        token = strtok(NULL, ",");
+    }
+    return SUCCESS;
+}
+
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
+{
+    printf("DEBUG - handleStringDirective\n");
+    int stringLen = strlen(parsedLine->operands);
+    int i;
+
+    /* TODO: validate string - starts with "" */
+
+    for (i = 1; i < stringLen - 1; i++) {
+        printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
+        binaryCodesTable[*DC] = parsedLine->operands[i];
+        *DC = *DC + 1;
+    }
+    return SUCCESS;
+}
+
+int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
+    printf("DEBUG - handleExternDirective\n");
+    if (parsedLine->label != NULL) {
+        printf("WARNING: extern line contains label: <%s>", parsedLine->label);
+    }
+
+    /* TODO: validate label */
+    /* TODO: handle multiple labeles */
+    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
+    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
+    return SUCCESS;
+}
+
+int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
+    printf("DEBUG - handleDataDirective\n");
+    return SUCCESS;
+}
+
+int isDirectiveLine(AssemblyLine *parsedLine)
+{
+    int i;
+    for (i = 0; i < NUM_DIRECTIVES; i++)
+    {
+        if (strcmp(parsedLine->instruction, DIRECTIVES[i]) == 0)
         {
             return 1;
         }
@@ -55,59 +140,20 @@ int isInstructionLine(char *line)
     return 0;
 }
 
-struct AssemblyLine {
-    char *label;
-    char *instruction;
-    Operand *src;
-    Operand *dst;
-    char *operands;
-};
-
-struct AssemblyLine parseAssemblyLine(const char *line)
+int getOpcodeOperandsNum(char *opcode)
 {
-    struct AssemblyLine result;
-    result.label = NULL;
-    result.instruction = NULL;
-    result.src = NULL;
-    result.dst = NULL;
-
-    // Find the first occurrence of ':'
-    char *colonPos = strchr(line, ':');
-    if (colonPos != NULL)
+    int i;
+    for (i = 0; i < NUM_OPCODES; i++)
     {
-        // Extract the label
-        size_t labelLen = colonPos - line;
-        result.label = (char *)malloc(labelLen + 1);
-        strncpy(result.label, line, labelLen);
-        result.label[labelLen] = '\0';
-
-        // Move the pointer past the colon
-        line = colonPos + 1;
+        if (strcmp(opcode, OPCODES[i].name) == 0)
+        {
+            return OPCODES[i].operandsNum;
+        }
     }
-
-    // Find the instruction (e.g., .data, .string, MOV, jmp, etc.)
-    char *spacePos = strchr(line, ' ');
-    if (spacePos != NULL)
-    {
-        size_t instrLen = spacePos - line;
-        result.instruction = (char *)malloc(instrLen + 1);
-        strncpy(result.instruction, line, instrLen);
-        result.instruction[instrLen] = '\0';
-
-        // Move the pointer past the space
-        line = spacePos + 1;
-    }
-
-    // The remaining part is the operands
-    result.operands = strdup(line);
-    if (!parseOperands(&result)){
-        /* TODO: Handle the error */
-        printf(stderr, "error");
-    }
-    return result;
+    return -1;
 }
 
-int getInstructionNumber(char instruction){
+int getInstructionNumber(char *instruction){
     int i = 1;
     /* Return -1 if the string is NULL */
     if (instruction == NULL) {
@@ -126,7 +172,7 @@ int getInstructionNumber(char instruction){
 int parseOperands(struct AssemblyLine *parsedLine){
     char *potSrc, *potDest;
     Operand *srcOperand, *destOperand;
-    int opcodeOperandsNum = getOpcodeOperandsNum(*parsedLine->instruction);
+    int opcodeOperandsNum = getOpcodeOperandsNum(parsedLine->instruction);
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1){
         return ERROR_OPCODE_NOT_FOUND;
@@ -135,7 +181,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
     
     /* if two operands */
     if (opcodeOperandsNum == 2){
-        int commaOccurences =  countOccurrences(parsedLine->operands, ",");
+        int commaOccurences =  countOccurrences(parsedLine->operands, ',');
             if (commaOccurences == 0) {
             /* TODO: return "Missing comma between arguments" */
             return 0;
@@ -168,11 +214,11 @@ int parseOperands(struct AssemblyLine *parsedLine){
     /* if no operands */
 
     if (opcodeOperandsNum == 0) {
-            if (extra_text()) { /* TODO: create the actual function */
+            if (0) { /* TODO: create the actual function */
                 return 0; /* TODO: return real ERROR CODE */
             } 
             else {
-                parsedLine->src = parsedLine->dst = NULL;
+                /*parsedLine->src = parsedLine->dst = NULL;/*
             }
         /* Success, No more to check */
         return 1;
@@ -257,81 +303,117 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Succesfully inserted parsed operands, now save them in the parsed line */
         destOperand->value = potDest;
         srcOperand->value = potSrc;
-        parsedLine->dst = destOperand;
-        parsedLine->src = srcOperand;
+        /*parsedLine->dst = destOperand;
+        parsedLine->src = srcOperand;*/
+        free(potDest);
+        free(potSrc);
         return 0;
 }
-
-void printAssemblyLine(struct AssemblyLine *parsedLine)
-{
-    printf("Label: %s\n", parsedLine->label ? parsedLine->label : "(none)");
-    printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
-    printf(": %s\n", parsedLine->operands);
-    printf("src type: %d, src value: %s", parsedLine->src->type, parsedLine->src->value);
-    printf("dst type: %d, dst value: %s", parsedLine->dst->type, parsedLine->dst->value);
 }
 
-void freeOperand(struct Operand *operand){
+
+void freeOperand(Operand *operand){
     free(operand->type);
     free(operand->value);
 }
 
-void freeAssemblyLine(struct AssemblyLine *line) {
-    free(line->label);
-    free(line->instruction);
-    free(line->operands);
-    freeOperand(line->src);
-    freeOperand(line->dst);
-}
-
-
-
-int firstPass(FILE *inputFile, FILE *outputFile)
+int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 {
-    int IC = 0; /* Insturctions Counter */
-    int DC = 0; /* Data Counter */
+    int IC = 100;  /* Insturctions Counter */
+    int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
-    char symbol[MAX_LINE_LEN];
-    LinkedList *symbolTable = createList();
-    int isSymbol = 0;
-    struct AssemblyLine parsedLine;
-    int operandsNum;
+    int isLabel = 0;
+    AssemblyLine parsedLine;
+    /* int operandsNum; */
+    int handlerRetVal;
 
+    /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
+        /* Remove the newline character at the end of the line */
+        line[strcspn(line, "\n")] = '\0';
+
+        printf("#####################################\nDEBUG - read line: %s\n", line);
         parsedLine = parseAssemblyLine(line);
-        printAssemblyLine(&parsedLine);
-        if (parsedLine.instruction == DEFINE_DIRECTIVE)
+        /*printAssemblyLine(&parsedLine);*/
+
+        if (parsedLine.label != NULL)
         {
-            handleDefine(*line, symbolTable);
-            continue;
-        }
-        if (parsedLine.label)
-        {
-            isSymbol = 1;
-            if (searchList(symbolTable, parsedLine.label)) {
+            isLabel = 1;
+            if (searchList(symbolTable, parsedLine.label) != NULL)
+            {
                 return ERROR_SYMBOL_ALREADY_EXIST;
             }
+            /*
+            else {
+                printf("Inserting to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_CODE, IC);
+                insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
+            }
+            */
         }
 
-        if (parsedLine.instruction == ".data" || parsedLine.instruction == ".string")
+        if (strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)
         {
-            if (isSymbol) {
-                insertToList(symbolTable, parsedLine.label, ".data", DC);
-                /* handle .data or .string - line 9 */
+            handlerRetVal = handleDefine(&parsedLine, symbolTable);
+        }
+        else if (isDirectiveLine(&parsedLine))
+        {
+            printf("DEBUG - DIRECTIVE LINE!\n");
+            if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
+            {
+                if (isLabel) {
+                    printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                }
+                if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
+                {
+                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                }
+                else
+                {
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                }
+            }
+            else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
+            {
+                handlerRetVal = handleExternDirective(&parsedLine, symbolTable, binaryCodesTable);
+            }
+            else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0)
+            {
+                handlerRetVal = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
+            }
+            else {
+                /* TODO; not supposed to come here, but just in case */
+                return GENERAL_ERROR;
+            }
+
+            if (handlerRetVal != SUCCESS)
+            {
+                return handlerRetVal;
             }
         }
-        else if (parsedLine.instruction == ".extern") {
-            continue;
+        else {
+            printf("DEBUG - CODE LINE - NOT HANDLED!\n");
+            if (isLabel) {
+                printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_CODE, IC);
+                insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
+                IC++;
+            }
+            /*
+            operandsNum = getOpcodeOperandsNum(parsedLine.instruction);
+            if (operandsNum == -1)
+            {
+                return ERROR_OPCODE_NOT_FOUND;
+            } 
+            * else if (operandsNum != parsedLine.operandsNum) {
+            *    return ERROR_TOO_FEW_OPERANDS_GIVEN;
+            * }
+            * */
+            /* TODO - section 14-17 */
+            isLabel = 0;
         }
-        else if (parsedLine.instruction == ".entry") {
-            continue;
-        }
-        else if (isSymbol) {
-            insertToList(symbolTable, parsedLine.label, ".code", IC + 100);
-        }
-
-
-        /* TODO - section 14-17 */
+        freeAssemblyLine(&parsedLine);
     }
+    /* TODO - free things */
+    return 0;
 }

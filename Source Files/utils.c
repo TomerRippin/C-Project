@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../Header Files/constants.h"
 #include "../Header Files/utils.h"
-
 
 void removeExtraSpacesTabs(char *str) {
     int i, j;
@@ -39,7 +34,7 @@ void removeComments(char *str) {
     }
 }
 
-/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndComments */
+/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndCommentsFromFile */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
     char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile)) {
@@ -67,14 +62,10 @@ int countOccurrences(char *str, char target) {
     return count;  /** Return the total count of occurrences */
 }
 
-int isNumber(const char *str) {
-    char *endptr;
-    strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
-    return *endptr == '\0'; /*Return 1 if the conversion reaches the end of the string */
-} 
 
 int parseOperandAdressing(const char *operand)
 {
+    char *ch;
     /* Check if the operand is empty
     TODO: return an Error Code  */ 
     if (*operand == '\0') {
@@ -105,13 +96,13 @@ int parseOperandAdressing(const char *operand)
         const char *indexEnd = strchr(indexStart, ']');
         if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
             /* Check if the label contains only valid characters */ 
-            for (const char *ch = operand; ch < labelEnd; ch++) {
+            for (*ch = operand; ch < labelEnd; ch++) {
                 if (!isalnum(*ch) && *ch != '_') {
                     return -1; /* Invalid label  TODO: return an Error Code*/ 
                 }
             }
             /* Check if the index contains only digits */ 
-            for (const char *ch = indexStart; ch < indexEnd; ch++) {
+            for (*ch = indexStart; ch < indexEnd; ch++) {
                 if (!isdigit(*ch)) {
                     return -1; /* Invalid index  TODO: return an Error Code */ 
                 }
@@ -120,7 +111,7 @@ int parseOperandAdressing(const char *operand)
         }
     } else {
         /* Check if the operand contains only valid characters for a label */ 
-        for (const char *ch = operand; *ch != '\0'; ch++) {
+        for (*ch = operand; *ch != '\0'; ch++) {
             if (!isalnum(*ch) && *ch != '_') {
                 return -1; /* Invalid label  TODO: return an Error Code */ 
             }
@@ -129,4 +120,11 @@ int parseOperandAdressing(const char *operand)
     }
 
     return -1; /* No valid addressing type found  TODO: return an Error Code */ 
+}
+
+int isNumber(const char *str)
+{
+    char *endptr;
+    strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
+    return *endptr == '\0';   /*Return 1 if the conversion reaches the end of the string */
 }
