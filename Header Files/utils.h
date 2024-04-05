@@ -4,32 +4,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "debug.h"
 #include "constants.h"
 
-/* Function to remove extra spaces and tabs from a string */
+/* Removes extra spaces and tabs from a string */
 void removeExtraSpacesTabs(char *str);
 
-/* Function to remove comments (lines starting with ';') from a string */
+/* Removes comments (lines starting with ';') from a string */
 void removeComments(char *str);
 
 /**
- * Removes extra spaces, tabs, and spaces after commas from a string.
+ * @brief Removes extra spaces, tabs and comments from an input file and writes the cleaned lines to an output file.
  *
- * This function removes extra spaces, tabs, and spaces after commas from the given string.
- * Additionally, it ensures that only one space remains if spaces are found at the beginning of the string.
- *
- * @param str The string to be modified (in-place).
+ * @param inputFile Pointer to the input file.
+ * @param outputFile Pointer to the output file.
+ * @return 1 after successfully processing the input file.
  */
 int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile);
 
-
 /**
- * Function to check if a string represents a valid number.
- * 
- * @param str The input string to be checked.
- * @return 1 if the string is a number, 0 otherwise.
- * 
+ * Checks whether a given string represents a valid number.
+ *
+ * @param str The string to be checked.
+ * @return 1 if the string represents a valid number, 0 otherwise.
  */
 int isNumber(const char *str);
+
+/**
+ * @brief Duplicates a string.
+ *
+ * This function creates a new copy of the input string.
+ * The returned string is allocated using malloc and should be freed by the caller.
+ * NOTE: Sometimes this function is part of the standart library.
+ *
+ * @param source The string to be duplicated. If this parameter is NULL, the function returns NULL.
+ * @return A pointer to the newly allocated string, or NULL if the allocation failed or the input was NULL.
+ */
+char *strdup(const char *source);
 
 #endif /* UTILS_H */

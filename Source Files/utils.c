@@ -49,5 +49,23 @@ int isNumber(const char *str)
 {
     char *endptr;
     strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
-    return *endptr == '\0';   /*Return 1 if the conversion reaches the end of the string */
+    return *endptr == '\0'; /* Return 1 if the conversion reaches the end of the string */
+}
+
+char *strdup(const char *source)
+{
+    if (source == NULL)
+    {
+        return NULL;
+    }
+
+    size_t len = strlen(source) + 1;
+    char *duplicate = malloc(len);
+
+    if (duplicate != NULL)
+    {
+        memcpy(duplicate, source, len);
+    }
+
+    return duplicate;
 }

@@ -77,7 +77,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
             else
             {
                 value = searchResult->lineNumber;
-                printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>", token, value);
+                printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
             }
         } else {
             value = atoi(token);
