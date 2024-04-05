@@ -31,6 +31,12 @@ int main()
         printf("--- Finished First Pass with SUCCESS result! ---\n");
     }
 
+    printf("Printing symbolTable\n");
+    printList(symbolTable);
+
+    freeList(symbolTable);
+    symbolTable = createList();
+
     printf("Input file: test_input_first_pass_symbol_exist\n");
     retVal = firstPass(inputFile2, symbolTable, binaryCodesTable);
     if (retVal != SUCCESS)

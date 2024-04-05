@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 
 /** TODO: change lineNumber to type, in order to use in the symbol table 
  * for now:
