@@ -24,17 +24,6 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile);
 
 
 /**
- * Function to count the occurrences of a specific character in a string.
- * 
- * @param str Pointer to the input string.
- * @param target The character to count occurrences of.
- * 
- * @return The number of occurrences of the target character in the string.
- */
-int countOccurrences(char *str, char target);
-
-
-/**
  * Function to check if a string represents a valid number.
  * 
  * @param str The input string to be checked.
@@ -42,12 +31,5 @@ int countOccurrences(char *str, char target);
  * 
  */
 int isNumber(const char *str);
-
-/**
- * Function to parse the type of operand.
- * @param operand The input operand string to be parsed.
- * @return The type of operand.
- */
-int parseOperandAdressing(const char *operand);
 
 #endif /* UTILS_H */
