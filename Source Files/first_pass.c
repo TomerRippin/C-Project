@@ -335,7 +335,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 
         printf("#####################################\nDEBUG - read line: %s\n", line);
         parsedLine = parseAssemblyLine(line);
-        /*printAssemblyLine(&parsedLine);*/
+        printAssemblyLine(&parsedLine);
 
         if (parsedLine.label != NULL)
         {
