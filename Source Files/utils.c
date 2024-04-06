@@ -69,3 +69,22 @@ char *strdup(const char *source)
 
     return duplicate;
 }
+
+char *removeFileNameExt(char *fileName)
+{
+    char *lastPeriod, *newFileName;
+
+    newFileName = handle_malloc(sizeof(fileName) * sizeof(char));
+
+    strcpy(newFileName, fileName);
+
+    /* Find the last occurrence of '.' in the new file name */
+    lastPeriod = strrchr(newFileName, '.');
+
+    if (lastPeriod != NULL)
+    {
+        *lastPeriod = '\0';
+    }
+
+    return newFileName;
+}

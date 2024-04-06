@@ -42,4 +42,13 @@ int isNumber(const char *str);
  */
 char *strdup(const char *source);
 
+/**
+ * @brief Removes the extension from a file name.
+ * If searches for last '.' in the file name and removes it and everything after it.
+ *
+ * @param fileName The original file name.
+ * @return char* The new file name without the extension.
+ */
+char *removeFileNameExt(char *fileName);
+
 #endif /* UTILS_H */
