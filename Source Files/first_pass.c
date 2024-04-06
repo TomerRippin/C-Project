@@ -243,7 +243,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             if (!parseOperands(&parsedLine)){
                 printf("error");
             }
-            printf("STARTING parsing operands!12345 \n");
+            printf("dst value = %s\n", parsedLine.dst->value);
+            printf("src value = %s\n", parsedLine.src->value);
             int L = calculateL(parsedLine.src->type, parsedLine.dst->type);
             printf("############## \n L = %d \n\n", L);
             IC = IC + L;
