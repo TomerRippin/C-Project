@@ -28,16 +28,15 @@ int parseOperandAdressing(const char *operand)
     if (*operand == '\0') {
         return -1;
     }
-
+    printf("DEBUG - operand 1234 = %s \n", operand);
     /* Check for immediate addressing */ 
     if (*operand == '#') {
+        printf("DEBUG - operand 12345 = %s \n", operand);
         /* Check if the remaining characters are digits */ 
-        while (*(++operand) != '\0') {
-            if (!isdigit(operand)) {
-                return -1; /* Invalid immediate address TODO: return an Error Code */ 
-            }
-        }
-        return 0;
+        if(isNumber(operand+=1))
+            return 0;
+        else
+            return -1;
     }
 
     /* Check for register addressing */ 
@@ -204,6 +203,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
     int num = getInstructionNumber(parsedLine->instruction);
     destOperand->type = type;
     printf("DEBUG - dest type = %d \n", destOperand->type);
+    printf("DEBUG - num = %d \n", num);
     switch (num)
         {
 
@@ -215,9 +215,9 @@ int parseOperands(struct AssemblyLine *parsedLine){
         */
         /* MOV (1), ADD (3), SUB (4)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
         
-        case 1: 
+        case 0: 
+        case 2:
         case 3:
-        case 4:
             if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
@@ -226,7 +226,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
             break;
         
         /* CMP (2) has a dest instruction 0,1,2,3 and src instruction 0,1,2,3 */
-        case 2:
+        case 1:
             if (!(destOperand->type >= 0 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
@@ -234,26 +234,27 @@ int parseOperands(struct AssemblyLine *parsedLine){
             break;
         
         /* LEA (5) has dst instructions 1,2,3 and src instruction 1,2*/
-        case 5:
+        case 4:
             if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 1 && srcOperand->type <=2)){
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
             }
+            break;
         /* NOT (6), CLR (7), INC(8), DEC(9), RED(12) have dst instruction 1,2,3 and no src instruction */
+        case 5:
         case 6:
         case 7:
         case 8:
-        case 9:
-        case 12:
+        case 11:
             if (!(destOperand->type >= 1 && destOperand->type <= 3)){
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
             }
             break;
         /* JMP (), BNE (), JSR() have dst instruction 1,3 and no src instruction */
+        case 9:
         case 10:
-        case 11:
-        case 14:
+        case 13:
             if (!(destOperand->type == 1 || destOperand->type == 3)){
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
@@ -261,14 +262,17 @@ int parseOperands(struct AssemblyLine *parsedLine){
             break;
 
         /* PRN (13) has dst instruction 0,1,2,3 and no src instruction */
-        case 13:
+        case 12:
+            printf("IM HERE! \n");
             if (!(destOperand->type >= 0 && destOperand->type <= 3)){
+                printf("IM HERE123! \n");
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
             }
+            break;
         /* RTS (15), HLT (16) have no dst and src instructions */
+        case 14:
         case 15:
-        case 16:
 
         /* Could not find instruction */
         case -1:

@@ -47,6 +47,7 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
 
 int isNumber(const char *str)
 {
+    printf("DEBUG - str-= %s \n", str);
     char *endptr;
     strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
     return *endptr == '\0'; /* Return 1 if the conversion reaches the end of the string */
