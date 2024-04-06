@@ -291,8 +291,6 @@ int parseOperands(struct AssemblyLine *parsedLine){
         printf("DEBUG - finished parsing operands 3 \n");
         parsedLine->src = srcOperand;
         printf("DEBUG - finished parsing operands 4 \n");
-        free(potDest);
-        free(potSrc);
         return 1;
 }
 
