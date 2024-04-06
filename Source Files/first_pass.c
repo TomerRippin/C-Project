@@ -140,6 +140,23 @@ int isDirectiveLine(AssemblyLine *parsedLine)
     return 0;
 }
 
+int calculateL(int *srcType, int *dstType){
+    printf("STARTING parsing operands!123456 \n");
+    printf("srctype = %d \n", srcType);
+    printf("dst type = %d \n", dstType);
+    int L = 1; /* you always have the base word */
+    if (srcType == 4 && dstType == 4){
+        return 1;
+    }
+    if (srcType >= 0 && srcType <= 3){
+        L = L + 1;
+    }
+    if (dstType >= 0 && dstType <= 3){
+        L = L + 1;
+    }
+    return L;
+}
+
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 {
     int IC = 100;  /* Insturctions Counter */
@@ -226,6 +243,10 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             if (!parseOperands(&parsedLine)){
                 printf("error");
             }
+            printf("STARTING parsing operands!12345 \n");
+            int L = calculateL(parsedLine.src->type, parsedLine.dst->type);
+            printf("############## \n L = %d \n\n", L);
+            IC = IC + L;
             /*
             operandsNum = getOpcodeOperandsNum(parsedLine.instruction);
             if (operandsNum == -1)

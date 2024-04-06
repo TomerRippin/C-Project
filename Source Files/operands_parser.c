@@ -187,7 +187,12 @@ int parseOperands(struct AssemblyLine *parsedLine){
                 return 0; /* TODO: return real ERROR CODE */
             } 
             else {
-                parsedLine->src = parsedLine->dst = NULL;
+                destOperand->type = -1;
+                destOperand->value = '\0';
+                srcOperand->type = -1;
+                srcOperand->value = '\0';
+                parsedLine->src = srcOperand;
+                parsedLine->dst = destOperand;
             }
         /* Success, No more to check */
         return 1;
