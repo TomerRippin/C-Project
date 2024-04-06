@@ -45,7 +45,6 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     /* --- Setting operands --- */
     result.operands = strdup(line);
 
-
     /** --- Setting operandsNum --- 
     if operands contains " - there is only one operand *
     if (strlen(result.operands) >= 2 && result.operands[0] == '"' && result.operands[strlen(result.operands)] == '"')

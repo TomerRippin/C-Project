@@ -6,7 +6,7 @@
 /*TODO: document like the other structs */
 typedef struct Operand
 {
-    int type; /* what type of adressing the operand has (0, 1, 2, 3) */
+    int *type; /* what type of adressing the operand has (0, 1, 2, 3) */
     char *value; /* the value of the operand  (r8, sz, LOOP, ARR[0] etc... )*/
 } Operand;
 

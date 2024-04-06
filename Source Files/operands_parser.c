@@ -3,21 +3,114 @@
 #include <ctype.h>
 
 
+
+int isAlphanumeric(const char *str) {
+  if (str == NULL) {  
+    return 0;
+  }
+
+  while (*str != '\0') {  
+    if (!isalnum(*str)) {  
+      return 0;  
+    }
+    str++; 
+  }
+
+  return 1; 
+}
+
+int parseOperandAdressing(const char *operand)
+{
+    printf("DEBUG - operand 123 = %s \n", operand);
+    char *ch;
+    /* Check if the operand is empty
+    TODO: return an Error Code  */ 
+    if (*operand == '\0') {
+        return -1;
+    }
+
+    /* Check for immediate addressing */ 
+    if (*operand == '#') {
+        /* Check if the remaining characters are digits */ 
+        while (*(++operand) != '\0') {
+            if (!isdigit(operand)) {
+                return -1; /* Invalid immediate address TODO: return an Error Code */ 
+            }
+        }
+        return 0;
+    }
+
+    /* Check for register addressing */ 
+    if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0') {
+        return 3;
+    }
+    printf("DEBUG - operand 1234 = %s \n", operand);
+    /* Check for straight addressing or index addressing */ 
+    const char *labelEnd = strchr(operand, '[');
+    printf("DEBUG - operand 12345 = %s \n", operand);
+    if (labelEnd != NULL) {
+        /* Check if the label is followed by '[' and ']' */ 
+        const char *indexStart = labelEnd + 1;
+        const char *indexEnd = strchr(indexStart, ']');
+        if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
+            /* Check if the label contains only valid characters */ 
+            if (!isAlphanumeric(operand)){
+                return -1;
+            }
+            /* Check if the index contains only digits */ 
+            for (*ch = indexStart; ch < indexEnd; ch++) {
+                if (!isdigit(ch)) {
+                    return -1; /* Invalid index  TODO: return an Error Code */ 
+                }
+            }
+            return 2;
+        }
+    } else {
+        /* Check if the operand contains only valid characters for a label */ 
+        printf("DEBUG - operand 123456 = %s \n", operand);
+        if (!isAlphanumeric(operand)) {
+            printf("DEBUG - operand 1234567 = %s \n", operand);
+            return -1; /* Invalid label  TODO: return an Error Code */ 
+        }
+        printf("DEBUG - operand 1234569 = %s \n", operand);
+        return 1; /* Straight adressing */
+    }
+
+    return -1; /* No valid addressing type found  TODO: return an Error Code */ 
+}
+
+
+
+int countOccurrences(char *str, char target) {
+    printf("DEBUG - Starting count occourences");
+    int count = 0;  /** Initialize a counter for occurrences */
+
+    /** Iterate through the string until the end ('\0') is reached */
+    while (*str != '\0') {
+        /** If the current character matches the target character, increment count */
+        if (*str == target) {
+            count++;
+        }
+        /** Move to the next character in the string */
+        str++;
+    }
+
+    return count;  /** Return the total count of occurrences */
+}
+
 int getInstructionNumber(char *instruction){
-    printf("DEBUG - Starting parsing operand number \n");
+    printf("###########################\n");
+    printf("DEBUG - Starting parsing instruction number \n");
     printf("DEBUG instruction <%s> \n", instruction);
     int i = 1;
     /* Return -1 if the string is NULL */
     if (instruction == NULL) {
         return -1;
     }
-    printf("DEBUG - 1 \n");
 
     /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
     for (i = 0; i < 17; i++) { /* TODO: Create constatnt */
-        printf("DEBUG - %d \n", i);
         if (strcmp(instruction, OPCODES[i].name) == 0) {
-            printf("DEBUG - i= %d \n", i);
             return i; /* Return the index of the matching opcode */
         }
     }
@@ -32,13 +125,10 @@ int getInstructionOperandsNumber(char *instruction){
     if (instruction == NULL) {
         return -1;
     }
-    printf("DEBUG - 1 \n");
 
     /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
     for (i = 0; i < 17; i++) { /* TODO: Create constatnt */
-        printf("DEBUG - %d \n", i);
         if (strcmp(instruction, OPCODES[i].name) == 0) {
-            printf("DEBUG - i= %d \n", i);
             return OPCODES[i].operandsNum; /* Return the index of the matching opcode */
         }
     }
@@ -46,23 +136,21 @@ int getInstructionOperandsNumber(char *instruction){
 }
 
 int parseOperands(struct AssemblyLine *parsedLine){
-    char *potSrc = NULL;
-    char *potDest = NULL;
-    Operand *srcOperand = NULL;
-    Operand *destOperand = NULL;
+    char *potSrc = (char*)malloc(sizeof(char));
+    char *potDest = (char*)malloc(sizeof(char));;
+    Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
+    Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     printf("DEBUG - Starting parsing operands \n");
     printf("DEBUG - operands = %s \n", parsedLine->operands);
     printf("DEBUG - instruction = %s \n", parsedLine->instruction);
     int opcodeOperandsNum = getInstructionOperandsNumber(parsedLine->instruction);
     printf("DEBUG - number of operands = %d \n", opcodeOperandsNum);
-    printf("DEBUG - number of operands = %d \n", opcodeOperandsNum);
-    printf("DEBUG - Starting parsing operands \n");
+    
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1){
         return ERROR_OPCODE_NOT_FOUND;
     }
 
-    printf("IN HERE!!!");
     /* if two operands */
     if (opcodeOperandsNum == 2){
         int commaOccurences =  countOccurrences(parsedLine->operands, ',');
@@ -87,7 +175,6 @@ int parseOperands(struct AssemblyLine *parsedLine){
     }
     /* if one operand */
     if (opcodeOperandsNum == 1) {
-        printf("DEBUG- IN HERE!");
         if (strchr(parsedLine->operands, ' ')) {
             /* TODO: return error "Extra text after argument" */
             return 0;
@@ -95,7 +182,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Only one argument, should be destenation */
         strcpy(potDest, parsedLine->operands);
     }
-    printf("DEBUG- potential dest: %s", potDest);
+    printf("DEBUG - potential dest = %s \n", potDest);
 
     /* if no operands */
 
@@ -109,11 +196,15 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Success, No more to check */
         return 1;
     }
-    destOperand->type = parseOperandAdressing(potDest);
-    srcOperand->type = parseOperandAdressing(potSrc);
+    int type = parseOperandAdressing(potDest);
+    printf("DEBUG - type = %d \n", type);
 
+    /*srcOperand->type = parseOperandAdressing(potSrc);/*
     /* Check if potentioal arguments are correct */
-    switch (getInstructionNumber(parsedLine->instruction))
+    int num = getInstructionNumber(parsedLine->instruction);
+    destOperand->type = type;
+    printf("DEBUG - dest type = %d \n", destOperand->type);
+    switch (num)
         {
 
         /*
@@ -182,103 +273,27 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Could not find instruction */
         case -1:
             /* TODO: Return indicative ERROR */
-            return -1;
+            return 0;
         default:
             break;
         }
         /* Succesfully inserted parsed operands, now save them in the parsed line */
-        printf("DEBUG - finished parsing operands");
+        printf("DEBUG - finished parsing operands \n");
         destOperand->value = potDest;
+        printf("DEBUG - finished parsing operands 1  \n");
         srcOperand->value = potSrc;
+        printf("DEBUG - finished parsing operands 2  \n");
         parsedLine->dst = destOperand;
+        printf("DEBUG - finished parsing operands 3 \n");
         parsedLine->src = srcOperand;
+        printf("DEBUG - finished parsing operands 4 \n");
         free(potDest);
         free(potSrc);
-        return 0;
+        return 1;
 }
 
 
 void freeOperand(Operand *operand){
     free(operand->type);
     free(operand->value);
-}
-
-
-int parseOperandAdressing(const char *operand)
-{
-    printf("DEBUG - Starting operand adressing");
-    char *ch;
-    /* Check if the operand is empty
-    TODO: return an Error Code  */ 
-    if (*operand == '\0') {
-        return -1;
-    }
-
-    /* Check for immediate addressing */ 
-    if (*operand == '#') {
-        /* Check if the remaining characters are digits */ 
-        while (*(++operand) != '\0') {
-            if (!isdigit(operand)) {
-                return -1; /* Invalid immediate address TODO: return an Error Code */ 
-            }
-        }
-        return 0;
-    }
-
-    /* Check for register addressing */ 
-    if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0') {
-        return 3;
-    }
-
-    /* Check for straight addressing or index addressing */ 
-    const char *labelEnd = strchr(operand, '[');
-    if (labelEnd != NULL) {
-        /* Check if the label is followed by '[' and ']' */ 
-        const char *indexStart = labelEnd + 1;
-        const char *indexEnd = strchr(indexStart, ']');
-        if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
-            /* Check if the label contains only valid characters */ 
-            for (ch = operand; ch < labelEnd; ch++) {
-                if (!isalnum(*ch) && *ch != '_') {
-                    return -1; /* Invalid label  TODO: return an Error Code*/ 
-                }
-            }
-            /* Check if the index contains only digits */ 
-            for (*ch = indexStart; ch < indexEnd; ch++) {
-                if (!isdigit(ch)) {
-                    return -1; /* Invalid index  TODO: return an Error Code */ 
-                }
-            }
-            return 2;
-        }
-    } else {
-        /* Check if the operand contains only valid characters for a label */ 
-        for (*ch = operand; *ch != '\0'; ch++) {
-            if (!isalnum(*ch) && *ch != '_') {
-                return -1; /* Invalid label  TODO: return an Error Code */ 
-            }
-        }
-        return 1; /* Straight adressing */
-    }
-
-    return -1; /* No valid addressing type found  TODO: return an Error Code */ 
-}
-
-
-
-int countOccurrences(char *str, char target) {
-    printf("DEBUG - Starting count occourences");
-    int count = 0;  /** Initialize a counter for occurrences */
-
-    /** Iterate through the string until the end ('\0') is reached */
-    while (*str != '\0') {
-        /** If the current character matches the target character, increment count */
-        if (*str == target) {
-            count++;
-        }
-        /** Move to the next character in the string */
-        str++;
-    }
-
-    return count;  /** Return the total count of occurrences */
 }
