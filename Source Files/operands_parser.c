@@ -48,20 +48,13 @@ int parseOperandAdressing(const char *operand)
     const char *labelEnd = strchr(operand, '[');
     printf("DEBUG - operand 12345 = %s \n", operand);
     if (labelEnd != NULL) {
+        printf("DEBUG - indexxxxx = %s \n", operand);
         /* Check if the label is followed by '[' and ']' */ 
         const char *indexStart = labelEnd + 1;
         const char *indexEnd = strchr(indexStart, ']');
         if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
-            /* Check if the label contains only valid characters */ 
-            if (!isAlphanumeric(operand)){
-                return -1;
-            }
-            /* Check if the index contains only digits */ 
-            for (*ch = indexStart; ch < indexEnd; ch++) {
-                if (!isdigit(ch)) {
-                    return -1; /* Invalid index  TODO: return an Error Code */ 
-                }
-            }
+            /* TODO: Check if the label contains only valid characters */ 
+            /* TODO: Check if the index contains only digits its hard because it might have a define in it like LIST[sz] */ 
             return 2;
         }
     } else {
@@ -199,14 +192,14 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Success, No more to check */
         return 1;
     }
-    int type = parseOperandAdressing(potDest);
-    printf("DEBUG - type = %d \n", type);
 
     /*srcOperand->type = parseOperandAdressing(potSrc);/*
     /* Check if potentioal arguments are correct */
     int num = getInstructionNumber(parsedLine->instruction);
-    destOperand->type = type;
+    destOperand->type = parseOperandAdressing(potDest);
+    srcOperand->type = parseOperandAdressing(potSrc);
     printf("DEBUG - dest type = %d \n", destOperand->type);
+    printf("DEBUG - src type = %d \n", srcOperand->type);
     printf("DEBUG - num = %d \n", num);
     switch (num)
         {
