@@ -81,7 +81,6 @@ int parseOperandAdressing(const char *operand)
 
 
 int countOccurrences(char *str, char target) {
-    printf("DEBUG - Starting count occourences");
     int count = 0;  /** Initialize a counter for occurrences */
 
     /** Iterate through the string until the end ('\0') is reached */
@@ -93,7 +92,7 @@ int countOccurrences(char *str, char target) {
         /** Move to the next character in the string */
         str++;
     }
-
+    printf("DEBUG - Number of occurences =  %d \n", count);
     return count;  /** Return the total count of occurrences */
 }
 
@@ -152,6 +151,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
 
     /* if two operands */
     if (opcodeOperandsNum == 2){
+        printf("DEBUG - 2 operands!!\n #############\n");
         int commaOccurences =  countOccurrences(parsedLine->operands, ',');
             if (commaOccurences == 0) {
             /* TODO: return "Missing comma between arguments" */
@@ -162,14 +162,17 @@ int parseOperands(struct AssemblyLine *parsedLine){
             return 0;
         }
         else {
+            printf("IM HERE! \n");
             /** Find the position of the comma and space separator */
-            char *comma_pos = strstr(parsedLine->operands, ", ");
+            char *comma_pos = strstr(parsedLine->operands, ",");
             /** Copy the first operand (before the comma) */
             strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
+            printf("IM HERE! 123s \n");
             potSrc[comma_pos - parsedLine->operands] = '\0'; /** Null-terminate the string */
             
             /** Copy the second operand (after the comma and space) */
             strcpy(potDest, comma_pos + 2);
+            
         }
     }
     /* if one operand */
@@ -263,9 +266,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
 
         /* PRN (13) has dst instruction 0,1,2,3 and no src instruction */
         case 12:
-            printf("IM HERE! \n");
             if (!(destOperand->type >= 0 && destOperand->type <= 3)){
-                printf("IM HERE123! \n");
                 /* TODO: Add error code on "Bad addressing type for instruction"  */
                 return 0;
             }
