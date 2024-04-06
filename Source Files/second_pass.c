@@ -1,10 +1,12 @@
 #include "../Header Files/second_pass.h"
 
-int secondPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable) {
+int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, int *binaryCodesTable)
+{
     int IC = 0;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
 
+    /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL) {
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
@@ -31,8 +33,8 @@ int secondPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable) 
         }
     }
 
-    /* Print the extern labels and their addresses to the '.ext' output file */
-    /* Print the entry labels and their addresses to the '.ent' output file */
+    /* Print the extern labels and their addresses to the '.externals' output file */
+    /* Print the entry labels and their addresses to the '.entries' output file */
     /* Free all the allocated memory and resources used during the second pass */
 
     return SUCCESS;
