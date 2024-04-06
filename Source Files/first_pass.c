@@ -23,6 +23,7 @@ const Opcode OPCODES[] = {
     {"rts", 0},
     {"hlt", 0}};
 
+
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
     printf("DEBUG - handleDefine\n");
@@ -217,6 +218,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         else {
             printf("DEBUG - CODE LINE - NOT HANDLED!\n");
+            if (!parseOperands(&parsedLine)){
+                printf("error");
+            }
             if (isLabel) {
                 printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);

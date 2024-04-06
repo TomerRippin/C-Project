@@ -19,5 +19,7 @@ int parseOperandAdressing(const char *operand);
 int countOccurrences(char *str, char target);
 
 
+int parseOperands(struct AssemblyLine *parsedLine);
+
 
 #endif /* OPERANDS_PARSER_H */

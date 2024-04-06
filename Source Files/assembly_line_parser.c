@@ -1,4 +1,5 @@
 #include "../Header Files/assembly_line_parser.h"
+#include "../Header Files/operands_parser.h"
 
 struct AssemblyLine parseAssemblyLine(const char *line) {
     AssemblyLine result;
@@ -44,9 +45,7 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     /* --- Setting operands --- */
     result.operands = strdup(line);
 
-    /* if (!parseOperands(&result)){
-        printf("error");
-    } */
+
     /** --- Setting operandsNum --- 
     if operands contains " - there is only one operand *
     if (strlen(result.operands) >= 2 && result.operands[0] == '"' && result.operands[strlen(result.operands)] == '"')
@@ -78,8 +77,8 @@ void printAssemblyLine(AssemblyLine *parsedLine) {
     printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
     printf("Operands: %s\n", parsedLine->operands);
     printf("--------------\n");
-    /* printf("src type: %d, src value: %s", parsedLine->src->type, parsedLine->src->value);
-    // printf("dst type: %d, dst value: %s", parsedLine->dst->type, parsedLine->dst->value); */
+    /*printf("src type: %d, src value: %s", parsedLine->src->type, parsedLine->src->value);
+    printf("dst type: %d, dst value: %s", parsedLine->dst->type, parsedLine->dst->value);/*
     /* printf("Num Operands: %d\n", *(parsedLine->operandsNum)); */
 }
 

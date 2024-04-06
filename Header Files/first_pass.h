@@ -19,6 +19,4 @@ int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int 
 
 int isDirectiveLine(AssemblyLine *parsedLine);
 
-int getOpcodeOperandsNum(char *opcode);
-
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable);

@@ -25,8 +25,8 @@ typedef struct AssemblyLine
     char *label;
     char *instruction;
     char *operands;
-    /* Operand *src;
-    Operand *dst;/*
+    Operand *src;
+    Operand *dst;
     /* int *operandsNum; */
 } AssemblyLine;
 
