@@ -135,7 +135,7 @@ int getInstructionOperandsNumber(char *instruction){
 
 int parseOperands(struct AssemblyLine *parsedLine){
     char *potSrc = (char*)malloc(sizeof(char));
-    char *potDest = (char*)malloc(sizeof(char));;
+    char *potDest = (char*)malloc(sizeof(char));
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     printf("DEBUG - Starting parsing operands \n");
@@ -168,10 +168,11 @@ int parseOperands(struct AssemblyLine *parsedLine){
             /** Copy the first operand (before the comma) */
             strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
             printf("IM HERE! 123s \n");
-            potSrc[comma_pos - parsedLine->operands] = '\0'; /** Null-terminate the string */
+            potSrc[(comma_pos - parsedLine->operands) + 1] = '\0'; /** Null-terminate the string */
             
             /** Copy the second operand (after the comma and space) */
-            strcpy(potDest, comma_pos + 2);
+            strcpy(potDest, comma_pos + 1);
+            printf("DEBUG - potential src = %s \n", potSrc);
             
         }
     }
