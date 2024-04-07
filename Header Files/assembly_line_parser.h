@@ -75,6 +75,15 @@ int countOccurrences(char *str, char target);
 
 int parseOperands(struct AssemblyLine *parsedLine);
 
+/**
+ * @brief This function returns the instruction number for a given opcode.
+ * It iterates through the list of known opcodes and compare the string with each opcode in the list.
+ *
+ * @param instruction A pointer to a string representing the instruction
+ *
+ * @return Return the index of the matching opcode or -1 if the string does not match any known opcodes
+ */
 int getInstructionNumber(char *instruction);
+
 int getInstructionOperandsNumber(char *instruction);
 int isAlphanumeric(const char *str);

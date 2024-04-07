@@ -170,7 +170,7 @@ int getInstructionNumber(char *instruction){
     }
 
     /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
-    for (i = 0; i < 17; i++) { /* TODO: Create constatnt */
+    for (i = 0; i <= NUM_OPCODES; i++) {
         if (strcmp(instruction, OPCODES[i].name) == 0) {
             return i; /* Return the index of the matching opcode */
         }
@@ -186,7 +186,7 @@ int getInstructionOperandsNumber(char *instruction){
     }
 
     /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
-    for (i = 0; i < 17; i++) { /* TODO: Create constatnt */
+    for (i = 0; i < NUM_OPCODES; i++) { /* TODO: Create constatnt */
         if (strcmp(instruction, OPCODES[i].name) == 0) {
             return OPCODES[i].operandsNum; /* Return the index of the matching opcode */
         }
