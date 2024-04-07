@@ -179,8 +179,6 @@ int getInstructionNumber(char *instruction){
 }
 
 int getInstructionOperandsNumber(char *instruction){
-    printf("DEBUG - Starting parsing operand number \n");
-    printf("DEBUG instruction <%s> \n", instruction);
     int i = 1;
     /* Return -1 if the string is NULL */
     if (instruction == NULL) {
@@ -225,8 +223,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
             char *comma_pos = strstr(parsedLine->operands, ",");
             /** Copy the first operand (before the comma) */
             strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
-            potSrc[(comma_pos - parsedLine->operands) + 1] = '\0'; /** Null-terminate the string */
-            
+            potSrc[(comma_pos - parsedLine->operands)] = '\0'; /** Null-terminate the string */
             /** Copy the second operand (after the comma and space) */
             strcpy(potDest, comma_pos + 1);
             
