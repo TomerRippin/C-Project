@@ -239,26 +239,16 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 IC++;
             }
-            printf("STARTING parsing operands! \n");
+            printf("DEBUG -  parsing operands \n");
             if (!parseOperands(&parsedLine)){
-                printf("error");
+                printf("DEBUG - Could not parse operands");
             }
-            printf("dst value = %s\n", parsedLine.dst->value);
-            printf("src value = %s\n", parsedLine.src->value);
+            printf("DEBUG - dst operand value = %s\n", parsedLine.dst->value);
+            printf("DEBUG - src operand value = %s\n", parsedLine.src->value);
+            printf("############## \n");
             int L = calculateL(parsedLine.src->type, parsedLine.dst->type);
-            printf("############## \n L = %d \n\n", L);
+            printf("DEBUG - L = %d \n", L);
             IC = IC + L;
-            /*
-            operandsNum = getOpcodeOperandsNum(parsedLine.instruction);
-            if (operandsNum == -1)
-            {
-                return ERROR_OPCODE_NOT_FOUND;
-            } 
-            * else if (operandsNum != parsedLine.operandsNum) {
-            *    return ERROR_TOO_FEW_OPERANDS_GIVEN;
-            * }
-            * */
-            /* TODO - section 14-17 */
             isLabel = 0;
         }
         freeAssemblyLine(&parsedLine);
