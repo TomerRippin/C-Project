@@ -164,34 +164,30 @@ int countOccurrences(char *str, char target) {
 
 int getInstructionNumber(char *instruction){
     int i = 1;
-    /* Return -1 if the string is NULL */
     if (instruction == NULL) {
         return -1;
     }
 
-    /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
     for (i = 0; i <= NUM_OPCODES; i++) {
         if (strcmp(instruction, OPCODES[i].name) == 0) {
-            return i; /* Return the index of the matching opcode */
+            return i;
         }
     }
-    return -1; /* Return -1 if the string does not match any known opcodes */
+    return -1;
 }
 
 int getInstructionOperandsNumber(char *instruction){
     int i = 1;
-    /* Return -1 if the string is NULL */
     if (instruction == NULL) {
         return -1;
     }
 
-    /* Iterate through the list of known opcodes and compare the string with each opcode in the list */
-    for (i = 0; i < NUM_OPCODES; i++) { /* TODO: Create constatnt */
+    for (i = 0; i <= NUM_OPCODES; i++) {
         if (strcmp(instruction, OPCODES[i].name) == 0) {
-            return OPCODES[i].operandsNum; /* Return the index of the matching opcode */
+            return OPCODES[i].operandsNum;
         }
     }
-    return -1; /* Return -1 if the string does not match any known opcodes */
+    return -1;
 }
 
 int parseOperands(struct AssemblyLine *parsedLine){
