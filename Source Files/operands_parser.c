@@ -2,8 +2,6 @@
 #include "../Header Files/operands_parser.h"
 #include <ctype.h>
 
-
-
 int isAlphanumeric(const char *str) {
   if (str == NULL) {  
     return 0;
@@ -21,17 +19,13 @@ int isAlphanumeric(const char *str) {
 
 int parseOperandAdressing(const char *operand)
 {
-    printf("DEBUG - operand 123 = %s \n", operand);
-    char *ch;
     /* Check if the operand is empty
     TODO: return an Error Code  */ 
     if (*operand == '\0') {
         return -1;
     }
-    printf("DEBUG - operand 1234 = %s \n", operand);
     /* Check for immediate addressing */ 
     if (*operand == '#') {
-        printf("DEBUG - operand 12345 = %s \n", operand);
         /* Check if the remaining characters are digits */ 
         if(isNumber(operand+=1))
             return 0;
@@ -43,12 +37,9 @@ int parseOperandAdressing(const char *operand)
     if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0') {
         return 3;
     }
-    printf("DEBUG - operand 1234 = %s \n", operand);
     /* Check for straight addressing or index addressing */ 
     const char *labelEnd = strchr(operand, '[');
-    printf("DEBUG - operand 12345 = %s \n", operand);
     if (labelEnd != NULL) {
-        printf("DEBUG - indexxxxx = %s \n", operand);
         /* Check if the label is followed by '[' and ']' */ 
         const char *indexStart = labelEnd + 1;
         const char *indexEnd = strchr(indexStart, ']');
@@ -59,12 +50,9 @@ int parseOperandAdressing(const char *operand)
         }
     } else {
         /* Check if the operand contains only valid characters for a label */ 
-        printf("DEBUG - operand 123456 = %s \n", operand);
         if (!isAlphanumeric(operand)) {
-            printf("DEBUG - operand 1234567 = %s \n", operand);
             return -1; /* Invalid label  TODO: return an Error Code */ 
         }
-        printf("DEBUG - operand 1234569 = %s \n", operand);
         return 1; /* Straight adressing */
     }
 
@@ -85,14 +73,10 @@ int countOccurrences(char *str, char target) {
         /** Move to the next character in the string */
         str++;
     }
-    printf("DEBUG - Number of occurences =  %d \n", count);
     return count;  /** Return the total count of occurrences */
 }
 
 int getInstructionNumber(char *instruction){
-    printf("###########################\n");
-    printf("DEBUG - Starting parsing instruction number \n");
-    printf("DEBUG instruction <%s> \n", instruction);
     int i = 1;
     /* Return -1 if the string is NULL */
     if (instruction == NULL) {
@@ -127,15 +111,12 @@ int getInstructionOperandsNumber(char *instruction){
 }
 
 int parseOperands(struct AssemblyLine *parsedLine){
+    /* TODO: init memory */
     char *potSrc = (char*)malloc(sizeof(char));
     char *potDest = (char*)malloc(sizeof(char));
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
-    printf("DEBUG - Starting parsing operands \n");
-    printf("DEBUG - operands = %s \n", parsedLine->operands);
-    printf("DEBUG - instruction = %s \n", parsedLine->instruction);
     int opcodeOperandsNum = getInstructionOperandsNumber(parsedLine->instruction);
-    printf("DEBUG - number of operands = %d \n", opcodeOperandsNum);
     
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1){
@@ -144,7 +125,6 @@ int parseOperands(struct AssemblyLine *parsedLine){
 
     /* if two operands */
     if (opcodeOperandsNum == 2){
-        printf("DEBUG - 2 operands!!\n #############\n");
         int commaOccurences =  countOccurrences(parsedLine->operands, ',');
             if (commaOccurences == 0) {
             /* TODO: return "Missing comma between arguments" */
@@ -155,17 +135,14 @@ int parseOperands(struct AssemblyLine *parsedLine){
             return 0;
         }
         else {
-            printf("IM HERE! \n");
             /** Find the position of the comma and space separator */
             char *comma_pos = strstr(parsedLine->operands, ",");
             /** Copy the first operand (before the comma) */
             strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
-            printf("IM HERE! 123s \n");
             potSrc[(comma_pos - parsedLine->operands) + 1] = '\0'; /** Null-terminate the string */
             
             /** Copy the second operand (after the comma and space) */
             strcpy(potDest, comma_pos + 1);
-            printf("DEBUG - potential src = %s \n", potSrc);
             
         }
     }
@@ -178,15 +155,14 @@ int parseOperands(struct AssemblyLine *parsedLine){
         /* Only one argument, should be destenation */
         strcpy(potDest, parsedLine->operands);
     }
-    printf("DEBUG - potential dest = %s \n", potDest);
-
     /* if no operands */
 
     if (opcodeOperandsNum == 0) {
-            if (0) { /* TODO: create the actual function */
+            if (0) { /* TODO: create the actual function extraText() */
                 return 0; /* TODO: return real ERROR CODE */
             } 
             else {
+                /* TODO: think what to do with this */
                 destOperand->type = -1;
                 destOperand->value = '\0';
                 srcOperand->type = -1;
@@ -198,14 +174,10 @@ int parseOperands(struct AssemblyLine *parsedLine){
         return 1;
     }
 
-    /*srcOperand->type = parseOperandAdressing(potSrc);/*
     /* Check if potentioal arguments are correct */
     int num = getInstructionNumber(parsedLine->instruction);
     destOperand->type = parseOperandAdressing(potDest);
     srcOperand->type = parseOperandAdressing(potSrc);
-    printf("DEBUG - dest type = %d \n", destOperand->type);
-    printf("DEBUG - src type = %d \n", srcOperand->type);
-    printf("DEBUG - num = %d \n", num);
     switch (num)
         {
 
@@ -282,20 +254,9 @@ int parseOperands(struct AssemblyLine *parsedLine){
             break;
         }
         /* Succesfully inserted parsed operands, now save them in the parsed line */
-        printf("DEBUG - finished parsing operands \n");
         destOperand->value = potDest;
-        printf("DEBUG - finished parsing operands 1  \n");
         srcOperand->value = potSrc;
-        printf("DEBUG - finished parsing operands 2  \n");
         parsedLine->dst = destOperand;
-        printf("DEBUG - finished parsing operands 3 \n");
         parsedLine->src = srcOperand;
-        printf("DEBUG - finished parsing operands 4 \n");
         return 1;
-}
-
-
-void freeOperand(Operand *operand){
-    free(operand->type);
-    free(operand->value);
 }

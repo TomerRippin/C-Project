@@ -140,7 +140,7 @@ int isDirectiveLine(AssemblyLine *parsedLine)
     return 0;
 }
 
-int calculateL(int *srcType, int *dstType){
+int calculateL(int srcType, int dstType){
     printf("STARTING parsing operands!123456 \n");
     printf("srctype = %d \n", srcType);
     printf("dst type = %d \n", dstType);
