@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "utils.h"
 
 /* TODO: document like the other structs */
@@ -52,3 +53,28 @@ void freeAssemblyLine(AssemblyLine *line);
 /* Idea - validations */
 int isValidLabel(char *str);
 int isValidString(char *str);
+
+
+/**
+ * Function to parse the type of operand.
+ * @param operand The input operand string to be parsed.
+ * @return The type of operand.
+ */
+int parseOperandAdressing(const char *operand);
+
+/**
+ * Function to count the occurrences of a specific character in a string.
+ * 
+ * @param str Pointer to the input string.
+ * @param target The character to count occurrences of.
+ * 
+ * @return The number of occurrences of the target character in the string.
+ */
+int countOccurrences(char *str, char target);
+
+
+int parseOperands(struct AssemblyLine *parsedLine);
+
+int getInstructionNumber(char *instruction);
+int getInstructionOperandsNumber(char *instruction);
+int isAlphanumeric(const char *str);
