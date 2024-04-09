@@ -12,3 +12,4 @@
 # Ubuntu: gcc -DDEBUG -ansi -Wall -I Header\ Files/ Source\ Files/first_pass.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Tests/test_first_pass/test_first_pass.c -o first_pass.exe
 
 
+# gcc -ansi -Wall -I Header\ Files/ Source\ Files/first_pass.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Tests/test_first_pass/test_first_pass.c -o first_pass.exe
