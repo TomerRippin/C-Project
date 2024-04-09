@@ -5,24 +5,6 @@
 
 const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry"};
 
-const Opcode OPCODES[] = {
-    {"mov", 2},
-    {"cmp", 2},
-    {"add", 2},
-    {"sub", 2},
-    {"lea", 2},
-    {"not", 1},
-    {"clr", 1},
-    {"inc", 1},
-    {"dec", 1},
-    {"jmp", 1},
-    {"bne", 1},
-    {"red", 1},
-    {"prn", 1},
-    {"jsr", 1},
-    {"rts", 0},
-    {"hlt", 0}};
-
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
     printf("DEBUG - handleDefine\n");
