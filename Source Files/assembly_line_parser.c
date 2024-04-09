@@ -44,28 +44,6 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     /* --- Setting operands --- */
     result.operands = strdup(line);
 
-    /** --- Setting operandsNum --- 
-    if operands contains " - there is only one operand *
-    if (strlen(result.operands) >= 2 && result.operands[0] == '"' && result.operands[strlen(result.operands)] == '"')
-    {
-        result.operandsNum = (int *)1;
-    }
-    else if (strtok(result.operands, "=") != NULL)
-    {
-        result.operandsNum = (int *)1;
-    }
-    else {
-        * Count the number of commas to determine the number of parameters *
-        int i;
-        for (i = 0; i < sizeof(result.operands); i++)
-        {
-            if (result.operands[i] == ',')
-            {
-                result.operandsNum++;
-            }
-        }
-    }
-    */
     return result;
 }
 
@@ -75,91 +53,94 @@ void printAssemblyLine(AssemblyLine *parsedLine) {
     printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
     printf("Operands: %s\n", parsedLine->operands);
     printf("--------------\n");
-    /*printf("src type: %d, src value: %s", parsedLine->src->type, parsedLine->src->value);
-    printf("dst type: %d, dst value: %s", parsedLine->dst->type, parsedLine->dst->value);*/
-    /* printf("Num Operands: %d\n", *(parsedLine->operandsNum)); */
+    /* printf("src adrType: %d, src value: %s", parsedLine->src->adrType, parsedLine->src->value);
+    printf("dst adrType: %d, dst value: %s", parsedLine->dst->adrType, parsedLine->dst->value); */
 }
 
 void freeAssemblyLine(AssemblyLine *line) {
     free(line->label);
     free(line->instruction);
     free(line->operands);
-    /* free(line->operandsNum); */
 }
 
-
-int isAlphanumeric(const char *str) {
-  if (str == NULL) {  
-    return 0;
-  }
-
-  while (*str != '\0') {  
-    if (!isalnum(*str)) {  
-      return 0;  
-    }
-    str++; 
-  }
-
-  return 1; 
-}
-
-int parseOperandAdressing(const char *operand)
+int isValidLabel(const char *label)
 {
-    /* Check if the operand is empty
-    TODO: return an Error Code  */ 
+    if (strlen(label) > MAX_LABEL_LEN)
+    {
+        return 0;
+    }
+
+    /* Check if the first character is an alphabetic letter */
+    if (!isalpha(label[0]))
+    {
+        return 0;
+    }
+
+    /* Check the rest of the characters */
+    int i;
+    for (i = 1; i < strlen(label); i++)
+    {
+        if (!isalnum(label[i]))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int parseOperandAdressing(const char *operand, int *operandType)
+{
     if (*operand == '\0') {
-        return -1;
+        *operandType = -1;
+        /* TODO: decide if return ERROR_OPERAND_IS_EMPTY; */
+        return SUCCESS;
     }
     /* Check for immediate addressing */ 
-    if (*operand == '#') {
+    if (*operand == '#')
+    {
         /* Check if the remaining characters are digits */ 
-        if(isNumber(operand+=1))
-            return 0;
+        if (isNumber(operand+=1))
+        {
+            *operandType = 0;
+            return SUCCESS;
+        }
         else
-            return -1;
+        {
+            return ERROR_OPERAND_NOT_VALID;
+        }
     }
 
     /* Check for register addressing */ 
-    if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0') {
-        return 3;
+    if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0')
+    {
+        *operandType = 3;
+        return SUCCESS;
     }
     /* Check for straight addressing or index addressing */ 
     const char *labelEnd = strchr(operand, '[');
-    if (labelEnd != NULL) {
+    if (labelEnd != NULL)
+    {
         /* Check if the label is followed by '[' and ']' */ 
         const char *indexStart = labelEnd + 1;
         const char *indexEnd = strchr(indexStart, ']');
         if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
             /* TODO: Check if the label contains only valid characters */ 
-            /* TODO: Check if the index contains only digits its hard because it might have a define in it like LIST[sz] */ 
-            return 2;
+            /* TODO: Check if the index contains only digits its hard because it might have a define in it like LIST[sz] */
+            *operandType = 2;
+            return SUCCESS;
         }
-    } else {
-        /* Check if the operand contains only valid characters for a label */ 
-        if (!isAlphanumeric(operand)) {
-            return -1; /* Invalid label  TODO: return an Error Code */ 
+    }
+    else
+    {
+        if (!isValidLabel(operand)) {
+            return ERROR_LABEL_NOT_VALID;
         }
-        return 1; /* Straight adressing */
+        *operandType = 1;
+        return SUCCESS;
     }
 
-    return -1; /* No valid addressing type found  TODO: return an Error Code */ 
-}
-
-
-
-int countOccurrences(char *str, char target) {
-    int count = 0;  /** Initialize a counter for occurrences */
-
-    /** Iterate through the string until the end ('\0') is reached */
-    while (*str != '\0') {
-        /** If the current character matches the target character, increment count */
-        if (*str == target) {
-            count++;
-        }
-        /** Move to the next character in the string */
-        str++;
-    }
-    return count;  /** Return the total count of occurrences */
+    return ERROR_ADDRESSING_NOT_FOUND;
 }
 
 int getInstructionNumber(char *instruction){
@@ -190,98 +171,116 @@ int getInstructionOperandsNumber(char *instruction){
     return -1;
 }
 
-int parseOperands(struct AssemblyLine *parsedLine){
+int parseOperands(struct AssemblyLine *parsedLine)
+{
     /* TODO: init memory */
     char *potSrc = (char*)malloc(sizeof(char));
     char *potDest = (char*)malloc(sizeof(char));
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     int opcodeOperandsNum = getInstructionOperandsNumber(parsedLine->instruction);
-    
+    int parseRetVal = 0;
+
     /* Cannot find the operand */
-    if (opcodeOperandsNum == -1){
-        return 0;
+    if (opcodeOperandsNum == -1)
+    {
+        return ERROR_OPERAND_NOT_VALID;
     }
 
     /* if two operands */
-    if (opcodeOperandsNum == 2){
-        int commaOccurences =  countOccurrences(parsedLine->operands, ',');
-            if (commaOccurences == 0) {
-            /* TODO: return "Missing comma between arguments" */
-            return 0;
+    else if (opcodeOperandsNum == 2)
+    {
+        int commaOccurences = countOccurrences(parsedLine->operands, ',');
+        if (commaOccurences == 0)
+        {
+            return ERROR_MISSING_COMMA_BETWEEN_ARGUMENTS;
         }
-        else if (commaOccurences > 1) {
-            /* TODO: return "Extra commas between arguments" */
-            return 0;
+        else if (commaOccurences > 1)
+        {
+            return ERROR_EXTRA_COMMAS_BETWEEN_ARGUMENTS;
         }
-        else {
-            /** Find the position of the comma and space separator */
+        else
+        {
+            /* Find the position of the comma and space separator */
             char *comma_pos = strstr(parsedLine->operands, ",");
-            /** Copy the first operand (before the comma) */
+            /* Copy the first operand (before the comma) */
             strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
-            potSrc[(comma_pos - parsedLine->operands)] = '\0'; /** Null-terminate the string */
-            /** Copy the second operand (after the comma and space) */
+            potSrc[(comma_pos - parsedLine->operands)] = '\0'; /* Null-terminate the string */
+            /* Copy the second operand (after the comma and space) */
             strcpy(potDest, comma_pos + 1);
-            
         }
     }
-    /* if one operand */
-    if (opcodeOperandsNum == 1) {
-        if (strchr(parsedLine->operands, ' ')) {
-            /* TODO: return error "Extra text after argument" */
-            return 0;
-        }
-        /* Only one argument, should be destenation */
-        strcpy(potDest, parsedLine->operands);
-    }
-    /* if no operands */
 
-    if (opcodeOperandsNum == 0) {
-            if (0) { /* TODO: create the actual function extraText() */
-                return 0; /* TODO: return real ERROR CODE */
-            } 
-            else {
-                /* TODO: think what to do with this */
-                destOperand->type = -1;
-                destOperand->value = '\0';
-                srcOperand->type = -1;
-                srcOperand->value = '\0';
-                parsedLine->src = srcOperand;
-                parsedLine->dst = destOperand;
-            }
-        /* Success, No more to check */
-        return 1;
+    /* if one operand */
+    else if (opcodeOperandsNum == 1)
+    {
+        if (strchr(parsedLine->operands, ' ')) {
+            return ERROR_EXTRA_TEXT_AFTER_ARGUMENT;
+        }
+        /* Only one argument, should be destination */
+        strcpy(potDest, parsedLine->operands);
+        printf("4 potSrc: %s, potDest: %s, parseRetVal: %d\n", potSrc, potDest, parseRetVal);
+    }
+
+    /* if no operands */
+    else if (opcodeOperandsNum == 0)
+    {
+        if (0)
+        {   /* TODO: create the actual function extraText() */
+            return ERROR_OPCODE_NOT_FOUND;
+        } 
+        else {
+            /* TODO: think what to do with this */
+            destOperand->adrType = -1;
+            destOperand->value = '\0';
+            srcOperand->adrType = -1;
+            srcOperand->value = '\0';
+            parsedLine->src = srcOperand;
+            parsedLine->dst = destOperand;
+        }
+        return SUCCESS;
     }
 
     /* Check if potentioal arguments are correct */
     int instructionNumber = getInstructionNumber(parsedLine->instruction);
-    destOperand->type = parseOperandAdressing(potDest);
-    srcOperand->type = parseOperandAdressing(potSrc);
+    parseRetVal = parseOperandAdressing(potSrc, &(srcOperand->adrType));
+    if (parseRetVal != SUCCESS)
+    {
+        return parseRetVal;
+    }
+    parseRetVal = parseOperandAdressing(potDest, &(destOperand->adrType));
+    if (parseRetVal != SUCCESS)
+    {
+        return parseRetVal;
+    }
+
+    /*= parseOperandAdressing(potDest); */
+    /* srcOperand->type = parseOperandAdressing(potSrc); */
     switch (instructionNumber)
         {
         /* MOV (0), ADD (2), SUB (3)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
         case 0: 
         case 2:
         case 3:
-            if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            if (!(destOperand->adrType >= 1 && destOperand->adrType <= 3) && (srcOperand->adrType >= 0 && srcOperand->adrType <=3 ))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
         
         /* CMP (1) has a dest instruction 0,1,2,3 and src instruction 0,1,2,3 */
         case 1:
-            if (!(destOperand->type >= 0 && destOperand->type <= 3) && (srcOperand->type >= 0 && srcOperand->type <=3 )){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            if (!(destOperand->adrType >= 0 && destOperand->adrType <= 3) && (srcOperand->adrType >= 0 && srcOperand->adrType <=3 ))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
         
         /* LEA (4) has dst instructions 1,2,3 and src instruction 1,2*/
         case 4:
-            if (!(destOperand->type >= 1 && destOperand->type <= 3) && (srcOperand->type >= 1 && srcOperand->type <=2)){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            if (!(destOperand->adrType >= 1 && destOperand->adrType <= 3) && (srcOperand->adrType >= 1 && srcOperand->adrType <=2))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
         /* NOT (5), CLR (6), INC(7), DEC(8), RED(11) have dst instruction 1,2,3 and no src instruction */
@@ -290,26 +289,27 @@ int parseOperands(struct AssemblyLine *parsedLine){
         case 7:
         case 8:
         case 11:
-            if (!(destOperand->type >= 1 && destOperand->type <= 3)){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            if (!(destOperand->adrType >= 1 && destOperand->adrType <= 3))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
         /* JMP (9), BNE (10), JSR(13) have dst instruction 1,3 and no src instruction */
         case 9:
         case 10:
         case 13:
-            if (!(destOperand->type == 1 || destOperand->type == 3)){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            printf("HEREEEEEEEEEEEEEEEE: %d - %d\n", destOperand->adrType, srcOperand->adrType);
+            if (!(destOperand->adrType == 1 || destOperand->adrType == 3))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
 
         /* PRN (12) has dst instruction 0,1,2,3 and no src instruction */
         case 12:
-            if (!(destOperand->type >= 0 && destOperand->type <= 3)){
-                /* TODO: Add error code on "Bad addressing type for instruction"  */
-                return 0;
+            if (!(destOperand->adrType >= 0 && destOperand->adrType <= 3))
+            {
+                return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
         /* RTS (14), HLT (15) have no dst and src instructions */
@@ -318,8 +318,7 @@ int parseOperands(struct AssemblyLine *parsedLine){
 
         /* Could not find instruction */
         case -1:
-            /* TODO: Return indicative ERROR */
-            return 0;
+            return ERROR_OPCODE_NOT_FOUND;
             break;
         default:
             break;
@@ -329,5 +328,6 @@ int parseOperands(struct AssemblyLine *parsedLine){
         srcOperand->value = potSrc;
         parsedLine->dst = destOperand;
         parsedLine->src = srcOperand;
-        return 1;
+
+        return SUCCESS;
 }
