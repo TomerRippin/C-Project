@@ -140,17 +140,24 @@ int isDirectiveLine(AssemblyLine *parsedLine)
     return 0;
 }
 
-int getOpcodeOperandsNum(char *opcode)
-{
-    int i;
-    for (i = 0; i < NUM_OPCODES; i++)
-    {
-        if (strcmp(opcode, OPCODES[i].name) == 0)
-        {
-            return OPCODES[i].operandsNum;
-        }
+int calculateL(int srcType, int dstType){
+    int L = 1; /* you always have the base word */
+    if (srcType == 4 && dstType == 4){
+        return 1;
     }
-    return -1;
+    if (srcType == 0 || srcType == 3 || srcType == 4){
+        L = L + 1;
+    }
+    if (dstType == 0 || dstType == 3 || srcType == 4){
+        L = L + 1;
+    }
+    if (dstType == 2){
+        L = L + 2;
+    }
+    if (srcType == 2){
+        L = L + 2;
+    }
+    return L;
 }
 
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
@@ -220,36 +227,39 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             }
             else {
                 /* TODO; not supposed to come here, but just in case */
+                freeAssemblyLine(&parsedLine);
                 return GENERAL_ERROR;
             }
 
             if (handlerRetVal != SUCCESS)
             {
+                freeAssemblyLine(&parsedLine);
                 return handlerRetVal;
             }
         }
         else {
-            printf("DEBUG - CODE LINE - NOT HANDLED!\n");
+            /*printf("DEBUG - CODE LINE - NOT HANDLED!\n");*/
             if (isLabel) {
                 printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 IC++;
             }
-            /*
-            operandsNum = getOpcodeOperandsNum(parsedLine.instruction);
-            if (operandsNum == -1)
+            printf("DEBUG - parsing operands \n");
+            handlerRetVal = parseOperands(&parsedLine);
+            if (handlerRetVal != SUCCESS)
             {
-                return ERROR_OPCODE_NOT_FOUND;
-            } 
-            * else if (operandsNum != parsedLine.operandsNum) {
-            *    return ERROR_TOO_FEW_OPERANDS_GIVEN;
-            * }
-            * */
-            /* TODO - section 14-17 */
+                printf("DEBUG - Could not parse operands\n");
+                freeAssemblyLine(&parsedLine);
+                return handlerRetVal;
+            }
+            printOperandsAfterParsing(&parsedLine);
+            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            printf("DEBUG - L = %d\n", L);
+            IC = IC + L;
             isLabel = 0;
         }
         freeAssemblyLine(&parsedLine);
     }
     /* TODO - free things */
-    return 0;
+    return SUCCESS;
 }

@@ -20,7 +20,7 @@
 #define SYMBOL_TYPE_CODE "code"
 
 #define NUM_DIRECTIVES 4
-#define NUM_OPCODES 15
+#define NUM_OPCODES 16
 
 extern const char *DIRECTIVES[NUM_DIRECTIVES];
 
@@ -33,3 +33,4 @@ typedef struct Opcode
 extern const Opcode OPCODES[];
 
 #endif  /* CONSTANTS_H */
+
