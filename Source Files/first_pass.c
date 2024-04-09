@@ -43,28 +43,33 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
 
     while (token != NULL)
     {
-        /* Check if token is a a label (not a number) and doesn't exist in symbolTable */
-        /* TODO: maybe change to a function that checks if its a valid symbol */
-        /* TODO: add search to the rest of the params in linked list also */
-        if (isNumber(token) != 1) {
-            searchResult = searchList(symbolTable, token);
-            if (searchResult == NULL)
+        if (isNumber(token)) {
+            value = atoi(token);
+        }
+        else {
+            if (isValidLabel(token) != 1)
             {
-                return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-            }
-            else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
-            {
-                return ERROR_SYMBOL_WRONG_TYPE;
+                return ERROR_LABEL_NOT_VALID;
             }
             else
             {
-                value = searchResult->lineNumber;
-                printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
+                searchResult = searchList(symbolTable, token);
+                if (searchResult == NULL)
+                {
+                    return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+                }
+                /* TODO: add search to the rest of the params in linked list also */
+                else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
+                {
+                    return ERROR_SYMBOL_WRONG_TYPE;
+                }
+                else
+                {
+                    value = searchResult->lineNumber;
+                    printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
+                }
             }
-        } else {
-            value = atoi(token);
         }
-
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         binaryCodesTable[*DC] = value;
         *DC = *DC + 1;
