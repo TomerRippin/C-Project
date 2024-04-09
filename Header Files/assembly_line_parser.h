@@ -64,6 +64,8 @@ struct AssemblyLine parseAssemblyLine(const char *line);
 
 void printAssemblyLine(AssemblyLine *parsedLine);
 
+void printOperandsAfterParsing(AssemblyLine *parsedLine);
+
 void freeAssemblyLine(AssemblyLine *line);
 
 /**

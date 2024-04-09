@@ -252,11 +252,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 freeAssemblyLine(&parsedLine);
                 return handlerRetVal;
             }
-            printf("DEBUG - dst operand type = %d, value = %s\n", parsedLine.dst->adrType, parsedLine.dst->value);
-            printf("DEBUG - src operand type = %d, value = %s\n", parsedLine.src->adrType, parsedLine.src->value);
+            printOperandsAfterParsing(&parsedLine);
             int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             printf("DEBUG - L = %d\n", L);
-            printf("############## \n");
             IC = IC + L;
             isLabel = 0;
         }

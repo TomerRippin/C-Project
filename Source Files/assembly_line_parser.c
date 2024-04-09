@@ -5,7 +5,8 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     result.label = NULL;
     result.instruction = NULL;
     result.operands = NULL;
-    /* result.operandsNum = NULL; */
+    result.src = NULL;
+    result.dst = NULL;
 
     char *colonPos = strchr(line, ':');
     if (colonPos != NULL)
@@ -49,15 +50,42 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
 
 void printAssemblyLine(AssemblyLine *parsedLine) {
     printf("--------------\n");
-    printf("Label: %s\n", parsedLine->label ? parsedLine->label : "(none)");
-    printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
-    printf("Operands: %s\n", parsedLine->operands);
+    if (parsedLine == NULL) {
+        printf("AssemblyLine is NULL");
+    }
+    else {
+        printf("Label: %s\n", parsedLine->label ? parsedLine->label : "(none)");
+        printf("Instruction: %s\n", parsedLine->instruction ? parsedLine->instruction : "(none)");
+        printf("Operands: %s\n", parsedLine->operands);
+    }
     printf("--------------\n");
-    /* printf("src adrType: %d, src value: %s", parsedLine->src->adrType, parsedLine->src->value);
-    printf("dst adrType: %d, dst value: %s", parsedLine->dst->adrType, parsedLine->dst->value); */
 }
 
-void freeAssemblyLine(AssemblyLine *line) {
+void printOperandsAfterParsing(AssemblyLine *parsedLine) {
+    printf("--------------\n");
+    if (parsedLine->src != NULL)
+    {
+        printf("Source Operand Adress Address Type: %d\n", parsedLine->src->adrType);
+        printf("Source Operand Value: %s\n", parsedLine->src->value ? parsedLine->src->value : "(null)");
+    }
+    else
+    {
+        printf("Source Operand: (null)\n");
+    }
+    if (parsedLine->dst != NULL)
+    {
+        printf("Destination Operand Type: %d\n", parsedLine->dst->adrType);
+        printf("Destination Operand Value: %s\n", parsedLine->dst->value ? parsedLine->dst->value : "(null)");
+    }
+    else
+    {
+        printf("Destination Operand: (null)\n");
+    }
+    printf("--------------\n");
+}
+
+void freeAssemblyLine(AssemblyLine *line)
+{
     free(line->label);
     free(line->instruction);
     free(line->operands);
@@ -298,7 +326,6 @@ int parseOperands(struct AssemblyLine *parsedLine)
         case 9:
         case 10:
         case 13:
-            printf("HEREEEEEEEEEEEEEEEE: %d - %d\n", destOperand->adrType, srcOperand->adrType);
             if (!(destOperand->adrType == 1 || destOperand->adrType == 3))
             {
                 return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
