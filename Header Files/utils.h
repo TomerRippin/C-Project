@@ -42,4 +42,14 @@ int isNumber(const char *str);
  */
 char *strdup(const char *source);
 
+/**
+ * This function counts the occurrences of a specific character in a string.
+ *
+ * @param str Pointer to the input string.
+ * @param target The character to count occurrences of.
+ *
+ * @return The number of occurrences of the target character in the string.
+ */
+int countOccurrences(char *str, char target);
+
 #endif /* UTILS_H */

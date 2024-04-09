@@ -70,3 +70,21 @@ char *strdup(const char *source)
 
     return duplicate;
 }
+
+int countOccurrences(char *str, char target)
+{
+    int count = 0; /** Initialize a counter for occurrences */
+
+    /** Iterate through the string until the end ('\0') is reached */
+    while (*str != '\0')
+    {
+        /** If the current character matches the target character, increment count */
+        if (*str == target)
+        {
+            count++;
+        }
+        /** Move to the next character in the string */
+        str++;
+    }
+    return count; /** Return the total count of occurrences */
+}
