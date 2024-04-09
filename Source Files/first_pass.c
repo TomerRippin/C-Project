@@ -220,8 +220,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             }
         }
         else {
-            /*printf("DEBUG - CODE LINE - NOT HANDLED!\n");*/
-            if (isLabel) {
+            printf("DEBUG - CODE LINE\n");
+            if (isLabel)
+            {
                 printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 IC++;
@@ -242,6 +243,17 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         freeAssemblyLine(&parsedLine);
     }
+
+    ListNode *current = symbolTable->head;
+    while (current != NULL)
+    {
+        if (strcmp(current->data, SYMBOL_TYPE_DATA) == 0)
+        {
+            current->lineNumber = current->lineNumber + IC;
+        }
+        current = current->next;
+    }
+    
     /* TODO - free things */
     return SUCCESS;
 }

@@ -11,5 +11,7 @@
 # Windows: gcc -DDEBUG --ansi -Wall -I './Header Files/' './Source Files/first_pass.c' './Source Files/assembly_line_parser.c' '.\Source Files\linked_list.c' '.\Source Files\utils.c' './Tests/test_first_pass/test_first_pass.c' -o first_pass.exe
 # Ubuntu: gcc -DDEBUG -ansi -Wall -I Header\ Files/ Source\ Files/first_pass.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Tests/test_first_pass/test_first_pass.c -o first_pass.exe
 
+## Test second_pass
+# Ubuntu: gcc -ansi -Wall -I Header\ Files/ Source\ Files/second_pass.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Source\ Files/files_utils.c Tests/test_second_pass/test_second_pass.c -o second_pass.exe
 
-# gcc -ansi -Wall -I Header\ Files/ Source\ Files/first_pass.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Tests/test_first_pass/test_first_pass.c -o first_pass.exe
+
