@@ -149,11 +149,14 @@ int calculateL(int srcType, int dstType){
 
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 {
+    /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
     int IC = 100; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
     int isLabel = 0;
     int L;
+    int entryCount = 0;
+    int externCount = 0;
     AssemblyLine parsedLine;
     /* int operandsNum; */
     int handlerRetVal;
@@ -175,7 +178,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             {
                 return ERROR_SYMBOL_ALREADY_EXIST;
             }
-            else if (isValidLabel != 1) {
+            else if (isValidLabel(parsedLine.label) != 1)
+            {
                 return ERROR_LABEL_NOT_VALID;
             }
         }
@@ -205,10 +209,12 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
             {
                 handlerRetVal = handleExternDirective(&parsedLine, symbolTable, binaryCodesTable);
+                externCount += 1;
             }
             else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0)
             {
                 handlerRetVal = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
+                entryCount += 1;
             }
             else {
                 /* TODO; not supposed to come here, but just in case */
@@ -239,6 +245,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 return handlerRetVal;
             }
             printOperandsAfterParsing(&parsedLine);
+            /* TODOL insert to binary table */
             L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             printf("DEBUG - L = %d\n", L);
             IC = IC + L;
@@ -256,7 +263,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         current = current->next;
     }
-    
+
     /* TODO - free things */
     return SUCCESS;
 }

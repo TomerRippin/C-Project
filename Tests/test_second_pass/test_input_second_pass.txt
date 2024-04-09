@@ -5,6 +5,7 @@ LIL: .data 5,834
 STR: .string "abcdef"
 MAIN: jmp L1
 prn #-5
+TO: .data 7
 mov #12,W
 mov STR[5],STR[2]
 sub r1,r4

@@ -19,7 +19,7 @@ int main()
         return 1;
     }
 
-    printf("Testing First Pass\n");
+    printf("--- Testing First Pass ---\n");
 
     retVal = firstPass(inputFile, symbolTable, binaryCodesTable);
     if (retVal != SUCCESS)
@@ -34,7 +34,7 @@ int main()
 
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
 
-    printf("Testing Second Pass\n");
+    printf("--- Testing Second Pass ---\n");
 
     char *extension = "ext";
     retVal = secondPass(inputFile, fileName, symbolTable, binaryCodesTable);
@@ -54,11 +54,15 @@ int main()
     printf("Printing symbolTable\n");
     printList(symbolTable);
 
-    /**
+    /*
     printf("Printing binaryCodesTable\n");
     int i;
     for (i = 0; i < MAX_LINES_NUM * sizeof(int); i++)
     {
+        if (binaryCodesTable[i] == 99999)
+        {
+            break;
+        }
         printf("binaryCodesTable[%d]: %d\n", i, binaryCodesTable[i]);
     }
     */

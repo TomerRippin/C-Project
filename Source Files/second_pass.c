@@ -6,26 +6,31 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     ListNode *searchResult;
+    int handlerRetVal;
 
     /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
-    while (fgets(line, sizeof(line), inputFile) != NULL) {
+    while (fgets(line, sizeof(line), inputFile) != NULL)
+    {
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
         parsedLine = parseAssemblyLine(line);
+        printAssemblyLine(&parsedLine);
 
         if (parsedLine.label) {
             /* TODO: not sure if the meaning is to skip this line or skip the label */
+            continue;
         }
-        else if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || 
-            strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 || 
-            strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0) 
+        else if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
+                 strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
+                 strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
+                 strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
         {
-            printf("DEBUG - do nothing\n");
+            printf("DEBUG - string/data/extern - do nothing\n");
             continue;
         }
         else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0) {
-            printf("DEBUG - line 6\n");
+            printf("DEBUG - entry - do line 6\n");
             if (parsedLine.label) {
                 printf("WARNING: a label is declared in an entry line\n");
             }
@@ -33,18 +38,21 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
             if (searchResult == NULL) {
                 return ERROR_GIVEN_SYMBOL_NOT_EXIST;
             }
-            else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) != 0)  /* TODO: test this error */
+            else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
             {
                 return ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL;
             }
             else {
                 /* TODO: line 6 - update entry symbol */
-                continue;
+                printf("DEBUG - line 6 - TODO");
             }
         }
         else {
             /* TODO: section 7-8 */
             printf("DEBUG - section 7-8\n");
+            handlerRetVal = parseOperands(&parsedLine);
+            printOperandsAfterParsing(&parsedLine);
+            printf("DEBUG - %d\n", handlerRetVal);
         }
     }
 

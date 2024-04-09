@@ -91,6 +91,8 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     fclose(tempFile);
     freeList(macrosList);
     free(macrosList);
+
+    /* TODO: create a new file - .am */
     
     return 1;
 }
