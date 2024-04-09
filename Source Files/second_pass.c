@@ -2,9 +2,10 @@
 
 int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, int *binaryCodesTable)
 {
-    int IC = 0;
+    /* int IC = 0; */
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
+    ListNode *searchResult;
 
     /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL) {
@@ -14,22 +15,36 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
         parsedLine = parseAssemblyLine(line);
 
         if (parsedLine.label) {
-            continue;
             /* TODO: not sure if the meaning is to skip this line or skip the label */
         }
         else if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || 
             strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 || 
             strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0) 
         {
+            printf("DEBUG - do nothing\n");
             continue;
         }
         else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0) {
-            /* TODO: line 6 */
-            continue;
+            printf("DEBUG - line 6\n");
+            if (parsedLine.label) {
+                printf("WARNING: a label is declared in an entry line\n");
+            }
+            searchResult = searchList(symbolTable, parsedLine.operands);
+            if (searchResult == NULL) {
+                return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+            }
+            else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) != 0)  /* TODO: test this error */
+            {
+                return ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL;
+            }
+            else {
+                /* TODO: line 6 - update entry symbol */
+                continue;
+            }
         }
         else {
             /* TODO: section 7-8 */
-            continue;
+            printf("DEBUG - section 7-8\n");
         }
     }
 

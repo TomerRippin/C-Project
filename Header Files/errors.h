@@ -19,7 +19,8 @@ typedef enum ErrorCode
     ERROR_MISSING_COMMA_BETWEEN_ARGUMENTS = 13,
     ERROR_EXTRA_COMMAS_BETWEEN_ARGUMENTS = 14,
     ERROR_EXTRA_TEXT_AFTER_ARGUMENT = 15,
-    ERROR_ADDRESSING_TYPE_NOT_MATCHING = 16
+    ERROR_ADDRESSING_TYPE_NOT_MATCHING = 16,
+    ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL = 17,
 } ErrorCode;
 
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */

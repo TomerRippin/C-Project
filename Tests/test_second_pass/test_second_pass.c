@@ -12,7 +12,6 @@ int main()
     /* Open the input file */
     FILE *inputFile = fopen("./Tests/test_second_pass/test_input_second_pass.txt", "r");
     char *fileName = "test_input_second_pass.txt";
-    char *extension = "ext";
 
     if (inputFile == NULL)
     {
@@ -20,8 +19,24 @@ int main()
         return 1;
     }
 
+    printf("Testing First Pass\n");
+
+    retVal = firstPass(inputFile, symbolTable, binaryCodesTable);
+    if (retVal != SUCCESS)
+    {
+        printf("DEBUG - ERROR: %d\n", retVal);
+        /* return retVal; */
+    }
+    else
+    {
+        printf("--- Finished First Pass with SUCCESS result! ---\n");
+    }
+
+    fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
+
     printf("Testing Second Pass\n");
 
+    char *extension = "ext";
     retVal = secondPass(inputFile, fileName, symbolTable, binaryCodesTable);
 
     if (retVal != SUCCESS) {

@@ -175,12 +175,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             {
                 return ERROR_SYMBOL_ALREADY_EXIST;
             }
-            /*
-            else {
-                printf("Inserting to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_CODE, IC);
-                insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
+            else if (isValidLabel != 1) {
+                return ERROR_LABEL_NOT_VALID;
             }
-            */
         }
 
         if (strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)

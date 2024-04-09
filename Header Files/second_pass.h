@@ -1,7 +1,4 @@
 #include "files_utils.h"
-#include "utils.h"
-#include "errors.h"
-#include "linked_list.h"
-#include "assembly_line_parser.h"
+#include "first_pass.h"
 
 int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, int *binaryCodesTable);
