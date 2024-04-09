@@ -144,10 +144,11 @@ int calculateL(int srcType, int dstType){
 
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 {
-    int IC = 100;  /* Insturctions Counter */
+    int IC = 100; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
     int isLabel = 0;
+    int L;
     AssemblyLine parsedLine;
     /* int operandsNum; */
     int handlerRetVal;
@@ -236,11 +237,11 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 return handlerRetVal;
             }
             printOperandsAfterParsing(&parsedLine);
-            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             printf("DEBUG - L = %d\n", L);
             IC = IC + L;
-            isLabel = 0;
         }
+        isLabel = 0;
         freeAssemblyLine(&parsedLine);
     }
 
