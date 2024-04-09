@@ -227,11 +227,13 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             }
             else {
                 /* TODO; not supposed to come here, but just in case */
+                freeAssemblyLine(&parsedLine);
                 return GENERAL_ERROR;
             }
 
             if (handlerRetVal != SUCCESS)
             {
+                freeAssemblyLine(&parsedLine);
                 return handlerRetVal;
             }
         }
@@ -242,22 +244,24 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 IC++;
             }
-            printf("DEBUG -  parsing operands \n");
-            if (!parseOperands(&parsedLine)){
-                printf("DEBUG - Could not parse operands");
+            printf("DEBUG - parsing operands \n");
+            handlerRetVal = parseOperands(&parsedLine);
+            if (handlerRetVal != SUCCESS)
+            {
+                printf("DEBUG - Could not parse operands\n");
+                freeAssemblyLine(&parsedLine);
+                return handlerRetVal;
             }
-            printf("DEBUG - dst operand type = %d\n", parsedLine.dst->type);
-            printf("DEBUG - dst operand value = %s\n", parsedLine.dst->value);
-            printf("DEBUG - src operand type = %d\n", parsedLine.src->type);
-            printf("DEBUG - src operand value = %s\n", parsedLine.src->value);
+            printf("DEBUG - dst operand type = %d, value = %s\n", parsedLine.dst->adrType, parsedLine.dst->value);
+            printf("DEBUG - src operand type = %d, value = %s\n", parsedLine.src->adrType, parsedLine.src->value);
+            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            printf("DEBUG - L = %d\n", L);
             printf("############## \n");
-            int L = calculateL(parsedLine.src->type, parsedLine.dst->type);
-            printf("DEBUG - L = %d \n", L);
             IC = IC + L;
             isLabel = 0;
         }
         freeAssemblyLine(&parsedLine);
     }
     /* TODO - free things */
-    return 0;
+    return SUCCESS;
 }
