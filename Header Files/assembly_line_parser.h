@@ -69,6 +69,15 @@ void printOperandsAfterParsing(AssemblyLine *parsedLine);
 void freeAssemblyLine(AssemblyLine *line);
 
 /**
+ * @brief Checks if a string definition is valid.
+ * A valid string is a string that starts and ends with a quote (").
+ *
+ * @param str The string to check.
+ * @return int 1 if the string is valid, and 0 otherwise.
+ */
+int isValidString(char *str);
+
+/**
  * @brief Checks if a label is valid.
  * A valid label starts with an alphabetic letter (big or small),
  * followed by alphabetic letters or numbers, and its maximum length is 31.

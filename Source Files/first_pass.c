@@ -85,7 +85,9 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
     int stringLen = strlen(parsedLine->operands);
     int i;
 
-    /* TODO: validate string - starts with "" */
+    if (isValidString(parsedLine->operands) == 0) {
+        return ERROR_STRING_IS_NOT_VALID;
+    }
 
     for (i = 1; i < stringLen - 1; i++) {
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);

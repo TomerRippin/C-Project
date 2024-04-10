@@ -135,6 +135,18 @@ int isValidLabel(const char *label)
     return 1;
 }
 
+int isValidString(char *str) {
+    if (str[0] != '"')
+    {
+        return 0;
+    }
+    if (str[strlen(str) - 1] != '"')
+    {
+        return 0;
+    }
+    return 1;
+}
+
 int parseOperandAdressing(const char *operand, int *operandType)
 {
     if (*operand == '\0') {
