@@ -22,6 +22,8 @@
 #define NUM_DIRECTIVES 4
 #define NUM_OPCODES 16
 
+#define BINARY_CODE_LEN 15
+
 extern const char *DIRECTIVES[NUM_DIRECTIVES];
 
 typedef struct Opcode

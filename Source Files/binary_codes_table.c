@@ -1,7 +1,5 @@
 #include "binary_codes_table.h"
 
-/* TODO: move to a strctures folder */
-
 BinaryCodesTable *createBinaryCodesTable()
 {
     BinaryCodesTable *table = (BinaryCodesTable *)malloc(sizeof(BinaryCodesTable));
@@ -16,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode)
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const char *sourceLine, const char *binaryCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
@@ -55,7 +53,7 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
     {
         tempNodeToFree = current;
         current = current->next;
-        freeNode(tempNodeToFree);
+        freeBinaryCodesNode(tempNodeToFree);
     }
     table->head = NULL;
     table->last = NULL;

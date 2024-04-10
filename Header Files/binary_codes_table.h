@@ -2,13 +2,16 @@
 #define BINARY_CODES_TABLE_H
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "constants.h"
+
+/* TODO: move to a strctures folder */
 
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    char *sourceLine;
+    char *sourceLine[MAX_LINE_LEN]; /* TODO: decide maybe to insert the parsed line and not the original line */
     char *binaryCode[BINARY_CODE_LEN];
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
@@ -24,7 +27,7 @@ typedef struct BinaryCodesTable
 BinaryCodesTable *createBinaryCodesTable();
 
 /* Inserts a BinaryCodesNode at the beginning of the list */
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode);
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const char *sourceLine, const char *binaryCode);
 
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);

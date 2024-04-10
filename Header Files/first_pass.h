@@ -1,16 +1,14 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "errors.h"
 #include "utils.h"
 #include "linked_list.h"
 #include "assembly_line_parser.h"
+#include "binary_codes_table.h"
 
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line);
 
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
 

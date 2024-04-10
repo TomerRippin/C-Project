@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ifndef ASSEMBLY_LINE_PARSER_H
+#define ASSEMBLY_LINE_PARSER_H
+
 #include <ctype.h>
 #include "errors.h"
 #include "utils.h"
@@ -117,3 +117,5 @@ int getInstructionNumber(char *instruction);
  * @return Return the number of operands of the matching opcode or -1 if the string does not match any known opcodes
  */
 int getInstructionOperandsNumber(char *instruction);
+
+#endif /* ASSEMBLY_LINE_PARSER_H */

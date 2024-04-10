@@ -21,6 +21,7 @@ typedef enum ErrorCode
     ERROR_EXTRA_TEXT_AFTER_ARGUMENT = 15,
     ERROR_ADDRESSING_TYPE_NOT_MATCHING = 16,
     ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL = 17,
+    ERROR_STRING_IS_NOT_VALID = 18
 } ErrorCode;
 
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */

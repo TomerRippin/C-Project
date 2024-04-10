@@ -79,19 +79,27 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
     return SUCCESS;
 }
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line)
 {
     printf("DEBUG - handleStringDirective\n");
     int stringLen = strlen(parsedLine->operands);
     int i;
+    char *binaryCode[BINARY_CODE_LEN];
+    memset(binaryCode, '\0', BINARY_CODE_LEN * sizeof(char *));
 
     if (isValidString(parsedLine->operands) == 0) {
         return ERROR_STRING_IS_NOT_VALID;
     }
 
+    /* HEREEEEE NOT WORKING */
+
     for (i = 1; i < stringLen - 1; i++) {
+        /* converts the ASCII value of the character to a binary string */
+        strcpy(binaryCode, convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1));
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
+        logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, DC);
+        insertToBinaryCodesTable(binaryTableTry, *DC, line, binaryCode);
         *DC = *DC + 1;
     }
     return SUCCESS;
@@ -162,6 +170,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
     AssemblyLine parsedLine;
     /* int operandsNum; */
     int handlerRetVal;
+    BinaryCodesTable *binaryTableTry = createBinaryCodesTable();
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -205,7 +214,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry, line);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
@@ -265,6 +274,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         current = current->next;
     }
+
+    freeBinaryCodesTable(binaryTableTry);
 
     /* TODO - free things */
     return SUCCESS;

@@ -26,13 +26,13 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
                  strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
                  strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
         {
-            printf("DEBUG - string/data/extern - do nothing\n");
+            logger(LOG_LEVEL_DEBUG, "string/data/extern - do nothing");
             continue;
         }
         else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0) {
-            printf("DEBUG - entry - do line 6\n");
+            logger(LOG_LEVEL_DEBUG, "entry - do line 6");
             if (parsedLine.label) {
-                printf("WARNING: a label is declared in an entry line\n");
+                logger(LOG_LEVEL_WARNING, "a label is declared in an entry line");
             }
             searchResult = searchList(symbolTable, parsedLine.operands);
             if (searchResult == NULL) {
