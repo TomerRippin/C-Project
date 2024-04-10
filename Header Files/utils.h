@@ -52,4 +52,15 @@ char *strdup(const char *source);
  */
 int countOccurrences(char *str, char target);
 
+/**
+ * @brief Converts an integer to a binary string representation, and returns the binary string.
+ * If needed, the returned value will be padded with zeros according to len.
+ *
+ * @param num The integer to be converted.
+ * @param len The length of the binary string representation.
+ * @return A pointer to the binary string representation of the integer.
+ *
+ */
+char *convertIntToBinary(int num, int len);
+
 #endif /* UTILS_H */
