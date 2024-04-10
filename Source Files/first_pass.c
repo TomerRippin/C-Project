@@ -7,7 +7,7 @@ const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry
 
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
-    printf("DEBUG - handleDefine\n");
+    logger(LOG_LEVEL_DEBUG, "DEBUG - handleDefine");
     /* handles a line in format <label:> .define <symbol>=<value> */
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
