@@ -84,18 +84,24 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
     printf("DEBUG - handleStringDirective\n");
     int stringLen = strlen(parsedLine->operands);
     int i;
-    char *binaryCode[BINARY_CODE_LEN];
+    char binaryCode[BINARY_CODE_LEN];
     memset(binaryCode, '\0', sizeof(binaryCode));
+    printf("DEBUG - handleStringDirective2\n");
 
     if (isValidString(parsedLine->operands) == 0) {
         return ERROR_STRING_IS_NOT_VALID;
     }
+    printf("DEBUG - handleStringDirective3\n");
 
     /* HEREEEEE NOT */
 
     for (i = 1; i < stringLen - 1; i++) {
+        printf("DEBUG - handleStringDirective %d\n", i);
         /* converts the ASCII value of the character to a binary string */
-        strcpy(binaryCode, convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1));
+        char *res = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
+        printf("DEBUG -res  %s \n", res);
+
+        strcpy(binaryCode, res);
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
         logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, DC);
@@ -215,6 +221,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 else
                 {
                     handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry, line);
+
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)

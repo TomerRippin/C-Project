@@ -24,8 +24,8 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const cha
         exit(EXIT_FAILURE);
     }
     newNode->decAddress = decAddress;
-    strcpy(newNode->sourceLine, sourceLine);
-    strcpy(newNode->binaryCode, binaryCode);
+    strcpy(*(newNode->sourceLine), sourceLine);
+    strcpy(*(newNode->binaryCode), binaryCode);
     newNode->next = NULL;
 
     if (table->head == NULL) {
