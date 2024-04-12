@@ -55,7 +55,7 @@ void freeNode(ListNode *node);
 /* Function to free memory allocated for the list */
 void freeList(LinkedList *list);
 
-/* Iterates over the nodes of the List and prints them */
+/* Iterates over the nodes of the Link and prints them */
 /* TODO: consider deleting this */
 void printList(LinkedList *list);
 
