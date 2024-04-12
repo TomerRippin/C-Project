@@ -5,27 +5,9 @@
 
 const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry"};
 
-const Opcode OPCODES[] = {
-    {"mov", 2},
-    {"cmp", 2},
-    {"add", 2},
-    {"sub", 2},
-    {"lea", 2},
-    {"not", 1},
-    {"clr", 1},
-    {"inc", 1},
-    {"dec", 1},
-    {"jmp", 1},
-    {"bne", 1},
-    {"red", 1},
-    {"prn", 1},
-    {"jsr", 1},
-    {"rts", 0},
-    {"hlt", 0}};
-
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
-    printf("DEBUG - handleDefine\n");
+    logger(LOG_LEVEL_DEBUG, "handleDefine");
     /* handles a line in format <label:> .define <symbol>=<value> */
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
@@ -54,35 +36,40 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
 {
-    printf("DEBUG - handleDataDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleDataDirective");
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
     int value;
 
     while (token != NULL)
     {
-        /* Check if token is a a label (not a number) and doesn't exist in symbolTable */
-        /* TODO: maybe change to a function that checks if its a valid symbol */
-        /* TODO: add search to the rest of the params in linked list also */
-        if (isNumber(token) != 1) {
-            searchResult = searchList(symbolTable, token);
-            if (searchResult == NULL)
+        if (isNumber(token)) {
+            value = atoi(token);
+        }
+        else {
+            if (isValidLabel(token) != 1)
             {
-                return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-            }
-            else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
-            {
-                return ERROR_SYMBOL_WRONG_TYPE;
+                return ERROR_LABEL_NOT_VALID;
             }
             else
             {
-                value = searchResult->lineNumber;
-                printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
+                searchResult = searchList(symbolTable, token);
+                if (searchResult == NULL)
+                {
+                    return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+                }
+                /* TODO: add search to the rest of the params in linked list also */
+                else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
+                {
+                    return ERROR_SYMBOL_WRONG_TYPE;
+                }
+                else
+                {
+                    value = searchResult->lineNumber;
+                    printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
+                }
             }
-        } else {
-            value = atoi(token);
         }
-
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         binaryCodesTable[*DC] = value;
         *DC = *DC + 1;
@@ -92,29 +79,38 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
     return SUCCESS;
 }
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line)
 {
-    printf("DEBUG - handleStringDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleStringDirective");
     int stringLen = strlen(parsedLine->operands);
     int i;
+    char binaryCode[BINARY_CODE_LEN];
+    memset(binaryCode, '\0', sizeof(binaryCode));
 
-    /* TODO: validate string - starts with "" */
+    if (isValidString(parsedLine->operands) == 0) {
+        return ERROR_STRING_IS_NOT_VALID;
+    }
 
     for (i = 1; i < stringLen - 1; i++) {
+        /* converts the ASCII value of the character to a binary string */
+        char *res = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
+
+        strcpy(binaryCode, res);
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
+        logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, DC);
+        insertToBinaryCodesTable(binaryTableTry, *DC, line, binaryCode);
         *DC = *DC + 1;
     }
     return SUCCESS;
 }
 
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    printf("DEBUG - handleExternDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleExternDirective");
     if (parsedLine->label != NULL) {
         printf("WARNING: extern line contains label: <%s>", parsedLine->label);
     }
 
-    /* TODO: validate label */
     /* TODO: handle multiple labeles */
     printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
@@ -123,7 +119,7 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
 }
 
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    printf("DEBUG - handleDataDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleEntryDirective");
     return SUCCESS;
 }
 
@@ -162,13 +158,18 @@ int calculateL(int srcType, int dstType){
 
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
 {
-    int IC = 100;  /* Insturctions Counter */
+    /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
+    int IC = 100; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
     int isLabel = 0;
+    int L;
+    int entryCount = 0;
+    int externCount = 0;
     AssemblyLine parsedLine;
     /* int operandsNum; */
     int handlerRetVal;
+    BinaryCodesTable *binaryTableTry = createBinaryCodesTable();
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -187,12 +188,10 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             {
                 return ERROR_SYMBOL_ALREADY_EXIST;
             }
-            /*
-            else {
-                printf("Inserting to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_CODE, IC);
-                insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
+            else if (isValidLabel(parsedLine.label) != 1)
+            {
+                return ERROR_LABEL_NOT_VALID;
             }
-            */
         }
 
         if (strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)
@@ -214,16 +213,19 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry, line);
+
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
             {
                 handlerRetVal = handleExternDirective(&parsedLine, symbolTable, binaryCodesTable);
+                externCount += 1;
             }
             else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0)
             {
                 handlerRetVal = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
+                entryCount += 1;
             }
             else {
                 /* TODO; not supposed to come here, but just in case */
@@ -238,8 +240,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             }
         }
         else {
-            /*printf("DEBUG - CODE LINE - NOT HANDLED!\n");*/
-            if (isLabel) {
+            printf("DEBUG - CODE LINE\n");
+            if (isLabel)
+            {
                 printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE, IC);
                 IC++;
@@ -253,13 +256,27 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 return handlerRetVal;
             }
             printOperandsAfterParsing(&parsedLine);
-            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            /* TODOL insert to binary table */
+            L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             printf("DEBUG - L = %d\n", L);
             IC = IC + L;
-            isLabel = 0;
         }
+        isLabel = 0;
         freeAssemblyLine(&parsedLine);
     }
+
+    ListNode *current = symbolTable->head;
+    while (current != NULL)
+    {
+        if (strcmp(current->data, SYMBOL_TYPE_DATA) == 0)
+        {
+            current->lineNumber = current->lineNumber + IC;
+        }
+        current = current->next;
+    }
+
+    /*freeBinaryCodesTable(binaryTableTry); */
+
     /* TODO - free things */
     return SUCCESS;
 }

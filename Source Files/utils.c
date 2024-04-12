@@ -47,7 +47,7 @@ int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile) {
 
 int isNumber(const char *str)
 {
-    printf("DEBUG - str-= %s \n", str);
+    /* TODO: check if +<number> is also accepted */
     char *endptr;
     strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
     return *endptr == '\0'; /* Return 1 if the conversion reaches the end of the string */
@@ -87,4 +87,20 @@ int countOccurrences(char *str, char target)
         str++;
     }
     return count; /** Return the total count of occurrences */
+}
+
+char *convertIntToBinary(int num, int len) {
+    char *binary = (char *)malloc(sizeof(char) * len);
+    int i, k = 0;
+
+    /* Iterate over each bit in the integer */
+    for (i = (1 << (len - 1)); i > 0; i = i / 2)
+        /** Use bitwise AND to check if the current bit is set or not
+         * If the bit is set, add '1' to the binary string
+         * If the bit is not set, add '0' to the binary string */
+        binary[k++] = (num & i) ? '1' : '0';
+
+    /* Add a null character at the end of the binary string */
+    binary[k] = '\0';
+    return binary;
 }

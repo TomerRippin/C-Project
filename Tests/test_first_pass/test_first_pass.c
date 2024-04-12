@@ -9,7 +9,7 @@ int main()
     /* TODO: maybe change type to linkedList? */
     int binaryCodesTable[MAX_LINES_NUM];
 
-    /* Open the input and output files */
+    /* Open the input files */
     FILE *inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
     FILE *inputFile2 = fopen("./Tests/test_first_pass/test_input_first_pass_symbol_exist.txt", "r");
 

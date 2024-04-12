@@ -1,5 +1,23 @@
 #include "../Header Files/assembly_line_parser.h"
 
+const Opcode OPCODES[] = {
+    {"mov", 2},
+    {"cmp", 2},
+    {"add", 2},
+    {"sub", 2},
+    {"lea", 2},
+    {"not", 1},
+    {"clr", 1},
+    {"inc", 1},
+    {"dec", 1},
+    {"jmp", 1},
+    {"bne", 1},
+    {"red", 1},
+    {"prn", 1},
+    {"jsr", 1},
+    {"rts", 0},
+    {"hlt", 0}};
+
 struct AssemblyLine parseAssemblyLine(const char *line) {
     AssemblyLine result;
     result.label = NULL;
@@ -114,6 +132,18 @@ int isValidLabel(const char *label)
         }
     }
 
+    return 1;
+}
+
+int isValidString(char *str) {
+    if (str[0] != '"')
+    {
+        return 0;
+    }
+    if (str[strlen(str) - 1] != '"')
+    {
+        return 0;
+    }
     return 1;
 }
 

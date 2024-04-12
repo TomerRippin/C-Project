@@ -49,11 +49,11 @@ void insertToList(LinkedList *list, char *name, char *data, int lineNumber);
 /* Searches for a node name in the linked list */ 
 ListNode *searchList(LinkedList *list, char *target_name);
 
-/* Function to free memory allocated for the list */
-void freeList(LinkedList *list);
-
 /* Function to free memory from a node */
 void freeNode(ListNode *node);
+
+/* Function to free memory allocated for the list */
+void freeList(LinkedList *list);
 
 /* Iterates over the nodes of the Link and prints them */
 /* TODO: consider deleting this */
