@@ -59,3 +59,15 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
     table->last = NULL;
     free(table);
 }
+
+void printBinaryCodesTable(BinaryCodesTable *table)
+{
+    BinaryCodesNode *current = table->head;
+    printf("|    DecAdr    |    sourceLine    |    binaryCode    |\n");
+    printf("|--------------|------------------|------------------|\n");
+    while (current != NULL)
+    {
+        printf("|    %d       |       %s       |         %s        |\n", current->decAddress, current->sourceLine, current->binaryCode);
+        current = current->next;
+    }
+}

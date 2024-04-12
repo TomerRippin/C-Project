@@ -47,14 +47,7 @@ int main()
     printf("Printing symbolTable\n");
     printList(symbolTable);
 
-    /**
-    printf("Printing binaryCodesTable\n");
-    int i;
-    for (i = 0; i < MAX_LINES_NUM * sizeof(int); i++)
-    {
-        printf("binaryCodesTable[%d]: %d\n", i, binaryCodesTable[i]);
-    }
-    */
+    printBinaryCodesTable(binaryCodesTable);
 
     printf("Closing files\n");
     fclose(inputFile);
