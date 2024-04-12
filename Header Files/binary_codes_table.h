@@ -27,7 +27,7 @@ typedef struct BinaryCodesTable
 BinaryCodesTable *createBinaryCodesTable();
 
 /* Inserts a BinaryCodesNode at the beginning of the list */
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const char *sourceLine, const char *binaryCode);
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode);
 
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);

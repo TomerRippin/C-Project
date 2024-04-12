@@ -14,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const char *sourceLine, const char *binaryCode)
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
