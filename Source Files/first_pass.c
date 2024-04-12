@@ -282,7 +282,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         current = current->next;
     }
 
-    freeBinaryCodesTable(binaryTableTry);
+    /*freeBinaryCodesTable(binaryTableTry); */
 
     /* TODO - free things */
     return SUCCESS;

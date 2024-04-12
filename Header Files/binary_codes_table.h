@@ -11,8 +11,8 @@
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    char *sourceLine[MAX_LINE_LEN]; /* TODO: decide maybe to insert the parsed line and not the original line */
-    char *binaryCode[BINARY_CODE_LEN];
+    char *sourceLine; /* TODO: decide maybe to insert the parsed line and not the original line */
+    char *binaryCode;
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
 
