@@ -85,13 +85,13 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
     int stringLen = strlen(parsedLine->operands);
     int i;
     char *binaryCode[BINARY_CODE_LEN];
-    memset(binaryCode, '\0', BINARY_CODE_LEN * sizeof(char *));
+    memset(binaryCode, '\0', sizeof(binaryCode));
 
     if (isValidString(parsedLine->operands) == 0) {
         return ERROR_STRING_IS_NOT_VALID;
     }
 
-    /* HEREEEEE NOT WORKING */
+    /* HEREEEEE NOT */
 
     for (i = 1; i < stringLen - 1; i++) {
         /* converts the ASCII value of the character to a binary string */
