@@ -23,11 +23,12 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, const cha
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
+    printf("DEBUG - handleStringDirective4\n");
     newNode->decAddress = decAddress;
-    strcpy(*(newNode->sourceLine), sourceLine);
-    strcpy(*(newNode->binaryCode), binaryCode);
+    newNode->sourceLine = sourceLine;
+    newNode->binaryCode = binaryCode;
     newNode->next = NULL;
-
+    printf("DEBUG - handleStringDirective5\n");
     if (table->head == NULL) {
         table->head = newNode;
     }
