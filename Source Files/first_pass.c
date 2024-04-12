@@ -7,7 +7,7 @@ const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry
 
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
-    logger(LOG_LEVEL_DEBUG, "DEBUG - handleDefine");
+    logger(LOG_LEVEL_DEBUG, "handleDefine");
     /* handles a line in format <label:> .define <symbol>=<value> */
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
@@ -36,7 +36,7 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
 {
-    printf("DEBUG - handleDataDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleDataDirective");
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
     int value;
@@ -81,25 +81,19 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
 
 int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line)
 {
-    printf("DEBUG - handleStringDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleStringDirective");
     int stringLen = strlen(parsedLine->operands);
     int i;
     char binaryCode[BINARY_CODE_LEN];
     memset(binaryCode, '\0', sizeof(binaryCode));
-    printf("DEBUG - handleStringDirective2\n");
 
     if (isValidString(parsedLine->operands) == 0) {
         return ERROR_STRING_IS_NOT_VALID;
     }
-    printf("DEBUG - handleStringDirective3\n");
-
-    /* HEREEEEE NOT */
 
     for (i = 1; i < stringLen - 1; i++) {
-        printf("DEBUG - handleStringDirective %d\n", i);
         /* converts the ASCII value of the character to a binary string */
         char *res = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
-        printf("DEBUG -res  %s \n", res);
 
         strcpy(binaryCode, res);
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
@@ -112,12 +106,11 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
 }
 
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    printf("DEBUG - handleExternDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleExternDirective");
     if (parsedLine->label != NULL) {
         printf("WARNING: extern line contains label: <%s>", parsedLine->label);
     }
 
-    /* TODO: validate label */
     /* TODO: handle multiple labeles */
     printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
@@ -126,7 +119,7 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
 }
 
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    printf("DEBUG - handleDataDirective\n");
+    logger(LOG_LEVEL_DEBUG, "handleEntryDirective");
     return SUCCESS;
 }
 
