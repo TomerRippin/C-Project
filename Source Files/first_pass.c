@@ -259,6 +259,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             /* TODOL insert to binary table */
             L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             printf("DEBUG - L = %d\n", L);
+            insertToBinaryCodesTable(binaryTableTry, IC, &parsedLine, "\0");
             IC = IC + L;
         }
         isLabel = 0;
@@ -272,7 +273,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             current->lineNumber = current->lineNumber + IC;
         }
         current = current->next;
-    }
+    }  
+    printBinaryList(binaryTableTry);
 
     /*freeBinaryCodesTable(binaryTableTry); */
 
