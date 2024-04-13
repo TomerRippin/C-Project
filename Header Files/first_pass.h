@@ -8,7 +8,7 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line);
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry);
 
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
 

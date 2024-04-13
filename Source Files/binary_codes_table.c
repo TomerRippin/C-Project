@@ -14,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode)
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
@@ -23,12 +23,11 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sou
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    printf("DEBUG - handleStringDirective4\n");
     newNode->decAddress = decAddress;
     newNode->sourceLine = sourceLine;
     newNode->binaryCode = binaryCode;
     newNode->next = NULL;
-    printf("DEBUG - handleStringDirective5\n");
+    printAssemblyLine(newNode->sourceLine);
     if (table->head == NULL) {
         table->head = newNode;
     }

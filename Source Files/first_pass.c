@@ -79,7 +79,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
     return SUCCESS;
 }
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry, char *line)
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry)
 {
     logger(LOG_LEVEL_DEBUG, "handleStringDirective");
     int stringLen = strlen(parsedLine->operands);
@@ -99,7 +99,7 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
         logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, DC);
-        insertToBinaryCodesTable(binaryTableTry, *DC, line, binaryCode);
+        insertToBinaryCodesTable(binaryTableTry, *DC, parsedLine, binaryCode);
         *DC = *DC + 1;
     }
     return SUCCESS;
@@ -213,7 +213,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry, line);
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry);
 
                 }
             }
@@ -262,7 +262,6 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
             IC = IC + L;
         }
         isLabel = 0;
-        freeAssemblyLine(&parsedLine);
     }
 
     ListNode *current = symbolTable->head;

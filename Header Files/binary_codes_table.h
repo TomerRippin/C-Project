@@ -5,13 +5,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include "constants.h"
+#include "assembly_line_parser.h"
 
 /* TODO: move to a strctures folder */
 
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    char *sourceLine; /* TODO: decide maybe to insert the parsed line and not the original line */
+    AssemblyLine *sourceLine; /* TODO: decide maybe to insert the parsed line and not the original line */
     char *binaryCode;
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
@@ -27,7 +28,7 @@ typedef struct BinaryCodesTable
 BinaryCodesTable *createBinaryCodesTable();
 
 /* Inserts a BinaryCodesNode at the beginning of the list */
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, char *sourceLine, char *binaryCode);
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode);
 
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);
