@@ -147,9 +147,9 @@ int calculateL(int srcType, int dstType){
     return L;
 }
 
-int handleCodeLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry)
+int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry)
 {
-    logger(LOG_LEVEL_DEBUG, "handleCodeLine");
+    logger(LOG_LEVEL_DEBUG, "handleCommandLine");
     int parseRetVal;
     int L;
     if (parsedLine->label != NULL)
@@ -258,15 +258,21 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 return handlerRetVal;
             }
         }
-        /* TODO: validate its a code line - if not, throw exception */
-        else {
-            logger(LOG_LEVEL_DEBUG, "CODE LINE\n");
-            handlerRetVal = handleCodeLine(&parsedLine, symbolTable, binaryCodesTable, &IC, binaryTableTry);
+        
+        else if (isCommandLine(&parsedLine)) {
+            logger(LOG_LEVEL_DEBUG, "Command Line\n");
+            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, &IC, binaryTableTry);
             if (handlerRetVal != SUCCESS)
             {
                 freeAssemblyLine(&parsedLine);
                 return handlerRetVal;
             }
+        }
+
+        else {
+            logger(LOG_LEVEL_ERROR, "unknown instruction type");
+            freeAssemblyLine(&parsedLine);
+            return ERROR_UNKNOWN_INSTRUCTION;
         }
         isLabel = 0;
     }

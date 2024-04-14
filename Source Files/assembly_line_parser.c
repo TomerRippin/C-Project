@@ -148,6 +148,18 @@ int isDirectiveLine(AssemblyLine *parsedLine)
     return 0;
 }
 
+int isCommandLine(AssemblyLine *parsedLine) {
+    int i;
+    for (i = 0; i < NUM_OPCODES; i++)
+    {
+        if (strcmp(parsedLine->instruction, OPCODES[i].name) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int isValidString(char *str) {
     if (str[0] != '"')
     {

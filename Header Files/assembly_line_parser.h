@@ -70,6 +70,8 @@ void freeAssemblyLine(AssemblyLine *line);
 
 int isDirectiveLine(AssemblyLine *parsedLine);
 
+int isCommandLine(AssemblyLine *parsedLine);
+
 /**
  * @brief Checks if a string definition is valid.
  * A valid string is a string that starts and ends with a quote (").
