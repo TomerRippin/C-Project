@@ -135,6 +135,31 @@ int isValidLabel(const char *label)
     return 1;
 }
 
+int isDirectiveLine(AssemblyLine *parsedLine)
+{
+    int i;
+    for (i = 0; i < NUM_DIRECTIVES; i++)
+    {
+        if (strcmp(parsedLine->instruction, DIRECTIVES[i]) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int isCommandLine(AssemblyLine *parsedLine) {
+    int i;
+    for (i = 0; i < NUM_OPCODES; i++)
+    {
+        if (strcmp(parsedLine->instruction, OPCODES[i].name) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int isValidString(char *str) {
     if (str[0] != '"')
     {
@@ -237,6 +262,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     int opcodeOperandsNum = getInstructionOperandsNumber(parsedLine->instruction);
+    logger(LOG_LEVEL_INFO, "parseOperands, opcodeOperandsNum: %d", opcodeOperandsNum);
     int parseRetVal = 0;
 
     /* Cannot find the operand */
