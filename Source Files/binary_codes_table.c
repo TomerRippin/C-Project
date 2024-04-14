@@ -75,10 +75,10 @@ void printBinaryList(BinaryCodesTable *list)
 {
     BinaryCodesNode *current = list->head;
     printf("|    dec    |    binary code    |    operands    |\n");
-    printf("|------------|------------|---------------|\n");
+    printf("|-----------|-------------------|----------------|\n");
     while (current != NULL)
     {
-        printf("|    %d    |    %s    |       %s      |\n", current->decAddress, current->binaryCode, current->sourceLine->operands);
+        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceLine->operands);
         current = current->next;
     }
 }

@@ -15,6 +15,6 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
 /* NOTE: This function does nothing and always returns true*/
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
 
-int isDirectiveLine(AssemblyLine *parsedLine);
+int handleCodeLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry);
 
 int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable);
