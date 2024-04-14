@@ -103,14 +103,13 @@ int parseOperandAdressing(const char *operand, int *operandType);
 int parseOperands(struct AssemblyLine *parsedLine);
 
 /**
- * @brief This function returns the instruction index for a given opcode.
- * It iterates through the list of known opcodes and compare the string with each opcode in the list.
+ * @brief This function returns the Opcode code for a given opcode (according to the table at page 18 in the book).
  *
  * @param instruction A pointer to a string representing the instruction
  *
- * @return Return the index of the matching opcode or -1 if the string does not match any known opcodes
+ * @return Return the code attr of the matching opcode or -1 if the string does not match any known opcodes
  */
-int getInstructionNumber(char *instruction);
+int getOpcodeCode(char *instruction);
 
 /**
  * @brief This function returns the instruction operands number for a given opcode.

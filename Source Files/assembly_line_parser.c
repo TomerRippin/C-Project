@@ -1,22 +1,22 @@
 #include "../Header Files/assembly_line_parser.h"
 
 const Opcode OPCODES[] = {
-    {"mov", 2},
-    {"cmp", 2},
-    {"add", 2},
-    {"sub", 2},
-    {"lea", 2},
-    {"not", 1},
-    {"clr", 1},
-    {"inc", 1},
-    {"dec", 1},
-    {"jmp", 1},
-    {"bne", 1},
-    {"red", 1},
-    {"prn", 1},
-    {"jsr", 1},
-    {"rts", 0},
-    {"hlt", 0}};
+    {0, "mov", 2},
+    {1, "cmp", 2},
+    {2, "add", 2},
+    {3, "sub", 2},
+    {4, "not", 1},
+    {5, "clr", 1},
+    {6, "lea", 2},
+    {7, "inc", 1},
+    {8, "dec", 1},
+    {9, "jmp", 1},
+    {10, "bne", 1},
+    {11, "red", 1},
+    {12, "prn", 1},
+    {13, "jsr", 1},
+    {14, "rts", 0},
+    {15, "hlt", 0}};
 
 struct AssemblyLine parseAssemblyLine(const char *line) {
     AssemblyLine result;
@@ -226,7 +226,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     return ERROR_ADDRESSING_NOT_FOUND;
 }
 
-int getInstructionNumber(char *instruction){
+int getOpcodeCode(char *instruction) {
     int i = 1;
     if (instruction == NULL) {
         return -1;
@@ -234,7 +234,7 @@ int getInstructionNumber(char *instruction){
 
     for (i = 0; i <= NUM_OPCODES; i++) {
         if (strcmp(instruction, OPCODES[i].name) == 0) {
-            return i;
+            return OPCODES[i].code;
         }
     }
     return -1;
@@ -326,7 +326,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     }
 
     /* Check if potentioal arguments are correct */
-    int instructionNumber = getInstructionNumber(parsedLine->instruction);
+    int opcodeCode = getOpcodeCode(parsedLine->instruction);
     parseRetVal = parseOperandAdressing(potSrc, &(srcOperand->adrType));
     if (parseRetVal != SUCCESS)
     {
@@ -340,7 +340,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
 
     /*= parseOperandAdressing(potDest); */
     /* srcOperand->type = parseOperandAdressing(potSrc); */
-    switch (instructionNumber)
+    switch (opcodeCode)
         {
         /* MOV (0), ADD (2), SUB (3)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
         case 0: 
@@ -359,17 +359,16 @@ int parseOperands(struct AssemblyLine *parsedLine)
                 return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
-        
-        /* LEA (4) has dst instructions 1,2,3 and src instruction 1,2*/
-        case 4:
-            if (!(destOperand->adrType >= 1 && destOperand->adrType <= 3) && (srcOperand->adrType >= 1 && srcOperand->adrType <=2))
+        /* LEA (6) has dst instructions 1,2,3 and src instruction 1,2*/
+        case 6:
+            if (!(destOperand->adrType >= 1 && destOperand->adrType <= 3) && (srcOperand->adrType >= 1 && srcOperand->adrType <= 2))
             {
                 return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
             }
             break;
-        /* NOT (5), CLR (6), INC(7), DEC(8), RED(11) have dst instruction 1,2,3 and no src instruction */
+        /* NOT (4), CLR (5), INC(7), DEC(8), RED(11) have dst instruction 1, 2, 3 and no src instruction */
+        case 4:
         case 5:
-        case 6:
         case 7:
         case 8:
         case 11:
