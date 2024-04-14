@@ -124,7 +124,7 @@ int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int 
 }
 
 int calculateL(int srcType, int dstType){
-    int L = 1; /* you always have the base word */
+    int L = 1; /* at least the base word */
     if (srcType == -1 && dstType == -1)
     {
         return L;
@@ -150,8 +150,9 @@ int calculateL(int srcType, int dstType){
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry)
 {
     logger(LOG_LEVEL_DEBUG, "handleCommandLine");
-    int parseRetVal;
-    int L;
+    char binaryCode[BINARY_CODE_LEN];
+    int parseRetVal, L;
+
     if (parsedLine->label != NULL)
     {
         logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine->label, SYMBOL_TYPE_CODE, *IC);
@@ -167,11 +168,16 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *bi
     }
     printOperandsAfterParsing(parsedLine);
     /* TODOL insert to binary table */
+
+    strcpy(binaryCode, getOpcodeBinaryCode(parsedLine));
+    logger(LOG_LEVEL_DEBUG, "opcode: %s, binaryCode: %s", parsedLine->instruction, binaryCode);
+    logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, *IC);
+    insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, binaryCode);
+
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
-    logger(LOG_LEVEL_DEBUG, "L = %d\n", L);
-    /* TODO: calc binary code */
-    logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <\0> at location: <%d>", IC);
-    insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, "\0");
+    logger(LOG_LEVEL_DEBUG, "calculated L = %d\n", L);
+    /* TODO: calc operands binary code */
+    /* insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, "\0"); */
     IC = IC + L;
     return SUCCESS;
 }
@@ -186,7 +192,6 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
     int entryCount = 0;
     int externCount = 0;
     AssemblyLine parsedLine;
-    /* int operandsNum; */
     int handlerRetVal;
     BinaryCodesTable *binaryTableTry = createBinaryCodesTable();
 

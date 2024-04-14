@@ -1,5 +1,6 @@
 #include "errors.h"
 #include "utils.h"
+#include "binary_code.h"
 #include "linked_list.h"
 #include "assembly_line_parser.h"
 #include "binary_codes_table.h"
