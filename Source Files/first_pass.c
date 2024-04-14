@@ -79,7 +79,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
     return SUCCESS;
 }
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC, BinaryCodesTable *binaryTableTry)
+int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
     logger(LOG_LEVEL_DEBUG, "handleStringDirective");
     int stringLen = strlen(parsedLine->operands);
@@ -93,13 +93,14 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
 
     for (i = 1; i < stringLen - 1; i++) {
         /* converts the ASCII value of the character to a binary string */
-        char *res = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
-
-        strcpy(binaryCode, res);
-        printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", parsedLine->operands[i], *DC);
+        char *intToBinaryRes = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
+        strcpy(binaryCode, intToBinaryRes);
+        /*
+        logger(LOG_LEVEL_DEBUG, "Insert to binaryCodesTable: <%c>-<%d>, at location: <%d>", parsedLine->operands[i], parsedLine->operands[i], *DC);
         binaryCodesTable[*DC] = parsedLine->operands[i];
-        logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, DC);
-        insertToBinaryCodesTable(binaryTableTry, *DC, parsedLine, binaryCode);
+        */
+        logger(LOG_LEVEL_DEBUG, "insert to binaryCodesTable: <%c>-<%s> at location: <%d>", parsedLine->operands[i], binaryCode, *DC);
+        insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, binaryCode, &parsedLine->operands[i]);
         *DC = *DC + 1;
     }
     return SUCCESS;
@@ -147,7 +148,7 @@ int calculateL(int srcType, int dstType){
     return L;
 }
 
-int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry)
+int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     logger(LOG_LEVEL_DEBUG, "handleCommandLine");
     char binaryCode[BINARY_CODE_LEN];
@@ -172,7 +173,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *bi
     strcpy(binaryCode, getOpcodeBinaryCode(parsedLine));
     logger(LOG_LEVEL_DEBUG, "opcode: %s, binaryCode: %s", parsedLine->instruction, binaryCode);
     logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, *IC);
-    insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, binaryCode);
+    insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, binaryCode, parsedLine->instruction);
 
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d\n", L);
@@ -237,8 +238,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC, binaryTableTry);
-
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryTableTry, &DC);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
@@ -266,7 +266,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         
         else if (isCommandLine(&parsedLine)) {
             logger(LOG_LEVEL_DEBUG, "Command Line\n");
-            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, &IC, binaryTableTry);
+            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryTableTry, &IC);
             if (handlerRetVal != SUCCESS)
             {
                 freeAssemblyLine(&parsedLine);

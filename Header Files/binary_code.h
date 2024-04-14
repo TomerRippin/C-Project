@@ -39,4 +39,6 @@ void reverseBits(char *bitsArray);
  */
 char *getOpcodeBinaryCode(AssemblyLine *parsedLine);
 
+char *getOperandsBinaryCode(AssemblyLine *parsedLine);
+
 #endif /* BINARY_CODE_H */

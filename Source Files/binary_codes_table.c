@@ -14,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode)
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
@@ -25,16 +25,16 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
     }
     printf("DEBUG - in InsertToBinary\n");
     newNode->binaryCode = malloc(strlen(binaryCode) + 1);
-    printf("DEBUG - malloc binary \n");
     strcpy(newNode->binaryCode, binaryCode);
-    printf("DEBUG - assign binary \n");
+
+    newNode->sourceCode = malloc(strlen(sourceCode) + 1);
+    strcpy(newNode->sourceCode, sourceCode);
+
     newNode->sourceLine = malloc(sizeof(AssemblyLine));
-    printf("DEBUG - malloc assembly line \n");
     memcpy(newNode->sourceLine, sourceLine, sizeof(AssemblyLine));
-    printf("DEBUG - assign assembly \n");
+    
     newNode->decAddress = decAddress;
-    /*newNode->sourceLine = sourceLine;
-    newNode->binaryCode = binaryCode; */
+
     newNode->next = NULL;
     printAssemblyLine(newNode->sourceLine);
     if (table->head == NULL) {
@@ -74,11 +74,11 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
 void printBinaryList(BinaryCodesTable *list)
 {
     BinaryCodesNode *current = list->head;
-    printf("|    dec    |    binary code    |    operands    |\n");
-    printf("|-----------|-------------------|----------------|\n");
+    printf("|    dec    |    binary code    |    source code     |\n");
+    printf("|-----------|-------------------|--------------------|\n");
     while (current != NULL)
     {
-        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceLine->operands);
+        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceCode);
         current = current->next;
     }
 }

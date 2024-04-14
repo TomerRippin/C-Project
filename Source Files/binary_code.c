@@ -39,7 +39,7 @@ void reverseBits(char *bitsArray)
 char *getOpcodeBinaryCode(AssemblyLine *parsedLine)
 {
     char *binaryCode = (char *)malloc(sizeof(char) * BINARY_CODE_LEN);
-    /* memset(binaryCode, '0', sizeof(binaryCode)); */
+    memset(binaryCode, '0', BINARY_CODE_LEN);
 
     /* bits 0-1: ARE codex - 'A' */
     strncpy(&binaryCode[0], "00", 3);
@@ -102,5 +102,12 @@ char *getOpcodeBinaryCode(AssemblyLine *parsedLine)
     /* a null character at the end of the binary code string */
     binaryCode[BINARY_CODE_LEN] = '\0';
 
+    return binaryCode;
+}
+
+char *getOperandsBinaryCode(AssemblyLine *parsedLine)
+{
+    char *binaryCode = (char *)malloc(sizeof(char) * BINARY_CODE_LEN);
+    memset(binaryCode, '0', BINARY_CODE_LEN);
     return binaryCode;
 }

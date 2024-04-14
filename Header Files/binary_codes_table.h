@@ -12,8 +12,9 @@
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    AssemblyLine *sourceLine; /* TODO: decide maybe to insert the parsed line and not the original line */
+    AssemblyLine *sourceLine;
     char *binaryCode;
+    char *sourceCode; /* TODO: used for pretty prints as in the book, and maybe can replace usage of sourceLine? */
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
 
@@ -28,7 +29,7 @@ typedef struct BinaryCodesTable
 BinaryCodesTable *createBinaryCodesTable();
 
 /* Inserts a BinaryCodesNode at the beginning of the list */
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode);
+void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode);
 
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);
