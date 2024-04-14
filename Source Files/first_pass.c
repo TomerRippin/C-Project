@@ -147,6 +147,19 @@ int calculateL(int srcType, int dstType){
     return L;
 }
 
+char *calculateInstructionBinaryCode(AssemblyLine *parsedLine){
+    int instructionNumber = getInstructionNumber(parsedLine->instruction);
+    int binary = 0;
+    binary |= (instructionNumber << 6);
+    if (parsedLine->dst->adrType != -1){
+        binary |= (parsedLine->dst->adrType << 2);
+    }
+    if (parsedLine->src->adrType != -1){
+        binary |= (parsedLine->dst->adrType << 4);
+    }
+    return convertIntToBinary(binary, BINARY_CODE_LEN);
+}
+
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *IC, BinaryCodesTable *binaryTableTry)
 {
     logger(LOG_LEVEL_DEBUG, "handleCommandLine");
@@ -169,9 +182,9 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, int *bi
     /* TODOL insert to binary table */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "L = %d\n", L);
-    /* TODO: calc binary code */
+    char * binary = calculateInstructionBinaryCode(parsedLine);
     logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <\0> at location: <%d>", IC);
-    insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, "\0");
+    insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, binary);
     IC = IC + L;
     return SUCCESS;
 }
