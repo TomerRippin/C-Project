@@ -18,6 +18,8 @@ const Opcode OPCODES[] = {
     {14, "rts", 0},
     {15, "hlt", 0}};
 
+const char *REGISTERS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
+
 struct AssemblyLine parseAssemblyLine(const char *line) {
     AssemblyLine result;
     result.label = NULL;
@@ -172,6 +174,19 @@ int isValidString(char *str) {
     return 1;
 }
 
+int isRegisterOperand(const char *operand)
+{
+    int i;
+    for (i = 0; i < NUM_REGISTERS; i++)
+    {
+        if (strcmp(operand, REGISTERS[i]) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int parseOperandAdressing(const char *operand, int *operandType)
 {
     if (*operand == '\0') {
@@ -194,8 +209,8 @@ int parseOperandAdressing(const char *operand, int *operandType)
         }
     }
 
-    /* Check for register addressing */ 
-    if (operand[0] == 'r' && isdigit(operand[1]) && operand[2] == '\0')
+    /* Check for register addressing */
+    if (isRegisterOperand(operand))
     {
         *operandType = 3;
         return SUCCESS;
@@ -216,6 +231,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     }
     else
     {
+        /* TODO: is it okay that this is here? */
         if (!isValidLabel(operand)) {
             return ERROR_LABEL_NOT_VALID;
         }
@@ -240,14 +256,17 @@ int getOpcodeCode(char *instruction) {
     return -1;
 }
 
-int getInstructionOperandsNumber(char *instruction){
+int getOpcodeOperandsNumber(char *instruction) {
     int i = 1;
-    if (instruction == NULL) {
+    if (instruction == NULL)
+    {
         return -1;
     }
 
-    for (i = 0; i <= NUM_OPCODES; i++) {
-        if (strcmp(instruction, OPCODES[i].name) == 0) {
+    for (i = 0; i <= NUM_OPCODES; i++)
+    {
+        if (strcmp(instruction, OPCODES[i].name) == 0)
+        {
             return OPCODES[i].operandsNum;
         }
     }
@@ -261,7 +280,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     char *potDest = (char*)malloc(sizeof(char));
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
-    int opcodeOperandsNum = getInstructionOperandsNumber(parsedLine->instruction);
+    int opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
     logger(LOG_LEVEL_INFO, "parseOperands, opcodeOperandsNum: %d", opcodeOperandsNum);
     int parseRetVal = 0;
 
@@ -314,7 +333,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
             return ERROR_OPCODE_NOT_FOUND;
         } 
         else {
-            /* TODO: think what to do with this */
+            /* TODO: think what to do with this, maybe NULL are better */
             destOperand->adrType = -1;
             destOperand->value = '\0';
             srcOperand->adrType = -1;

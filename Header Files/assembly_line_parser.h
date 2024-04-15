@@ -91,14 +91,15 @@ int isValidString(char *str);
  */
 int isValidLabel(const char *label);
 
+int isRegisterOperand(const char *operand);
+
 /**
  * Function to parse the adrType of operand.
- * 
+ *
  * @param operand The input operand string to be parsed.
  * @return The adrType of operand.
  */
 int parseOperandAdressing(const char *operand, int *operandType);
-
 
 int parseOperands(struct AssemblyLine *parsedLine);
 
@@ -119,6 +120,6 @@ int getOpcodeCode(char *instruction);
  *
  * @return Return the number of operands of the matching opcode or -1 if the string does not match any known opcodes
  */
-int getInstructionOperandsNumber(char *instruction);
+int getOpcodeOperandsNumber(char *instruction);
 
 #endif /* ASSEMBLY_LINE_PARSER_H */

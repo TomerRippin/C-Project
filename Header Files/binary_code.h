@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "errors.h"
+#include "logger.h"
 #include "constants.h"
 #include "assembly_line_parser.h"
+#include "linked_list.h"
+#include "binary_codes_table.h"
 
 /* TOOD: decide if this function will insert to binaryCodesTable also or no */
 
@@ -20,6 +24,17 @@
 char *convertIntToBinary(int num, int len);
 
 /**
+ * @brief Converts an integer to a binary string using the Two's complement method.
+ * If needed, the returned value will be padded with zeros according to len.
+ *
+ * @param num The integer to be converted.
+ * @param len The length of the binary string representation.
+ * @return A pointer to the binary string representation of the integer.
+ *
+ */
+char *convertIntToTCBinary(int num, int len);
+
+/**
  * @brief Reverses a string of bits.
  * For example:
  *  - input: 0010
@@ -30,15 +45,22 @@ char *convertIntToBinary(int num, int len);
  */
 void reverseBits(char *bitsArray);
 
+int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int IC);
+
 /**
- * Creates the binary code of an opcode.
- * NOTE: it reverses the bits so the bit in place 0 will be the on the right.
+ * @brief Creates the binary code of an opcode (+ TODO: insert to binaryCodesTable).
+ *
+ * The structure of opcode binary code is:
+ * - bits 0-1: ARE codex - 'A'
+ * - bits 2-3: src operand address type
+ * - bits 4-5: dst operand address type
+ * - bits 6-9: opcode
+ * - bits 10-13: 0 (not in use)
  *
  * @param parsedLine - A pointer to an AssemblyLine struct.
- * @return A pointer to a character array (string) representing the binary code of the opcode.
+ * @return A string representing the binary code of the assembly instruction.
+ *
  */
-char *getOpcodeBinaryCode(AssemblyLine *parsedLine);
-
-char *getOperandsBinaryCode(AssemblyLine *parsedLine);
+char *handleOpcodeBinaryCode(AssemblyLine *parsedLine);
 
 #endif /* BINARY_CODE_H */

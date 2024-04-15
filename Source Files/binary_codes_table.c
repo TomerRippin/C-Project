@@ -23,7 +23,6 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    printf("DEBUG - in InsertToBinary\n");
     newNode->binaryCode = malloc(strlen(binaryCode) + 1);
     strcpy(newNode->binaryCode, binaryCode);
 
@@ -44,9 +43,7 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
         table->last->next = newNode;
     }
     table->last = newNode;
-    table->length++;
-    printf("DEBUG - operands in list = %s \n\n", table->last->sourceLine->operands);
-    
+    table->length++;    
 }
 
 void freeBinaryCodesNode(BinaryCodesNode *node)

@@ -151,8 +151,7 @@ int calculateL(int srcType, int dstType){
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     logger(LOG_LEVEL_DEBUG, "handleCommandLine");
-    char binaryCode[BINARY_CODE_LEN];
-    int parseRetVal, L;
+    int funcsRetVal, L;
 
     if (parsedLine->label != NULL)
     {
@@ -161,25 +160,36 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
         *IC = *IC + 1;
     }
     logger(LOG_LEVEL_DEBUG, "parsing operands");
-    parseRetVal = parseOperands(parsedLine);
-    if (parseRetVal != SUCCESS)
+    funcsRetVal = parseOperands(parsedLine);
+    if (funcsRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_DEBUG, "could not parse operands, return error: %d", parseRetVal);
-        return parseRetVal;
+        logger(LOG_LEVEL_ERROR, "could not parse operands, return error: %d", funcsRetVal);
+        return funcsRetVal;
     }
     printOperandsAfterParsing(parsedLine);
-    /* TODOL insert to binary table */
 
-    strcpy(binaryCode, getOpcodeBinaryCode(parsedLine));
-    logger(LOG_LEVEL_DEBUG, "opcode: %s, binaryCode: %s", parsedLine->instruction, binaryCode);
-    logger(LOG_LEVEL_DEBUG, "insert to binaryTableTry: <%s> at location: <%d>", binaryCode, *IC);
-    insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, binaryCode, parsedLine->instruction);
+    char *binary = handleOpcodeBinaryCode(parsedLine);
+    logger(LOG_LEVEL_DEBUG, "opcode: %s, binaryCode: %s", parsedLine->instruction, binary);
+    insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, binary, parsedLine->instruction);
+
+    /* TODO: insert to binary table */
+
+    /*     
+    if (parsedLine->operands != NULL)
+    {
+        logger(LOG_LEVEL_DEBUG, "getOperandsBinaryCode");
+        funcsRetVal = getOperandsBinaryCode(parsedLine, symbolTable, binaryCodesTable, *IC);
+        if (funcsRetVal != SUCCESS)
+        {
+            logger(LOG_LEVEL_ERROR, "could get operands binary codes, return error: %d", funcsRetVal);
+            return funcsRetVal;
+        }
+    } */
 
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
-    logger(LOG_LEVEL_DEBUG, "calculated L = %d\n", L);
-    /* TODO: calc operands binary code */
-    /* insertToBinaryCodesTable(binaryTableTry, *IC, parsedLine, "\0"); */
+    logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
     IC = IC + L;
+
     return SUCCESS;
 }
 
