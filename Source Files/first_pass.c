@@ -124,7 +124,7 @@ int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int 
     return SUCCESS;
 }
 
-int calculateL(int srcType, int dstType){
+int calculateL(int srcType, int dstType) {
     int L = 1; /* at least the base word */
     if (srcType == -1 && dstType == -1)
     {
@@ -174,25 +174,22 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
         logger(LOG_LEVEL_ERROR, "got an error in 'handleOpcodeBinaryCode': %d", funcsRetVal);
         return funcsRetVal;
     }
-    IC = IC + 1;
+    *IC = *IC + 1;
 
-    /* TODO: insert to binary table */
-
-    /*     
     if (parsedLine->operands != NULL)
     {
-        logger(LOG_LEVEL_DEBUG, "getOperandsBinaryCode");
-        funcsRetVal = getOperandsBinaryCode(parsedLine, symbolTable, binaryCodesTable, *IC);
+        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, IC);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
-            logger(LOG_LEVEL_ERROR, "could get operands binary codes, return error: %d", funcsRetVal);
+            logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
             return funcsRetVal;
         }
-    } */
+    }
 
+    /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    IC = IC + L - 1; /* TODO: why is needed, maybe after each to binary code this updates */
+    /* IC = IC + L - 1; */
 
     return SUCCESS;
 }
@@ -216,7 +213,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
-        printf("#####################################\nDEBUG - read line: %s\n", line);
+        printf("#####################################\n");
+        logger(LOG_LEVEL_DEBUG, "read line: %s", line);
         parsedLine = parseAssemblyLine(line);
         printAssemblyLine(&parsedLine);
 
@@ -239,11 +237,11 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         else if (isDirectiveLine(&parsedLine))
         {
-            printf("DEBUG - DIRECTIVE LINE!\n");
+            logger(LOG_LEVEL_INFO, "DIRECTIVE LINE");
             if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
             {
                 if (isLabel) {
-                    printf("DEBUG - label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>\n", parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_DATA, DC);
                     insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
@@ -279,7 +277,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         
         else if (isCommandLine(&parsedLine)) {
-            logger(LOG_LEVEL_DEBUG, "Command Line\n");
+            logger(LOG_LEVEL_INFO, "COMMAND LINE");
             handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryTableTry, &IC);
             if (handlerRetVal != SUCCESS)
             {

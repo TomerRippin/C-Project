@@ -58,8 +58,28 @@ int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
  * - bits 10-13: 0 (not in use)
  *
  * @return SUCCESS code or ERROR code.
- *
  */
 int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
+
+/**
+ * @brief Creates the binary code of an operand with address type = 0 and inserts to binaryCodesTable.
+ *
+ * The structure of this operand binary code is:
+ * - bits 0-1: ARE codex - 'A' - 00
+ * - bits 2-14: the number in Two's complement method
+ *
+ * @return SUCCESS code or ERROR code.
+ */
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
+
+int handleAdrType1(Operand *operand);
+
+int handleAdrType2(Operand *operand);
+
+int handleAdrType3(Operand *operand);
+
+int handleAdrType3EdgeCase(AssemblyLine *parsedLine);
+
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 #endif /* BINARY_CODE_H */

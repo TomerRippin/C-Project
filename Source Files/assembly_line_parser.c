@@ -281,7 +281,6 @@ int parseOperands(struct AssemblyLine *parsedLine)
     Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     int opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
-    logger(LOG_LEVEL_INFO, "parseOperands, opcodeOperandsNum: %d", opcodeOperandsNum);
     int parseRetVal = 0;
 
     /* Cannot find the operand */
