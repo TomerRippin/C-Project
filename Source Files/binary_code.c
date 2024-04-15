@@ -59,7 +59,7 @@ void reverseBits(char *bitsArray)
     }
 }
 
-char *handleOpcodeBinaryCode(AssemblyLine *parsedLine)
+int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int opcodeCode = getOpcodeCode(parsedLine->instruction);
     int binaryCode = 0;
@@ -78,10 +78,7 @@ char *handleOpcodeBinaryCode(AssemblyLine *parsedLine)
         binaryCode |= (parsedLine->dst->adrType << 4);
     }
 
-    /*
-        logger(LOG_LEVEL_DEBUG, "insert to binaryCodesTable: <%s> at location: <%d>", binaryCode, IC);
-        insertToBinaryCodesTable(binaryCodesTable, IC, parsedLine, binaryCode, parsedLine->src->value);
-    */
+    int funcRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->instruction);
 
-    return convertIntToBinary(binaryCode, BINARY_CODE_LEN);
+    return funcRetVal;
 }

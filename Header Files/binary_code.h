@@ -48,7 +48,7 @@ void reverseBits(char *bitsArray);
 int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int IC);
 
 /**
- * @brief Creates the binary code of an opcode (+ TODO: insert to binaryCodesTable).
+ * @brief Creates the binary code of an opcode and inserts to binaryCodesTable.
  *
  * The structure of opcode binary code is:
  * - bits 0-1: ARE codex - 'A'
@@ -57,10 +57,9 @@ int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
  * - bits 6-9: opcode
  * - bits 10-13: 0 (not in use)
  *
- * @param parsedLine - A pointer to an AssemblyLine struct.
- * @return A string representing the binary code of the assembly instruction.
+ * @return SUCCESS code or ERROR code.
  *
  */
-char *handleOpcodeBinaryCode(AssemblyLine *parsedLine);
+int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 #endif /* BINARY_CODE_H */

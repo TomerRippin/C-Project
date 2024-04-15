@@ -12,7 +12,7 @@
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    AssemblyLine *sourceLine;
+    /* AssemblyLine *sourceLine; */  /* TODO: maybe delete */
     char *binaryCode;
     char *sourceCode; /* TODO: used for pretty prints as in the book, and maybe can replace usage of sourceLine? */
     struct BinaryCodesNode *next;
@@ -28,8 +28,9 @@ typedef struct BinaryCodesTable
 /* Creates a new BinaryCodesTable - allocates memory, initializes it and returns a pointer to the head */
 BinaryCodesTable *createBinaryCodesTable();
 
-/* Inserts a BinaryCodesNode at the beginning of the list */
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode);
+/** Inserts a BinaryCodesNode at the beginning of the list
+ * @return SUCCESS code or ERROR code. */
+int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode);
 
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);

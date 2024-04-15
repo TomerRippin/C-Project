@@ -14,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode)
+int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
@@ -23,19 +23,26 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
+    if (binaryCode == NULL || sourceCode == NULL)
+    {
+        return GENERAL_ERROR;
+    }
+
     newNode->binaryCode = malloc(strlen(binaryCode) + 1);
     strcpy(newNode->binaryCode, binaryCode);
 
     newNode->sourceCode = malloc(strlen(sourceCode) + 1);
     strcpy(newNode->sourceCode, sourceCode);
 
+    /*
+    logger(LOG_LEVEL_DEBUG, "3");
     newNode->sourceLine = malloc(sizeof(AssemblyLine));
     memcpy(newNode->sourceLine, sourceLine, sizeof(AssemblyLine));
-    
+    */
+
     newNode->decAddress = decAddress;
 
     newNode->next = NULL;
-    printAssemblyLine(newNode->sourceLine);
     if (table->head == NULL) {
         table->head = newNode;
     }
@@ -43,13 +50,16 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
         table->last->next = newNode;
     }
     table->last = newNode;
-    table->length++;    
+    table->length++;
+
+    logger(LOG_LEVEL_DEBUG, "Inserted to binaryCodesTable: source code - <%s> | binary code - <%s> | dec address: <%d>", sourceCode, binaryCode, decAddress);
+    return SUCCESS;
 }
 
 void freeBinaryCodesNode(BinaryCodesNode *node)
 {
-    free(node->sourceLine);
     free(node->binaryCode);
+    free(node->sourceCode);
     free(node);
 }
 

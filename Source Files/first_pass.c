@@ -163,14 +163,18 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     funcsRetVal = parseOperands(parsedLine);
     if (funcsRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "could not parse operands, return error: %d", funcsRetVal);
+        logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
         return funcsRetVal;
     }
     printOperandsAfterParsing(parsedLine);
 
-    char *binary = handleOpcodeBinaryCode(parsedLine);
-    logger(LOG_LEVEL_DEBUG, "opcode: %s, binaryCode: %s", parsedLine->instruction, binary);
-    insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, binary, parsedLine->instruction);
+    funcsRetVal = handleOpcodeBinaryCode(parsedLine, binaryCodesTable, IC);
+    if (funcsRetVal != SUCCESS)
+    {
+        logger(LOG_LEVEL_ERROR, "got an error in 'handleOpcodeBinaryCode': %d", funcsRetVal);
+        return funcsRetVal;
+    }
+    IC = IC + 1;
 
     /* TODO: insert to binary table */
 
@@ -188,7 +192,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
 
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    IC = IC + L;
+    IC = IC + L - 1; /* TODO: why is needed, maybe after each to binary code this updates */
 
     return SUCCESS;
 }
