@@ -118,21 +118,43 @@ int handleAdrType3(Operand *operand, int isSource)
     int binaryCode = 0;
     /* Parse the number from the operand */
     int num = atoi(operand->value + 1);
+
+    /* Check if the register number is valid */
     if (num < 1 && num > 8){
         return ERROR_NOT_VALID_REGISTER_NUMBER;
     }
+
     if (isSource){
-        binaryCode |=  (num << 2);
+        /* Add the bits representing the src number to bits 5-7 */
+        binaryCode |= (num << 5);
     }
+
     else {
-        binaryCode |=  (num << 5);
+        /* Add the bits representing the dst number to bits 2-4 */
+        binaryCode |= (num << 2);
     }
     return binaryCode;
 }
 
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine)
 {
-    return SUCCESS;
+    int binaryCode = 0;
+    /* Parse the number from the operand */
+    int srcNum = atoi(parsedLine->src->value + 1);
+    int dstNum = atoi(parsedLine->dst->value + 1);
+
+    /* Check if the register number is valid */
+    if ((srcNum < 1 && srcNum > 8) || (dstNum < 1 && dstNum > 8)){
+        return ERROR_NOT_VALID_REGISTER_NUMBER;
+    }
+
+    /* Add the bits representing the src number to bits 5-7 */
+    binaryCode |= (srcNum << 5);
+
+    /* Add the bits representing the dst number to bits 2-4 */
+    binaryCode |= (dstNum << 2);
+    
+    return binaryCode;
 }
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
@@ -144,7 +166,8 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
 
     if (srcOperand->adrType == 3 && dstOperand->adrType == 3)
     {
-        handlerRetVal = handleAdrType3EdgeCase(parsedLine);
+        binaryCode = handleAdrType3EdgeCase(parsedLine);
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), srcOperand->value);
     }
     else
     {
