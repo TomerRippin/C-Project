@@ -176,20 +176,10 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     }
     *IC = *IC + 1;
 
-    if (parsedLine->operands != NULL)
-    {
-        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, IC);  /* NOTE: this will still work even if operands is null */
-        if (funcsRetVal != SUCCESS)
-        {
-            logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
-            return funcsRetVal;
-        }
-    }
-
     /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    /* IC = IC + L - 1; */
+    *IC = *IC + L - 1;
 
     return SUCCESS;
 }

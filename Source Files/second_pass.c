@@ -2,7 +2,7 @@
 
 int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    /* int IC = 0; */
+    int *IC = 0;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     ListNode *searchResult;
@@ -56,7 +56,15 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
                 logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
                 return funcsRetVal;
             }
-            printOperandsAfterParsing(&parsedLine);
+
+            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC);  /* NOTE: this will still work even if operands is null */
+            if (funcsRetVal != SUCCESS)
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
+                return funcsRetVal;
+            }
+            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            IC = IC + L;
             printOperandsAfterParsing(&parsedLine);
             printf("DEBUG - %d\n", handlerRetVal);
         }
