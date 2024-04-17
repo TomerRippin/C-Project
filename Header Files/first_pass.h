@@ -7,15 +7,15 @@
 
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 
 int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 
-int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
+int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
 /* NOTE: This function does nothing and always returns true */
-int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable);
+int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable);
 
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC);
 
-int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable);
+int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable);

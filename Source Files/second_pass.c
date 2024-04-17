@@ -1,12 +1,12 @@
 #include "../Header Files/second_pass.h"
 
-int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, int *binaryCodesTable)
+int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     /* int IC = 0; */
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     ListNode *searchResult;
-    int handlerRetVal;
+    int handlerRetVal = 0;
 
     /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -50,7 +50,13 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
         else {
             /* TODO: section 7-8 */
             printf("DEBUG - section 7-8\n");
-            handlerRetVal = parseOperands(&parsedLine);
+            int funcsRetVal = parseOperands(&parsedLine);
+            if (funcsRetVal != SUCCESS)
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
+                return funcsRetVal;
+            }
+            printOperandsAfterParsing(&parsedLine);
             printOperandsAfterParsing(&parsedLine);
             printf("DEBUG - %d\n", handlerRetVal);
         }

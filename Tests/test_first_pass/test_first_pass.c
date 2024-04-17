@@ -7,7 +7,7 @@ int main()
 
     LinkedList *symbolTable = createList();
     /* TODO: maybe change type to linkedList? */
-    int binaryCodesTable[MAX_LINES_NUM];
+    BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
 
     /* Open the input files */
     FILE *inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
