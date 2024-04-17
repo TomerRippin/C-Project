@@ -84,7 +84,7 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return funcRetVal;
 }
 
-int handleAdrType0(Operand *operand)
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     /* Parse the number from the operand */
     int num = atoi(operand->value + 1);
@@ -100,7 +100,10 @@ int handleAdrType0(Operand *operand)
     binaryCode |= (num << 2);
     binaryCode |= 0;
 
-    return binaryCode;
+    int handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    *IC = *IC + 1;
+
+    return handlerRetVal;
 }
 
 int handleAdrType1(Operand *operand)
@@ -113,7 +116,7 @@ int handleAdrType2(Operand *operand)
     return SUCCESS;
 }
 
-int handleAdrType3(Operand *operand, int isSource)
+int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int binaryCode = 0;
     /* Parse the number from the operand */
@@ -133,10 +136,13 @@ int handleAdrType3(Operand *operand, int isSource)
         /* Add the bits representing the dst number to bits 2-4 */
         binaryCode |= (num << 2);
     }
-    return binaryCode;
+
+    int handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    *IC = *IC + 1;
+    return handlerRetVal;
 }
 
-int handleAdrType3EdgeCase(AssemblyLine *parsedLine)
+int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int binaryCode = 0;
     /* Parse the number from the operand */
@@ -153,8 +159,10 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine)
 
     /* Add the bits representing the dst number to bits 2-4 */
     binaryCode |= (dstNum << 2);
-    
-    return binaryCode;
+
+    int handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->src->value);
+
+    return handlerRetVal;
 }
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
@@ -162,12 +170,10 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;
     int handlerRetVal;
-    int binaryCode;
 
     if (srcOperand->adrType == 3 && dstOperand->adrType == 3)
     {
-        binaryCode = handleAdrType3EdgeCase(parsedLine);
-        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), srcOperand->value);
+        handlerRetVal = handleAdrType3EdgeCase(parsedLine, binaryCodesTable, IC);
     }
     else
     {
@@ -176,21 +182,18 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            binaryCode = handleAdrType0(srcOperand);
+            handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            binaryCode = handleAdrType1(srcOperand);
+            handlerRetVal = handleAdrType1(srcOperand);
             break;
         case 2:
-            binaryCode = handleAdrType2(srcOperand);
+            handlerRetVal = handleAdrType2(srcOperand);
             break;
         case 3:
-            binaryCode = handleAdrType3(srcOperand, 1);
+            handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, IC);
             break;
         }
-
-        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), srcOperand->value);
-        IC = IC + 1;
 
         if (handlerRetVal != SUCCESS)
         {
@@ -202,20 +205,18 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            binaryCode = handleAdrType0(dstOperand);
+            handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            binaryCode = handleAdrType1(dstOperand);
+            handlerRetVal = handleAdrType1(dstOperand);
             break;
         case 2:
-            binaryCode = handleAdrType2(dstOperand);
+            handlerRetVal = handleAdrType2(dstOperand);
             break;
         case 3:
-            binaryCode = handleAdrType3(dstOperand, 0);
+            handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, IC);
             break;
         }
-        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), srcOperand->value);
-        IC = IC + 1;
 
         if (handlerRetVal != SUCCESS)
         {

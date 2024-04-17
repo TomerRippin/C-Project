@@ -70,15 +70,15 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
  *
  * @return SUCCESS code or ERROR code.
  */
-int handleAdrType0(Operand *operand);
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 int handleAdrType1(Operand *operand);
 
 int handleAdrType2(Operand *operand);
 
-int handleAdrType3(Operand *operand, int isSource);
+int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
-int handleAdrType3EdgeCase(AssemblyLine *parsedLine);
+int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
