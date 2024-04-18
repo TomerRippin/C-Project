@@ -88,3 +88,28 @@ int countOccurrences(char *str, char target)
     }
     return count; /** Return the total count of occurrences */
 }
+
+
+int calculateL(int srcType, int dstType) {
+    int L = 1; /* at least the base word */
+    if (srcType == -1 && dstType == -1)
+    {
+        return L;
+    }
+    else if (srcType == 4 && dstType == 4){
+        return L;
+    }
+    else if (srcType == 0 || srcType == 3 || srcType == 4){
+        L = L + 1;
+    }
+    else if (dstType == 0 || dstType == 3 || srcType == 4){
+        L = L + 1;
+    }
+    else if (dstType == 2){
+        L = L + 2;
+    }
+    else if (srcType == 2){
+        L = L + 2;
+    }
+    return L;
+}
