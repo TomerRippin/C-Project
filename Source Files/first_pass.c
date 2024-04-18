@@ -152,7 +152,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
         return funcsRetVal;
     }
 
-    /* TODO: why is needed, maybe after each to binary code this updates */
+    /* TODO: i dont think IC is correct in our code, we should check if something is wrong */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
     *IC = *IC + L;
