@@ -28,6 +28,7 @@ extern const char *DIRECTIVES[NUM_DIRECTIVES];
 
 typedef struct Opcode
 {
+    int code;
     char *name;
     int operandsNum;
 } Opcode;

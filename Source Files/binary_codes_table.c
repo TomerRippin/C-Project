@@ -14,7 +14,7 @@ BinaryCodesTable *createBinaryCodesTable()
     return table;
 }
 
-void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode)
+int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode)
 {
     BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
     /* TODO: is it really needed? maybe were Magzimim */
@@ -23,20 +23,26 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    printf("DEBUG - in InsertToBinary\n");
+    if (binaryCode == NULL || sourceCode == NULL)
+    {
+        return GENERAL_ERROR;
+    }
+
     newNode->binaryCode = malloc(strlen(binaryCode) + 1);
-    printf("DEBUG - malloc binary \n");
     strcpy(newNode->binaryCode, binaryCode);
-    printf("DEBUG - assign binary \n");
+
+    newNode->sourceCode = malloc(strlen(sourceCode) + 1);
+    strcpy(newNode->sourceCode, sourceCode);
+
+    /*
+    logger(LOG_LEVEL_DEBUG, "3");
     newNode->sourceLine = malloc(sizeof(AssemblyLine));
-    printf("DEBUG - malloc assembly line \n");
     memcpy(newNode->sourceLine, sourceLine, sizeof(AssemblyLine));
-    printf("DEBUG - assign assembly \n");
+    */
+
     newNode->decAddress = decAddress;
-    /*newNode->sourceLine = sourceLine;
-    newNode->binaryCode = binaryCode; */
+
     newNode->next = NULL;
-    printAssemblyLine(newNode->sourceLine);
     if (table->head == NULL) {
         table->head = newNode;
     }
@@ -45,14 +51,15 @@ void insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyL
     }
     table->last = newNode;
     table->length++;
-    printf("DEBUG - operands in list = %s \n\n", table->last->sourceLine->operands);
-    
+
+    logger(LOG_LEVEL_DEBUG, "Inserted to binaryCodesTable: source code - <%s> | binary code - <%s> | dec address: <%d>", sourceCode, binaryCode, decAddress);
+    return SUCCESS;
 }
 
 void freeBinaryCodesNode(BinaryCodesNode *node)
 {
-    free(node->sourceLine);
     free(node->binaryCode);
+    free(node->sourceCode);
     free(node);
 }
 
@@ -74,11 +81,11 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
 void printBinaryList(BinaryCodesTable *list)
 {
     BinaryCodesNode *current = list->head;
-    printf("|    dec    |    binary code    |    operands    |\n");
-    printf("|-----------|-------------------|----------------|\n");
+    printf("|    dec    |    binary code    |    source code     |\n");
+    printf("|-----------|-------------------|--------------------|\n");
     while (current != NULL)
     {
-        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceLine->operands);
+        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceCode);
         current = current->next;
     }
 }
