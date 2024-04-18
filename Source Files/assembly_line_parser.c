@@ -174,7 +174,7 @@ int isValidString(char *str) {
     return 1;
 }
 
-int isRegisterOperand(const char *operand)
+int isValidRegisterOperand(const char *operand)
 {
     int i;
     for (i = 0; i < NUM_REGISTERS; i++)
@@ -210,7 +210,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     }
 
     /* Check for register addressing */
-    if (isRegisterOperand(operand))
+    if (isValidRegisterOperand(operand))
     {
         *operandType = 3;
         return SUCCESS;

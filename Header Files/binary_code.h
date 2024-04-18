@@ -50,7 +50,7 @@ int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
 /**
  * @brief Creates the binary code of an opcode and inserts to binaryCodesTable.
  *
- * The structure of opcode binary code is:
+ * The structure of an opcode's binary code is:
  * - bits 0-1: ARE codex - 'A'
  * - bits 2-3: src operand address type
  * - bits 4-5: dst operand address type
@@ -76,8 +76,34 @@ int handleAdrType1(Operand *operand);
 
 int handleAdrType2(Operand *operand);
 
+/**
+ * @brief Creates the binary code of an operand with address type = 3.
+ * In this case it creates only one binary code and inserts to binaryCodesTable.
+ * 
+ * @param isSource 1/0 - determines if the operand is src or dst
+ *
+ * The structure of this operand binary code is:
+ * - bits 0-1: ARE codex - 'A' - 00
+ * - bits 2-4: if isSource=0 -> the dst register number, else -> 0
+ * - bits 5-7: if isSource=0 -> the src register number, else -> 0
+ * - bist 8-14: 0 (not in use)
+ *
+ * @return SUCCESS code or ERROR code.
+ */
 int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
+/**
+ * @brief Creates the binary code of a src operand and a dst operand with address type = 3.
+ * In this case it creates only one binary code and inserts to binaryCodesTable.
+ *
+ * The structure of this operand binary code is:
+ * - bits 0-1: ARE codex - 'A' - 00
+ * - bits 2-4: the dst register number
+ * - bits 5-7: the src register number
+ * - bist 8-14: 0 (not in use)
+ *
+ * @return SUCCESS code or ERROR code.
+ */
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);

@@ -91,7 +91,7 @@ int isValidString(char *str);
  */
 int isValidLabel(const char *label);
 
-int isRegisterOperand(const char *operand);
+int isValidRegisterOperand(const char *operand);
 
 /**
  * Function to parse the adrType of operand.

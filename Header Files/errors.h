@@ -23,7 +23,7 @@ typedef enum ErrorCode
     ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL = 17,
     ERROR_STRING_IS_NOT_VALID = 18,
     ERROR_UNKNOWN_INSTRUCTION = 19,
-    ERROR_NOT_VALID_REGISTER_NUMBER = 20,
+    ERROR_NOT_VALID_REGISTER = 20,
 } ErrorCode;
 
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */
