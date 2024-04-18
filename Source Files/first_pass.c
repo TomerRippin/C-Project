@@ -124,29 +124,6 @@ int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bina
     return SUCCESS;
 }
 
-int calculateL(int srcType, int dstType) {
-    int L = 1; /* at least the base word */
-    if (srcType == -1 && dstType == -1)
-    {
-        return L;
-    }
-    else if (srcType == 4 && dstType == 4){
-        return L;
-    }
-    else if (srcType == 0 || srcType == 3 || srcType == 4){
-        L = L + 1;
-    }
-    else if (dstType == 0 || dstType == 3 || srcType == 4){
-        L = L + 1;
-    }
-    else if (dstType == 2){
-        L = L + 2;
-    }
-    else if (srcType == 2){
-        L = L + 2;
-    }
-    return L;
-}
 
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
@@ -174,12 +151,11 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
         logger(LOG_LEVEL_ERROR, "got an error in 'handleOpcodeBinaryCode': %d", funcsRetVal);
         return funcsRetVal;
     }
-    *IC = *IC + 1;
 
     /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    *IC = *IC + L - 1;
+    *IC = *IC + L;
 
     return SUCCESS;
 }
