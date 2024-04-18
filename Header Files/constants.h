@@ -22,6 +22,7 @@
 #define NUM_DIRECTIVES 4
 #define NUM_REGISTERS 8
 #define NUM_OPCODES 16
+#define NUM_REGISTERS 8
 
 #define BINARY_CODE_LEN 15
 
