@@ -91,13 +91,23 @@ int isValidString(char *str);
  */
 int isValidLabel(const char *label);
 
+/**
+ * @brief Checks if a register operand is valid.
+ * A valid register starts with 'r' followed by a single digit from 0 to NUM_REGISTERS.
+ * e.g: r1, r8
+ *
+ * @param operand The operand to check.
+ * @return int 1 if the operand is a valid register, and 0 otherwise.
+ */
 int isValidRegisterOperand(const char *operand);
 
 /**
  * Function to parse the adrType of operand.
+ * This function also runs validations on each operand that matches an addressing, 
+ * returns an ERROR if validation failes.
  *
  * @param operand The input operand string to be parsed.
- * @return The adrType of operand.
+ * @return SUCCESS code or ERROR code..
  */
 int parseOperandAdressing(const char *operand, int *operandType);
 
