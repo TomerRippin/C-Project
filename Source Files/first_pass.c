@@ -67,6 +67,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
                 }
             }
         }
+        /* TODO Insert to binaryCodesTable */
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         binaryCodesTable[*DC] = value;
         *DC = *DC + 1;
@@ -175,11 +176,18 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
 
     if (parsedLine->operands != NULL)
     {
-        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, IC);  /* NOTE: this will still work even if operands is null */
+        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, IC);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
-            logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
-            return funcsRetVal;
+            if (funcsRetVal == ERROR_GIVEN_SYMBOL_NOT_EXIST)
+            {
+                /* got an error in AddressType 1, ignore thie error and wait to second pass */
+            }
+            else
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
+                return funcsRetVal;
+            }
         }
     }
 

@@ -17,6 +17,7 @@ char *convertIntToBinary(int num, int len)
     return binary;
 }
 
+/* TODO: delete? not in use anymore */
 char *convertIntToTCBinary(int num, int len)
 {
     char *binary = (char *)malloc(sizeof(char) * len);
@@ -40,6 +41,7 @@ char *convertIntToTCBinary(int num, int len)
     return binary;
 }
 
+/* TODO: delete? not in use anymore */
 void reverseBits(char *bitsArray)
 {
     int start = 0;
@@ -97,7 +99,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         num = (1 << (BINARY_CODE_LEN - 2)) + num;  /* The number is stored in the bits 2-12 */
     }
 
-    /* bits 1-2: ARE codex - 'A' */
+    /* bits 1-2: ARE codex - 'A' - 00 */
     binaryCode |= (num << 2);
     binaryCode |= 0;
 
@@ -107,13 +109,50 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType1(Operand *operand)
+int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    return SUCCESS;
+    ListNode *searchResult;
+    int binaryCode, handlerRetVal, opcodeCode;
+    binaryCode = handlerRetVal = 0;
+
+    opcodeCode = getOpcodeCode(parsedLine->instruction);
+    /* Store the number of operands in the higher bits of binary */
+
+    searchResult = searchList(symbolTable, operand->value);
+    if (searchResult == NULL)
+    {
+        return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
+    {
+        /* bits 1-2: ARE codex - 'R' - 10, label is internal */
+        binaryCode |= (opcodeCode << 2);
+        binaryCode |= 0x2;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+    {
+        /* bits 1-2: ARE codex - 'E' - 01, label is external */
+        binaryCode |= (opcodeCode << 2);
+        binaryCode |= 0x1;
+    }
+    else
+    {
+        freeNode(searchResult);
+        return ERROR_SYMBOL_WRONG_TYPE;
+    }
+
+    /* freeNode(searchResult); */
+
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    *IC = *IC + 1;
+
+    return handlerRetVal;
 }
 
-int handleAdrType2(Operand *operand)
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
+    /* int binaryCode, handlerRetVal;
+    binaryCode = handlerRetVal = 0; */
     return SUCCESS;
 }
 
@@ -178,7 +217,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return handlerRetVal;
 }
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;
@@ -198,10 +237,10 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(srcOperand);
+            handlerRetVal = handleAdrType1(srcOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(srcOperand);
+            handlerRetVal = handleAdrType2(srcOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 3:
             handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, IC);
@@ -221,10 +260,10 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(dstOperand);
+            handlerRetVal = handleAdrType1(dstOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(dstOperand);
+            handlerRetVal = handleAdrType2(dstOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 3:
             handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, IC);

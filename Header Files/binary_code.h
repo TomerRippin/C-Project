@@ -54,7 +54,7 @@ int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
  * - bits 0-1: ARE codex - 'A'
  * - bits 2-3: src operand address type
  * - bits 4-5: dst operand address type
- * - bits 6-9: opcode
+ * - bits 6-9: the opcode code
  * - bits 10-13: 0 (not in use)
  *
  * @return SUCCESS code or ERROR code.
@@ -72,9 +72,20 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
  */
 int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
-int handleAdrType1(Operand *operand);
+/**
+ * @brief Creates the binary code of an operand with address type = 1 and inserts to binaryCodesTable.
+ *
+ * The structure of this operand binary code is:
+ * - bits 0-1: ARE codex:
+ *                          - 'R' - 10 - for internal symbol
+ *                          - 'E' - 01 - for external symbol
+ * - bits 2-14: the opcode code
+ *
+ * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type).
+ */
+int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
 
-int handleAdrType2(Operand *operand);
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
 /**
  * @brief Creates the binary code of an operand with address type = 3.
@@ -106,6 +117,6 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
  */
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
 
 #endif /* BINARY_CODE_H */
