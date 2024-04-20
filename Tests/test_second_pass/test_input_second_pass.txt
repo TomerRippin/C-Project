@@ -10,7 +10,6 @@ mov #12,W
 mov STR[5],STR[2]
 sub r1,r4
 L1: inc K
-bne LOOP
 .define len=4
 LIST: .data 6,-9,len
 lea STR,W

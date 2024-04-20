@@ -52,4 +52,16 @@ char *strdup(const char *source);
  */
 int countOccurrences(char *str, char target);
 
+
+/**
+ * This function calculates the number L that represents how many words of information in total the instruction needs.
+ * It based on the srcType and dstType of the operands.
+ *
+ * @param srcType The adressing type of the src Operand. 
+ * @param dstType The adressing type of the dst Operand
+ *
+ * @return How many words of information the command needs.
+ */
+int calculateL(int srcType, int dstType);
+
 #endif /* UTILS_H */
