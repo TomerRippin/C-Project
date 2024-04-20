@@ -8,7 +8,7 @@
 /* handles a line in format <label:> .define <symbol>=<value> */
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable);
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC);
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 
 int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 

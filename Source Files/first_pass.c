@@ -32,11 +32,11 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
     }
 }
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
-    int value;
+    int value, handlerRetVal;
 
     while (token != NULL)
     {
@@ -67,8 +67,12 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
                 }
             }
         }
+        /* TODO Insert to binaryCodesTable */
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
-        binaryCodesTable[*DC] = value;
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
+        if (handlerRetVal != SUCCESS){
+            return handlerRetVal;
+        }
         *DC = *DC + 1;
 
         token = strtok(NULL, ",");
@@ -175,11 +179,18 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
 
     if (parsedLine->operands != NULL)
     {
-        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, IC);  /* NOTE: this will still work even if operands is null */
+        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, IC);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
-            logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
-            return funcsRetVal;
+            if (funcsRetVal == ERROR_GIVEN_SYMBOL_NOT_EXIST)
+            {
+                /* got an error in AddressType 1, ignore thie error and wait to second pass */
+            }
+            else
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
+                return funcsRetVal;
+            }
         }
     }
 
@@ -244,7 +255,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryTableTry, &DC);
                 }
                 else
                 {

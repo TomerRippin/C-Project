@@ -89,21 +89,21 @@ void printOperandsAfterParsing(AssemblyLine *parsedLine) {
     printf("--------------\n");
     if (parsedLine->src != NULL)
     {
-        printf("Source Operand Adress Address Type: %d\n", parsedLine->src->adrType);
-        printf("Source Operand Value: %s\n", parsedLine->src->value ? parsedLine->src->value : "(null)");
+        printf("Src Operand Adress Type: %d\n", parsedLine->src->adrType);
+        printf("Src Operand Value: %s\n", parsedLine->src->value ? parsedLine->src->value : "(null)");
     }
     else
     {
-        printf("Source Operand: (null)\n");
+        printf("Src Operand: (null)\n");
     }
     if (parsedLine->dst != NULL)
     {
-        printf("Destination Operand Type: %d\n", parsedLine->dst->adrType);
-        printf("Destination Operand Value: %s\n", parsedLine->dst->value ? parsedLine->dst->value : "(null)");
+        printf("Dst Operand Address Type: %d\n", parsedLine->dst->adrType);
+        printf("Dst Operand Value: %s\n", parsedLine->dst->value ? parsedLine->dst->value : "(null)");
     }
     else
     {
-        printf("Destination Operand: (null)\n");
+        printf("Dst Operand: (null)\n");
     }
     printf("--------------\n");
 }
@@ -195,7 +195,9 @@ int isValidRegisterOperand(const char *operand)
 int parseOperandAdressing(const char *operand, int *operandType)
 {
     const char *labelEnd;
-   
+    char *label;
+    char *index;
+
     if (*operand == '\0')
     {
         *operandType = -1;
@@ -214,7 +216,8 @@ int parseOperandAdressing(const char *operand, int *operandType)
         }
         else
         {
-            return ERROR_OPERAND_NOT_VALID;
+            *operandType = 0;
+            return SUCCESS;
         }
     }
 
@@ -228,13 +231,29 @@ int parseOperandAdressing(const char *operand, int *operandType)
     labelEnd = strchr(operand, '[');
     if (labelEnd != NULL)
     {
+        const int labelLen = labelEnd - operand;
         /* Check if the label is followed by '[' and ']' */ 
         const char *indexStart = labelEnd + 1;
         const char *indexEnd = strchr(indexStart, ']');
-        if (indexEnd != NULL && labelEnd - operand > 0 && indexEnd - indexStart > 0) {
-            /* TODO: Check if the label contains only valid characters */ 
-            /* TODO: Check if the index contains only digits its hard because it might have a define in it like LIST[sz] */
+        if (indexEnd != NULL && labelLen > 0 && indexEnd - indexStart > 0) {
+            label = malloc(labelLen + 1);
+            strncpy(label, operand, labelLen);
+            label[labelLen] = '\0';
+            index = malloc(indexEnd - indexStart + 1); /* +1 for the null-terminator */
+            strncpy(index, labelEnd + 1, indexEnd - indexStart); /* +1 to exclude the '[' character */
+            index[indexEnd - indexStart] = '\0';
+
+            /* Validate label and validate index (number or a valid label) */
+            if ((!isValidLabel(label)) || (!isNumber(index) && !isValidLabel(index)))
+            {
+                free(label);
+                free(index);
+                return ERROR_LABEL_NOT_VALID;
+            }
+
             *operandType = 2;
+            free(label);
+            free(index);
             return SUCCESS;
         }
     }
@@ -331,7 +350,6 @@ int parseOperands(struct AssemblyLine *parsedLine)
         }
         /* Only one argument, should be destination */
         strcpy(potDest, parsedLine->operands);
-        printf("4 potSrc: %s, potDest: %s, parseRetVal: %d\n", potSrc, potDest, parseRetVal);
     }
 
     /* if no operands */

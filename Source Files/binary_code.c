@@ -17,6 +17,7 @@ char *convertIntToBinary(int num, int len)
     return binary;
 }
 
+/* TODO: delete? not in use anymore */
 char *convertIntToTCBinary(int num, int len)
 {
     char *binary = (char *)malloc(sizeof(char) * len);
@@ -40,6 +41,7 @@ char *convertIntToTCBinary(int num, int len)
     return binary;
 }
 
+/* TODO: delete? not in use anymore */
 void reverseBits(char *bitsArray)
 {
     int start = 0;
@@ -97,7 +99,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         num = (1 << (BINARY_CODE_LEN - 2)) + num;  /* The number is stored in the bits 2-12 */
     }
 
-    /* bits 1-2: ARE codex - 'A' */
+    /* bits 1-2: ARE codex - 'A' - 00 */
     binaryCode |= (num << 2);
     binaryCode |= 0;
 
@@ -107,14 +109,127 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType1(Operand *operand)
+int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    return SUCCESS;
+    ListNode *searchResult;
+    int binaryCode, handlerRetVal, opcodeCode;
+    binaryCode = handlerRetVal = 0;
+
+    opcodeCode = getOpcodeCode(parsedLine->instruction);
+    /* Store the number of operands in the higher bits of binary */
+
+    searchResult = searchList(symbolTable, operand->value);
+    if (searchResult == NULL)
+    {
+        return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
+    {
+        /* bits 1-2: ARE codex - 'R' - 10, label is internal */
+        binaryCode |= (opcodeCode << 2);
+        binaryCode |= 0x2;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+    {
+        /* bits 1-2: ARE codex - 'E' - 01, label is external */
+        binaryCode |= (opcodeCode << 2);
+        binaryCode |= 0x1;
+    }
+    else
+    {
+        return ERROR_SYMBOL_WRONG_TYPE;
+    }
+
+    /* freeNode(searchResult); */
+
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    *IC = *IC + 1;
+
+    return handlerRetVal;
 }
 
-int handleAdrType2(Operand *operand)
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    return SUCCESS;
+    int labelAddressBinaryCode, indexBinaryCode, handlerRetVal;
+    labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
+    const char *labelEnd = strchr(operand->value, '[');
+    const char *indexEnd = strchr(labelEnd, ']');
+    char *label;
+    char *index;
+    int labelLen;
+    int indexLen;
+    ListNode *searchResult;
+
+    if (labelEnd == NULL || indexEnd == NULL)
+    {
+        /* Just in case, but this should not be thrown because already checked!! */
+        return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
+    }
+
+    labelLen = labelEnd - operand->value;
+    label = malloc(labelLen + 1);
+    strncpy(label, operand->value, labelLen);
+    label[labelLen] = '\0';
+
+    searchResult = searchList(symbolTable, label);
+    if (searchResult == NULL)
+    {
+        return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
+    {
+        /* bits 0-1: ARE codex - 'R' - 10, label is internal */
+        labelAddressBinaryCode |= 0x2;
+    }
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+    {
+        /* bits 0-1: ARE codex - 'E' - 01, label is external */
+        labelAddressBinaryCode |= 0x1;
+    }
+    else
+    {
+        return ERROR_SYMBOL_WRONG_TYPE;
+    }
+
+    /* bits 2-13 are the address of the label */
+    labelAddressBinaryCode |= (searchResult->lineNumber << 2);
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(labelAddressBinaryCode, BINARY_CODE_LEN), label);
+
+    if (handlerRetVal != SUCCESS){
+        return handlerRetVal;
+    }
+
+    /* handle the index */
+    indexLen = indexEnd - labelEnd - 1; /* -1 to exclude the '[' character */
+    index = malloc(indexLen + 1);
+    strncpy(index, labelEnd + 1, indexLen); /* +1 to exclude the '[' character */
+    index[indexLen] = '\0';
+
+    if (isNumber(index))
+    {
+        /* bits 2-13 represent the index. bits 0-1 always 0 */
+        indexBinaryCode |= (atoi(index) << 2);
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
+    }
+    else
+    {
+        /* search for the index if it is defiend elsewhere in the code */
+        searchResult = searchList(symbolTable, index);
+        if (searchResult == NULL){
+            return ERROR_INDEX_NOT_NUMBER_AND_NOT_DEFINED;
+        }
+        if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE)){
+            return ERROR_INDEX_NOT_DEFINE_OR_NUMBER;
+        }
+        /* bits 2-13 represent the index. bits 0-1 always 0 */
+        indexBinaryCode |= (searchResult->lineNumber << 2);
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
+    }
+
+    free(label);
+    free(index);
+
+    return handlerRetVal;
 }
 
 int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
@@ -178,7 +293,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return handlerRetVal;
 }
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;
@@ -198,10 +313,10 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(srcOperand);
+            handlerRetVal = handleAdrType1(srcOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(srcOperand);
+            handlerRetVal = handleAdrType2(srcOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 3:
             handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, IC);
@@ -221,10 +336,10 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(dstOperand);
+            handlerRetVal = handleAdrType1(dstOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(dstOperand);
+            handlerRetVal = handleAdrType2(dstOperand, parsedLine, binaryCodesTable, symbolTable, IC);
             break;
         case 3:
             handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, IC);

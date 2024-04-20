@@ -3,12 +3,12 @@ LIL: .data 5,834
 STR: .string "abcdef"
 MAIN: jmp L1
 prn #-5
-mov STR[5],STR[2]
+mov STR[sz],STR[2]
 sub r1,r4
-sub #8,r3
-L1: inc K
+sub #-10,r3
 bne LOOP
 .define len=4
 LIST: .data 6,-9,len
 K: .data 22
 END: hlt
+L1: inc K
