@@ -3,15 +3,17 @@
 int main()
 {
     int retVal;
-    printf("Starting main - test_first_pass!\n");
-
-    LinkedList *symbolTable = createList();
+    LinkedList *symbolTable;
     /* TODO: maybe change type to linkedList? */
     int binaryCodesTable[MAX_LINES_NUM];
+    FILE *inputFile, *inputFile2;
+
+    printf("Starting main - test_first_pass!\n");
+    symbolTable = createList();
 
     /* Open the input files */
-    FILE *inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
-    FILE *inputFile2 = fopen("./Tests/test_first_pass/test_input_first_pass_symbol_exist.txt", "r");
+    inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
+    inputFile2 = fopen("./Tests/test_first_pass/test_input_first_pass_symbol_exist.txt", "r");
 
     if (inputFile == NULL)
     {

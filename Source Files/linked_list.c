@@ -33,6 +33,7 @@ ListNode *searchList(LinkedList *list, char *targetName) {
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 {
     ListNode *searchResult;
+    ListNode *new_node;
 
     searchResult = searchList(list, name);
 
@@ -42,7 +43,7 @@ void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
     }
 
     /* Create a new node */ 
-    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
+    new_node = (ListNode *)malloc(sizeof(ListNode));
     if (new_node == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
