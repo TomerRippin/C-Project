@@ -32,11 +32,11 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
     }
 }
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
+int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
-    int value;
+    int value, handlerRetVal;
 
     while (token != NULL)
     {
@@ -69,7 +69,10 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
         }
         /* TODO Insert to binaryCodesTable */
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
-        binaryCodesTable[*DC] = value;
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
+        if (handlerRetVal != SUCCESS){
+            return handlerRetVal;
+        }
         *DC = *DC + 1;
 
         token = strtok(NULL, ",");
@@ -252,7 +255,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryTableTry, &DC);
                 }
                 else
                 {
