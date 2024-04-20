@@ -85,7 +85,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
  */
 int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
 
-int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
 
 /**
  * @brief Creates the binary code of an operand with address type = 3.
