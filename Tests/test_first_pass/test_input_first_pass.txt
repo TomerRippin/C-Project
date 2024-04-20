@@ -5,6 +5,7 @@ MAIN: jmp L1
 prn #-5
 mov STR[5],STR[2]
 sub r1,r4
+sub #8,r3
 L1: inc K
 bne LOOP
 .define len=4

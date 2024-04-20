@@ -7,8 +7,6 @@ const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry
 
 int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 {
-    logger(LOG_LEVEL_DEBUG, "handleDefine");
-    /* handles a line in format <label:> .define <symbol>=<value> */
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
     {
@@ -36,7 +34,6 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
 
 int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable, int *DC)
 {
-    logger(LOG_LEVEL_DEBUG, "handleDataDirective");
     char *token = strtok(parsedLine->operands, ",");
     ListNode *searchResult;
     int value;
@@ -81,10 +78,11 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *
 
 int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
-    logger(LOG_LEVEL_DEBUG, "handleStringDirective");
-    int stringLen = strlen(parsedLine->operands);
-    int i;
+    int stringLen, i;
     char binaryCode[BINARY_CODE_LEN];
+    char *intToBinaryRes;
+
+    stringLen = strlen(parsedLine->operands);
     memset(binaryCode, '\0', sizeof(binaryCode));
 
     if (isValidString(parsedLine->operands) == 0) {
@@ -93,7 +91,7 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
 
     for (i = 1; i < stringLen - 1; i++) {
         /* converts the ASCII value of the character to a binary string */
-        char *intToBinaryRes = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
+        intToBinaryRes = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
         strcpy(binaryCode, intToBinaryRes);
         /*
         logger(LOG_LEVEL_DEBUG, "Insert to binaryCodesTable: <%c>-<%d>, at location: <%d>", parsedLine->operands[i], parsedLine->operands[i], *DC);
@@ -106,8 +104,8 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
     return SUCCESS;
 }
 
-int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    logger(LOG_LEVEL_DEBUG, "handleExternDirective");
+int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable)
+{
     if (parsedLine->label != NULL) {
         printf("WARNING: extern line contains label: <%s>", parsedLine->label);
     }
@@ -119,8 +117,8 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
     return SUCCESS;
 }
 
-int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable) {
-    logger(LOG_LEVEL_DEBUG, "handleEntryDirective");
+int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable)
+{
     return SUCCESS;
 }
 
@@ -150,7 +148,6 @@ int calculateL(int srcType, int dstType) {
 
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    logger(LOG_LEVEL_DEBUG, "handleCommandLine");
     int funcsRetVal, L;
 
     if (parsedLine->label != NULL)
@@ -206,6 +203,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
     AssemblyLine parsedLine;
     int handlerRetVal;
     BinaryCodesTable *binaryTableTry = createBinaryCodesTable();
+    ListNode *current;
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -294,7 +292,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         isLabel = 0;
     }
 
-    ListNode *current = symbolTable->head;
+    current = symbolTable->head;
     while (current != NULL)
     {
         if (strcmp(current->data, SYMBOL_TYPE_DATA) == 0)
