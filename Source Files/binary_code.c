@@ -150,8 +150,8 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    int binaryCode, handlerRetVal;
-    binaryCode = handlerRetVal = 0;
+    int labelAddressBinaryCode, indexBinaryCode, handlerRetVal;
+    labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
     const char *labelEnd = strchr(operand->value, '[');
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
@@ -163,12 +163,12 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     if (labelEnd == NULL || indexEnd == NULL)
     {
         /* Just in case, but this should not be thrown because already checked!! */
-        ERROR_ADDRESSING_TYPE_NOT_MATCHING;
+        return ERROR_ADDRESSING_TYPE_NOT_MATCHING;
     }
 
-    labelEnd - operand->value;
+    labelLen = labelEnd - operand->value;
     label = malloc(labelLen + 1);
-    strncpy(label, operand, labelLen);
+    strncpy(label, operand->value, labelLen);
     label[labelLen] = '\0';
 
     searchResult = searchList(symbolTable, label);
@@ -178,17 +178,28 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
     {
-        /* bits 1-2: ARE codex - 'R' - 10, label is internal */
+        /* bits 0-1: ARE codex - 'R' - 10, label is internal */
+        labelAddressBinaryCode |= 0x2;
     }
     else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
     {
-        /* bits 1-2: ARE codex - 'E' - 01, label is external */
+        /* bits 0-1: ARE codex - 'E' - 01, label is external */
+        labelAddressBinaryCode |= 0x1;
     }
     else
     {
         return ERROR_SYMBOL_WRONG_TYPE;
     }
 
+    /* bits 2-13 are the address of the label */
+    labelAddressBinaryCode |= (searchResult->lineNumber << 2);
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(labelAddressBinaryCode, BINARY_CODE_LEN), label);
+
+    if (handlerRetVal != SUCCESS){
+        return handlerRetVal;
+    }
+
+    /* handle the index */
     indexLen = indexEnd - labelEnd - 1; /* -1 to exclude the '[' character */
     index = malloc(indexLen + 1);
     strncpy(index, labelEnd + 1, indexLen); /* +1 to exclude the '[' character */
@@ -196,21 +207,29 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
     if (isNumber(index))
     {
-        /* TODO: */
-        return SUCCESS;
+        /* bits 2-13 represent the index. bits 0-1 always 0 */
+        indexBinaryCode |= (atoi(index) << 2);
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
     }
     else
     {
-        /* TODO: */
-        return SUCCESS;
+        /* search for the index if it is defiend elsewhere in the code */
+        searchResult = searchList(symbolTable, index);
+        if (searchResult == NULL){
+            return ERROR_INDEX_NOT_NUMBER_AND_NOT_DEFINED;
+        }
+        if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE)){
+            return ERROR_INDEX_NOT_DEFINE_OR_NUMBER;
+        }
+        /* bits 2-13 represent the index. bits 0-1 always 0 */
+        indexBinaryCode |= (searchResult->lineNumber << 2);
+        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
     }
-
-    /* TODO: insert to binary list */
 
     free(label);
     free(index);
 
-    return SUCCESS;
+    return handlerRetVal;
 }
 
 int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)

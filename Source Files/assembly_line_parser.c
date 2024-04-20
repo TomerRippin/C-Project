@@ -216,7 +216,8 @@ int parseOperandAdressing(const char *operand, int *operandType)
         }
         else
         {
-            return ERROR_OPERAND_NOT_VALID;
+            *operandType = 0;
+            return SUCCESS;
         }
     }
 
