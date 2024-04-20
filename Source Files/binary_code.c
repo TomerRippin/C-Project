@@ -88,7 +88,8 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 {
     /* Parse the number from the operand */
     int num = atoi(operand->value + 1);
-    int binaryCode = 0;
+    int binaryCode, handlerRetVal;
+    binaryCode = handlerRetVal = 0;
 
     /* If the number is negative, compute its two's complement */
     if (num < 0)
@@ -100,9 +101,10 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     binaryCode |= (num << 2);
     binaryCode |= 0;
 
-    int funcRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
     *IC = *IC + 1;
-    return funcRetVal;
+
+    return handlerRetVal;
 }
 
 int handleAdrType1(Operand *operand)
@@ -115,25 +117,76 @@ int handleAdrType2(Operand *operand)
     return SUCCESS;
 }
 
-int handleAdrType3(Operand *operand)
+int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    return SUCCESS;
+    int binaryCode, handlerRetVal;
+    int num;
+    binaryCode = handlerRetVal = 0;
+
+    /* Parse the number from the operand */
+    num = atoi(operand->value + 1);
+
+    /* Check if the register number is valid */
+    /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
+    if (num < 1 || num > 8){
+        return ERROR_NOT_VALID_REGISTER;
+    }
+
+    if (isSource){
+        /* Add the bits representing the src number to bits 5-7 */
+        binaryCode |= (num << 5);
+    }
+    else {
+        /* Add the bits representing the dst number to bits 2-4 */
+        binaryCode |= (num << 2);
+    }
+
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), operand->value);
+    *IC = *IC + 1;
+
+    return handlerRetVal;
 }
 
-int handleAdrType3EdgeCase(AssemblyLine *parsedLine)
+int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    return SUCCESS;
+    int binaryCode, handlerRetVal, srcNum, dstNum;
+    binaryCode = handlerRetVal = 0;
+
+    if (isValidRegisterOperand(parsedLine->src->value) != 1 || isValidRegisterOperand(parsedLine->dst->value) != 1)
+    {
+        return ERROR_NOT_VALID_REGISTER;
+    }
+
+    /* Parse the number from the operand */
+    srcNum = atoi(parsedLine->src->value + 1);
+    dstNum = atoi(parsedLine->dst->value + 1);
+
+    /* Check if the register number is valid
+    if ((srcNum < 1 || srcNum > 8) || (dstNum < 1 || dstNum > 8)){
+        return ERROR_NOT_VALID_REGISTER;
+    }*/
+
+    /* Add the bits representing the src number to bits 5-7 */
+    binaryCode |= (srcNum << 5);
+
+    /* Add the bits representing the dst number to bits 2-4 */
+    binaryCode |= (dstNum << 2);
+
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->operands);
+    *IC = *IC + 1;
+
+    return handlerRetVal;
 }
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;
-    int handlerRetVal;
+    int handlerRetVal = 0;
 
     if (srcOperand->adrType == 3 && dstOperand->adrType == 3)
     {
-        handlerRetVal = handleAdrType3EdgeCase(parsedLine);
+        handlerRetVal = handleAdrType3EdgeCase(parsedLine, binaryCodesTable, IC);
     }
     else
     {
@@ -143,12 +196,16 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             break;
         case 0:
             handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, IC);
+            break;
         case 1:
-            handlerRetVal= handleAdrType1(srcOperand);
+            handlerRetVal = handleAdrType1(srcOperand);
+            break;
         case 2:
             handlerRetVal = handleAdrType2(srcOperand);
+            break;
         case 3:
-            handlerRetVal = handleAdrType3(srcOperand);
+            handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, IC);
+            break;
         }
 
         if (handlerRetVal != SUCCESS)
@@ -162,12 +219,16 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
             break;
         case 0:
             handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, IC);
+            break;
         case 1:
             handlerRetVal = handleAdrType1(dstOperand);
+            break;
         case 2:
             handlerRetVal = handleAdrType2(dstOperand);
+            break;
         case 3:
-            handlerRetVal = handleAdrType3(dstOperand);
+            handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, IC);
+            break;
         }
 
         if (handlerRetVal != SUCCESS)

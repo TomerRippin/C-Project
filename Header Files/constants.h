@@ -20,6 +20,7 @@
 #define SYMBOL_TYPE_CODE "code"
 
 #define NUM_DIRECTIVES 4
+#define NUM_REGISTERS 8
 #define NUM_OPCODES 16
 #define NUM_REGISTERS 8
 

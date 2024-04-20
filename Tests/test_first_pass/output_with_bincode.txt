@@ -8,6 +8,7 @@ Label: (none)
 Instruction: .define
 Operands: sz=2
 --------------
+[34m[DEBUG]: [0mhandleDefine
 DEBUG - Inserting to symbol table: <sz>, type: <mdefine>, at location: <2>
 #####################################
 [34m[DEBUG]: [0mread line: LIL: .data 5,834
@@ -18,6 +19,7 @@ Operands: 5,834
 --------------
 [32m[INFO]: [0mDIRECTIVE LINE
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <LIL>, type: <data>, at location: <0>
+[34m[DEBUG]: [0mhandleDataDirective
 DEBUG - Insert to binaryCodesTable: <5>, at location: <0>
 DEBUG - Insert to binaryCodesTable: <834>, at location: <1>
 #####################################
@@ -29,6 +31,7 @@ Operands: "abcdef"
 --------------
 [32m[INFO]: [0mDIRECTIVE LINE
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <STR>, type: <data>, at location: <2>
+[34m[DEBUG]: [0mhandleStringDirective
 [34m[DEBUG]: [0minsert to binaryCodesTable: <a>-<00000001100001> at location: <2>
 [34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <abcdef"> | binary code - <00000001100001> | dec address: <2>
 [34m[DEBUG]: [0minsert to binaryCodesTable: <b>-<00000001100010> at location: <3>
@@ -49,6 +52,7 @@ Instruction: jmp
 Operands: L1
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <MAIN>, type: <code>, at location: <100>
 [34m[DEBUG]: [0mparsing operands
 4 potSrc: , potDest: L1, parseRetVal: 0
@@ -68,6 +72,7 @@ Instruction: prn
 Operands: #-5
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mparsing operands
 4 potSrc: , potDest: #-5, parseRetVal: 0
 --------------
@@ -87,6 +92,7 @@ Instruction: mov
 Operands: STR[5],STR[2]
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mparsing operands
 --------------
 Source Operand Adress Address Type: 2
@@ -104,6 +110,7 @@ Instruction: sub
 Operands: r1,r4
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mparsing operands
 --------------
 Source Operand Adress Address Type: 3
@@ -112,26 +119,6 @@ Destination Operand Type: 3
 Destination Operand Value: r4
 --------------
 [34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <sub> | binary code - <000000011111100> | dec address: <105>
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <r1,r4> | binary code - <000000000110000> | dec address: <106>
-[34m[DEBUG]: [0mcalculated L = 2
-#####################################
-[34m[DEBUG]: [0mread line: sub #8,r3
---------------
-Label: (none)
-Instruction: sub
-Operands: #8,r3
---------------
-[32m[INFO]: [0mCOMMAND LINE
-[34m[DEBUG]: [0mparsing operands
---------------
-Source Operand Adress Address Type: 0
-Source Operand Value: #8
-Destination Operand Type: 3
-Destination Operand Value: r3
---------------
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <sub> | binary code - <000000011110000> | dec address: <107>
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <#8> | binary code - <000000000100000> | dec address: <108>
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <r3> | binary code - <000000000001100> | dec address: <109>
 [34m[DEBUG]: [0mcalculated L = 2
 #####################################
 [34m[DEBUG]: [0mread line: L1: inc K
@@ -141,7 +128,8 @@ Instruction: inc
 Operands: K
 --------------
 [32m[INFO]: [0mCOMMAND LINE
-[34m[DEBUG]: [0mlabel found, insert to symbol table: <L1>, type: <code>, at location: <110>
+[34m[DEBUG]: [0mhandleCommandLine
+[34m[DEBUG]: [0mlabel found, insert to symbol table: <L1>, type: <code>, at location: <106>
 [34m[DEBUG]: [0mparsing operands
 4 potSrc: , potDest: K, parseRetVal: 0
 --------------
@@ -150,7 +138,7 @@ Source Operand Value:
 Destination Operand Type: 1
 Destination Operand Value: K
 --------------
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <inc> | binary code - <000000111010000> | dec address: <111>
+[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <inc> | binary code - <000000111010000> | dec address: <107>
 [34m[DEBUG]: [0mcalculated L = 1
 #####################################
 [34m[DEBUG]: [0mread line: bne LOOP
@@ -160,6 +148,7 @@ Instruction: bne
 Operands: LOOP
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mparsing operands
 4 potSrc: , potDest: LOOP, parseRetVal: 0
 --------------
@@ -168,7 +157,7 @@ Source Operand Value:
 Destination Operand Type: 1
 Destination Operand Value: LOOP
 --------------
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <bne> | binary code - <000001010010000> | dec address: <112>
+[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <bne> | binary code - <000001010010000> | dec address: <108>
 [34m[DEBUG]: [0mcalculated L = 1
 #####################################
 [34m[DEBUG]: [0mread line: .define len=4
@@ -177,6 +166,7 @@ Label: (none)
 Instruction: .define
 Operands: len=4
 --------------
+[34m[DEBUG]: [0mhandleDefine
 DEBUG - Inserting to symbol table: <len>, type: <mdefine>, at location: <4>
 #####################################
 [34m[DEBUG]: [0mread line: LIST: .data 6,-9,len
@@ -187,6 +177,7 @@ Operands: 6,-9,len
 --------------
 [32m[INFO]: [0mDIRECTIVE LINE
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <LIST>, type: <data>, at location: <8>
+[34m[DEBUG]: [0mhandleDataDirective
 DEBUG - Insert to binaryCodesTable: <6>, at location: <8>
 DEBUG - Insert to binaryCodesTable: <-9>, at location: <9>
 DEBUG - found a symbol: <len> in the symbolTable, converting to value: <4>
@@ -200,6 +191,7 @@ Operands: 22
 --------------
 [32m[INFO]: [0mDIRECTIVE LINE
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <K>, type: <data>, at location: <11>
+[34m[DEBUG]: [0mhandleDataDirective
 DEBUG - Insert to binaryCodesTable: <22>, at location: <11>
 #####################################
 [34m[DEBUG]: [0mread line: END: hlt
@@ -209,7 +201,8 @@ Instruction: hlt
 Operands: (null)
 --------------
 [32m[INFO]: [0mCOMMAND LINE
-[34m[DEBUG]: [0mlabel found, insert to symbol table: <END>, type: <code>, at location: <113>
+[34m[DEBUG]: [0mhandleCommandLine
+[34m[DEBUG]: [0mlabel found, insert to symbol table: <END>, type: <code>, at location: <109>
 [34m[DEBUG]: [0mparsing operands
 --------------
 Source Operand Adress Address Type: -1
@@ -217,7 +210,7 @@ Source Operand Value: (null)
 Destination Operand Type: -1
 Destination Operand Value: (null)
 --------------
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <hlt> | binary code - <000001111000000> | dec address: <114>
+[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <hlt> | binary code - <000001111000000> | dec address: <110>
 [34m[DEBUG]: [0mcalculated L = 1
 |    dec    |    binary code    |    source code     |
 |-----------|-------------------|--------------------|
@@ -232,25 +225,21 @@ Destination Operand Value: (null)
 |     103     |  111111111101100  |      #-5     |
 |     104     |  000000000101000  |      mov     |
 |     105     |  000000011111100  |      sub     |
-|     106     |  000000000110000  |      r1,r4     |
-|     107     |  000000011110000  |      sub     |
-|     108     |  000000000100000  |      #8     |
-|     109     |  000000000001100  |      r3     |
-|     111     |  000000111010000  |      inc     |
-|     112     |  000001010010000  |      bne     |
-|     114     |  000001111000000  |      hlt     |
+|     107     |  000000111010000  |      inc     |
+|     108     |  000001010010000  |      bne     |
+|     110     |  000001111000000  |      hlt     |
 --- Finished First Pass with SUCCESS result! ---
 Printing symbolTable
 |    Name    |    Data    |    LineNum    |
 |------------|------------|---------------|
-|    END    |    code    |       113      |
-|    K    |    data    |       126      |
-|    LIST    |    data    |       123      |
+|    END    |    code    |       109      |
+|    K    |    data    |       122      |
+|    LIST    |    data    |       119      |
 |    len    |    mdefine    |       4      |
-|    L1    |    code    |       110      |
+|    L1    |    code    |       106      |
 |    MAIN    |    code    |       100      |
-|    STR    |    data    |       117      |
-|    LIL    |    data    |       115      |
+|    STR    |    data    |       113      |
+|    LIL    |    data    |       111      |
 |    sz    |    mdefine    |       2      |
 Input file: test_input_first_pass_symbol_exist
 #####################################
@@ -260,6 +249,7 @@ Label: (none)
 Instruction: .define
 Operands: sz=2
 --------------
+[34m[DEBUG]: [0mhandleDefine
 DEBUG - Inserting to symbol table: <sz>, type: <mdefine>, at location: <2>
 #####################################
 [34m[DEBUG]: [0mread line: LIL: .data 5
@@ -270,6 +260,7 @@ Operands: 5
 --------------
 [32m[INFO]: [0mDIRECTIVE LINE
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <LIL>, type: <data>, at location: <0>
+[34m[DEBUG]: [0mhandleDataDirective
 DEBUG - Insert to binaryCodesTable: <5>, at location: <0>
 #####################################
 [34m[DEBUG]: [0mread line: MAIN: mov r3,LIST[sz]
@@ -279,6 +270,7 @@ Instruction: mov
 Operands: r3,LIST[sz]
 --------------
 [32m[INFO]: [0mCOMMAND LINE
+[34m[DEBUG]: [0mhandleCommandLine
 [34m[DEBUG]: [0mlabel found, insert to symbol table: <MAIN>, type: <code>, at location: <100>
 [34m[DEBUG]: [0mparsing operands
 --------------
@@ -288,7 +280,6 @@ Destination Operand Type: 2
 Destination Operand Value: LIST[sz]
 --------------
 [34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <mov> | binary code - <000000000101100> | dec address: <101>
-[34m[DEBUG]: [0mInserted to binaryCodesTable: source code - <r3> | binary code - <000000001100000> | dec address: <102>
 [34m[DEBUG]: [0mcalculated L = 2
 #####################################
 [34m[DEBUG]: [0mread line: MAIN: jmp L1

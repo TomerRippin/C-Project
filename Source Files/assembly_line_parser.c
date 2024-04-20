@@ -20,15 +20,19 @@ const Opcode OPCODES[] = {
 
 const char *REGISTERS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
-struct AssemblyLine parseAssemblyLine(const char *line) {
+struct AssemblyLine parseAssemblyLine(const char *line)
+{    
+    char *colonPos;
+    char *spacePos;
     AssemblyLine result;
+    
     result.label = NULL;
     result.instruction = NULL;
     result.operands = NULL;
     result.src = NULL;
     result.dst = NULL;
 
-    char *colonPos = strchr(line, ':');
+    colonPos = strchr(line, ':');
     if (colonPos != NULL)
     {
         /* --- Setting label --- */
@@ -44,7 +48,7 @@ struct AssemblyLine parseAssemblyLine(const char *line) {
     }
 
     /* --- Setting instruction ---*/
-    char *spacePos = strchr(line, ' ');
+    spacePos = strchr(line, ' ');
     if (spacePos != NULL)
     {
         size_t instrLen = spacePos - line;
@@ -113,6 +117,8 @@ void freeAssemblyLine(AssemblyLine *line)
 
 int isValidLabel(const char *label)
 {
+    int i;
+
     if (strlen(label) > MAX_LABEL_LEN)
     {
         return 0;
@@ -125,7 +131,6 @@ int isValidLabel(const char *label)
     }
 
     /* Check the rest of the characters */
-    int i;
     for (i = 1; i < strlen(label); i++)
     {
         if (!isalnum(label[i]))
@@ -174,7 +179,7 @@ int isValidString(char *str) {
     return 1;
 }
 
-int isRegisterOperand(const char *operand)
+int isValidRegisterOperand(const char *operand)
 {
     int i;
     for (i = 0; i < NUM_REGISTERS; i++)
@@ -189,11 +194,15 @@ int isRegisterOperand(const char *operand)
 
 int parseOperandAdressing(const char *operand, int *operandType)
 {
-    if (*operand == '\0') {
+    const char *labelEnd;
+   
+    if (*operand == '\0')
+    {
         *operandType = -1;
         /* TODO: decide if return ERROR_OPERAND_IS_EMPTY; */
         return SUCCESS;
     }
+
     /* Check for immediate addressing */ 
     if (*operand == '#')
     {
@@ -210,13 +219,13 @@ int parseOperandAdressing(const char *operand, int *operandType)
     }
 
     /* Check for register addressing */
-    if (isRegisterOperand(operand))
+    if (isValidRegisterOperand(operand))
     {
         *operandType = 3;
         return SUCCESS;
     }
     /* Check for straight addressing or index addressing */ 
-    const char *labelEnd = strchr(operand, '[');
+    labelEnd = strchr(operand, '[');
     if (labelEnd != NULL)
     {
         /* Check if the label is followed by '[' and ']' */ 
@@ -282,6 +291,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     Operand *destOperand = (Operand*)malloc(sizeof(Operand));
     int opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
     int parseRetVal = 0;
+    int opcodeCode;
 
     /* Cannot find the operand */
     if (opcodeOperandsNum == -1)
@@ -344,7 +354,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     }
 
     /* Check if potentioal arguments are correct */
-    int opcodeCode = getOpcodeCode(parsedLine->instruction);
+    opcodeCode = getOpcodeCode(parsedLine->instruction);
     parseRetVal = parseOperandAdressing(potSrc, &(srcOperand->adrType));
     if (parseRetVal != SUCCESS)
     {
