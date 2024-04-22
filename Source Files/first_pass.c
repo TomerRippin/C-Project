@@ -123,6 +123,14 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
 
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
+    if (parsedLine->label != NULL) {
+        printf("WARNING: entry line contains label: <%s>", parsedLine->label);
+    }
+
+    /* TODO: handle multiple labeles */
+    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
+    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
 }
 
