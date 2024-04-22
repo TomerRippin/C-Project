@@ -67,7 +67,6 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Binar
                 }
             }
         }
-        /* TODO Insert to binaryCodesTable */
         printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
         if (handlerRetVal != SUCCESS){
@@ -215,7 +214,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
             isLabel = 1;
             if (searchList(symbolTable, parsedLine.label) != NULL)
             {
-                return ERROR_SYMBOL_ALREADY_EXIST;
+                /*return ERROR_SYMBOL_ALREADY_EXIST;*/
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {

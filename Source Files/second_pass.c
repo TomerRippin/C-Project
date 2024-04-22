@@ -74,3 +74,22 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
 
     return SUCCESS;
 }
+
+
+int handleEntryFile(char *filename, LinkedList *symbolTable){
+    ListNode *current = symbolTable->head;
+    FILE* outputFile = fopen(filename, "w");
+    int found = 0;
+    while (current != NULL){
+        if (strcmp(current->data, SYMBOL_TYPE_ENTRY)){
+            found = 1;
+            fprintf(outputFile, "%s     %d", current->name, current->lineNumber);
+        }
+        current = current->next;
+    }
+    fclose(outputFile);
+    if (!found){
+        remove(filename);
+    }
+    return SUCCESS;
+}

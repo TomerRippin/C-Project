@@ -38,14 +38,13 @@ void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
     searchResult = searchList(list, name);
 
     if(searchResult != NULL && strcmp(searchResult->data, data) != 0){
-        fprintf(stderr, "Internal Error"); /* TODO: assign an Error Code */
-        return;
+        logger(LOG_LEVEL_DEBUG, "label already exeist");
     }
 
     /* Create a new node */ 
     new_node = (ListNode *)malloc(sizeof(ListNode));
     if (new_node == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
         exit(EXIT_FAILURE);
     }
 
