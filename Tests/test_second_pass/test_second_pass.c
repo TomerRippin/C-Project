@@ -54,6 +54,7 @@ int main()
     printf("DEBUG - creating entries file\n");
     char *entryExt = "ent";
     char *entryFileName = replaceFileNameExt(fileName, entryExt);
+    printList(symbolTable);
     retVal = handleEntryFile(entryFileName, symbolTable);
 
     printf("Printing symbolTable\n");

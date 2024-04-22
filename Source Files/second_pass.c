@@ -80,15 +80,38 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
     ListNode *current = symbolTable->head;
     FILE* outputFile = fopen(filename, "w");
     int found = 0;
+
+    /* Search for an Entry in the symbol table*/
     while (current != NULL){
-        if (strcmp(current->data, SYMBOL_TYPE_ENTRY)){
+        if (strcmp(current->data, SYMBOL_TYPE_ENTRY) == 0){
+            /* Found an Entry, should create a file */
+            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
             found = 1;
-            fprintf(outputFile, "%s     %d", current->name, current->lineNumber);
+            ListNode *searchResult = symbolTable->head;
+            int stop = 0;
+            /* Search for the place the Entry is defiend */
+            while (searchResult != NULL && (stop != 1))
+            {
+                if ((strcmp(searchResult->name, current->name) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_ENTRY) != 0)){
+                    /* Found the line the entry is defiend in, write it to the file */
+                    stop = 1;
+                    logger(LOG_LEVEL_DEBUG, "Found Entry <%s> line number <%d>", searchResult->name, searchResult->lineNumber);
+                    fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
+                }
+                searchResult = searchResult->next;
+            }
+
+            if (searchResult == NULL){
+                /* Found an entry but it is not defiend anywhere */
+                return ERROR_UNKNOWN_INSTRUCTION;
+            }
         }
         current = current->next;
     }
     fclose(outputFile);
     if (!found){
+        /* No Entries found. delete Entries file */
+        logger(LOG_LEVEL_INFO, "No Entries found. Not creating a .ent file");
         remove(filename);
     }
     return SUCCESS;

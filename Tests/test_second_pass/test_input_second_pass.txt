@@ -15,3 +15,4 @@ LIST: .data 6,-9,len
 lea STR,W
 K: .data 22
 END: hlt
+.entry K
