@@ -1,12 +1,13 @@
+.define sz=2
 .entry TO
 .extern W
-mov STR[sz],STR[2]
 LIL: .data 5,834
 STR: .string "abcdef"
 MAIN: jmp L1
 prn #-5
 TO: .data 7
 mov #12,W
+mov STR[5],STR[2]
 sub r1,r4
 L1: inc K
 .define len=4
@@ -14,4 +15,3 @@ LIST: .data 6,-9,len
 lea STR,W
 K: .data 22
 END: hlt
-.define sz=2
