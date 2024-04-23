@@ -109,3 +109,35 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
     }
     return SUCCESS;
 }
+
+int handleExternFile(char *filename, LinkedList *symbolTable){
+    ListNode *current = symbolTable->head;
+    FILE* outputFile = fopen(filename, "w");
+    int found = 0;
+
+    /* Search for an Entry in the symbol table*/
+    while (current != NULL){
+        if (strcmp(current->data, SYMBOL_TYPE_EXTERNAL) == 0){
+            /* Found an Entry, should create a file */
+            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
+            ListNode *searchResult = symbolTable->head;
+            while (searchResult != NULL)
+            {
+                if ((strcmp(current->name, searchResult->name) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
+                    logger(LOG_LEVEL_INFO, "inserting label <%s> to extern file at location <%d>", current->name, searchResult->lineNumber);
+                    fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
+                    found = 1;
+                }
+                searchResult = searchResult->next;
+            }
+        }
+        current = current->next;
+    }
+    fclose(outputFile);
+    if (!found){
+        /* No Entries found. delete Entries file */
+        logger(LOG_LEVEL_INFO, "No externs found. Not creating a .ent file");
+        remove(filename);
+    }
+    return SUCCESS;
+}

@@ -13,3 +13,6 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
  * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type).
  */
 int handleEntryFile(char *filename, LinkedList *symbolTable);
+
+
+int handleExternFile(char *filename, LinkedList *symbolTable);

@@ -57,6 +57,11 @@ int main()
     printList(symbolTable);
     retVal = handleEntryFile(entryFileName, symbolTable);
 
+    printf("DEBUG - creating externs file\n");
+    char *externalExt = "ext";
+    char *externalFileName = replaceFileNameExt(fileName, externalExt);
+    retVal = handleExternFile(externalFileName, symbolTable);
+
     printf("Printing symbolTable\n");
     printList(symbolTable);
 
