@@ -96,7 +96,7 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
             }
             else {
                 logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%d>", current->name, searchResult->lineNumber);
-                fprintf(outputFile, "%d     %s\n", searchResult->lineNumber, current->name);
+                fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
             }
         }
         current = current->next;
