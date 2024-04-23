@@ -41,15 +41,25 @@ ListNode* searchListWithType(LinkedList *list, char *labelName, char *labelType,
     return NULL;
 }
 
+int isAlreadyExiest(LinkedList *list, char* name, char* data, int lineNumber){
+    ListNode *current = list->head;
+    while(current != NULL){
+        if (strcmp(current->name, name) == 0 && strcmp(current->data, data) == 0 && current->lineNumber == lineNumber){
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 {
-    ListNode *searchResult;
     ListNode *new_node;
 
-    searchResult = searchList(list, name);
-
-    if(searchResult != NULL && strcmp(searchResult->data, data) != 0){
-        logger(LOG_LEVEL_DEBUG, "label already exeist");
+    if(isAlreadyExiest(list, name, data, lineNumber)){
+        logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
+        return;
     }
 
     /* Create a new node */ 
