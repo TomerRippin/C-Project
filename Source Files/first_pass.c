@@ -110,11 +110,11 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
-        printf("WARNING: extern line contains label: <%s>", parsedLine->label);
+        logger(LOG_LEVEL_WARNING, "extern line contains label: <%s>", parsedLine->label);
     }
 
     /* TODO: handle multiple labeles */
-    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
+    logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
@@ -214,6 +214,8 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
             isLabel = 1;
             if (searchList(symbolTable, parsedLine.label) != NULL)
             {
+                /* TODO think if this is legal to not do anything */
+                logger(LOG_LEVEL_WARNING, "symbol already exist");
                 /*return ERROR_SYMBOL_ALREADY_EXIST;*/
             }
             else if (isValidLabel(parsedLine.label) != 1)
