@@ -87,23 +87,16 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
             /* Found an Entry, should create a file */
             logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
             found = 1;
-            ListNode *searchResult = symbolTable->head;
-            int stop = 0;
+            ListNode *searchResult = searchListWithType(symbolTable, current->name, SYMBOL_TYPE_ENTRY, 0);
+            logger(LOG_LEVEL_DEBUG, "result.data: %s", searchResult->data);
             /* Search for the place the Entry is defiend */
-            while (searchResult != NULL && (stop != 1))
-            {
-                if ((strcmp(searchResult->name, current->name) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_ENTRY) != 0)){
-                    /* Found the line the entry is defiend in, write it to the file */
-                    stop = 1;
-                    logger(LOG_LEVEL_DEBUG, "Found Entry <%s> line number <%d>", searchResult->name, searchResult->lineNumber);
-                    fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
-                }
-                searchResult = searchResult->next;
-            }
-
             if (searchResult == NULL){
                 /* Found an entry but it is not defiend anywhere */
                 return ERROR_UNKNOWN_INSTRUCTION;
+            }
+            else {
+                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%d>", current->name, searchResult->lineNumber);
+                fprintf(outputFile, "%d     %s\n", searchResult->lineNumber, current->name);
             }
         }
         current = current->next;

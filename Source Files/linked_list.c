@@ -30,6 +30,17 @@ ListNode *searchList(LinkedList *list, char *targetName) {
     return NULL;
 }
 
+ListNode* searchListWithType(LinkedList *list, char *labelName, char *labelType, int toInclude){
+    ListNode *current = list->head;
+    while (current != NULL){
+        if ((strcmp(current->name, labelName) == 0) && (strcmp(current->data, labelType) != toInclude)){
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 {
     ListNode *searchResult;
