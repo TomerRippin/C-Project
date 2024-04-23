@@ -118,7 +118,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     opcodeCode = getOpcodeCode(parsedLine->instruction);
     /* Store the number of operands in the higher bits of binary */
 
-    searchResult = searchList(symbolTable, operand->value);
+    searchResult = searchListWithType(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, 0);
     if (searchResult == NULL)
     {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
@@ -134,6 +134,8 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         /* bits 1-2: ARE codex - 'E' - 01, label is external */
         binaryCode |= (opcodeCode << 2);
         binaryCode |= 0x1;
+        /* insert to list that the external label was used in this IC */
+        insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
     }
     else
     {
@@ -185,6 +187,8 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     {
         /* bits 0-1: ARE codex - 'E' - 01, label is external */
         labelAddressBinaryCode |= 0x1;
+        /* insert to list that the external label was used in this IC */
+        insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
     }
     else
     {
