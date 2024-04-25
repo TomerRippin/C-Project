@@ -178,7 +178,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
-    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0)
     {
         /* bits 0-1: ARE codex - 'R' - 10, label is internal */
         labelAddressBinaryCode |= 0x2;
