@@ -203,6 +203,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         return handlerRetVal;
     }
 
+    *IC = *IC + 1;
     /* handle the index */
     indexLen = indexEnd - labelEnd - 1; /* -1 to exclude the '[' character */
     index = malloc(indexLen + 1);
@@ -229,6 +230,11 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         indexBinaryCode |= (searchResult->lineNumber << 2);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
     }
+    if (handlerRetVal != SUCCESS){
+        return handlerRetVal;
+    }
+
+    *IC = *IC + 1;
 
     free(label);
     free(index);

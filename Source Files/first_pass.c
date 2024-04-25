@@ -141,7 +141,6 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     {
         logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine->label, SYMBOL_TYPE_CODE, *IC);
         insertToList(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
-        *IC = *IC + 1;
     }
     logger(LOG_LEVEL_DEBUG, "parsing operands");
     funcsRetVal = parseOperands(parsedLine);
@@ -179,7 +178,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    IC = IC + L;
+    *IC = *IC + L;
 
     return SUCCESS;
 }
