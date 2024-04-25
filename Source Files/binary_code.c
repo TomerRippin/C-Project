@@ -123,7 +123,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
-    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0)
+    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0)
     {
         /* bits 1-2: ARE codex - 'R' - 10, label is internal */
         binaryCode |= (opcodeCode << 2);
@@ -297,7 +297,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return handlerRetVal;
 }
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int IC)
 {
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;
@@ -305,7 +305,7 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
 
     if (srcOperand->adrType == 3 && dstOperand->adrType == 3)
     {
-        handlerRetVal = handleAdrType3EdgeCase(parsedLine, binaryCodesTable, IC);
+        handlerRetVal = handleAdrType3EdgeCase(parsedLine, binaryCodesTable, &IC);
     }
     else
     {
@@ -314,16 +314,16 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, IC);
+            handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, &IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(srcOperand, parsedLine, binaryCodesTable, symbolTable, IC);
+            handlerRetVal = handleAdrType1(srcOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(srcOperand, parsedLine, binaryCodesTable, symbolTable, IC);
+            handlerRetVal = handleAdrType2(srcOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 3:
-            handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, IC);
+            handlerRetVal = handleAdrType3(srcOperand, 1, parsedLine, binaryCodesTable, &IC);
             break;
         }
 
@@ -337,16 +337,16 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, IC);
+            handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, &IC);
             break;
         case 1:
-            handlerRetVal = handleAdrType1(dstOperand, parsedLine, binaryCodesTable, symbolTable, IC);
+            handlerRetVal = handleAdrType1(dstOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 2:
-            handlerRetVal = handleAdrType2(dstOperand, parsedLine, binaryCodesTable, symbolTable, IC);
+            handlerRetVal = handleAdrType2(dstOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 3:
-            handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, IC);
+            handlerRetVal = handleAdrType3(dstOperand, 0, parsedLine, binaryCodesTable, &IC);
             break;
         }
 

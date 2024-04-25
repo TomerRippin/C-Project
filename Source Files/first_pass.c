@@ -158,11 +158,10 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
         logger(LOG_LEVEL_ERROR, "got an error in 'handleOpcodeBinaryCode': %d", funcsRetVal);
         return funcsRetVal;
     }
-    *IC = *IC + 1;
 
     if (parsedLine->operands != NULL)
     {
-        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, IC);  /* NOTE: this will still work even if operands is null */
+        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
             if (funcsRetVal == ERROR_GIVEN_SYMBOL_NOT_EXIST)
@@ -180,7 +179,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
     logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
-    /* IC = IC + L - 1; */
+    IC = IC + L;
 
     return SUCCESS;
 }

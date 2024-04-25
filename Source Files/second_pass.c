@@ -56,7 +56,7 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
                 return funcsRetVal;
             }
 
-            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, &IC);  /* NOTE: this will still work even if operands is null */
+            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC);  /* NOTE: this will still work even if operands is null */
             if (funcsRetVal != SUCCESS)
             {
                 logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
