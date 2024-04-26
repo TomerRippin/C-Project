@@ -9,7 +9,6 @@ sub r1,r4
 cmp r3,#sz
 bne W
 L1: inc L3
-.entry LOOP
 bne LOOP
 END: hlt
 .define len=4
