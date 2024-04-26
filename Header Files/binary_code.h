@@ -70,7 +70,7 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
  *
  * @return SUCCESS code or ERROR code.
  */
-int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
 
 /**
  * @brief Creates the binary code of an operand with address type = 1 and inserts to binaryCodesTable.

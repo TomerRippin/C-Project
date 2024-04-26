@@ -86,13 +86,31 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return funcRetVal;
 }
 
-int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    /* Parse the number from the operand */
-    int num = atoi(operand->value + 1);
-    int binaryCode, handlerRetVal;
+    int binaryCode, handlerRetVal, num;
+    char *token;
     binaryCode = handlerRetVal = 0;
 
+    if (isNumber(operand->value + 1)){
+        num = atoi(operand->value + 1);
+    }
+    else {
+        token = operand->value + 1;
+        ListNode *searchResult = searchList(symbolTable, token);
+        if (searchResult == NULL){
+            logger(LOG_LEVEL_ERROR, "Not a valid address after #");
+            return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+        } 
+        else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) == 0){
+            logger(LOG_LEVEL_DEBUG, "Found a valid defiend label");
+            num = searchResult->lineNumber;
+        }
+        else {
+            logger(LOG_LEVEL_ERROR, "found label, not in the right type");
+            return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+        }
+    }
     /* If the number is negative, compute its two's complement */
     if (num < 0)
     {
@@ -173,7 +191,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     strncpy(label, operand->value, labelLen);
     label[labelLen] = '\0';
 
-    searchResult = searchList(symbolTable, label);
+    searchResult = searchListWithType(symbolTable, label, SYMBOL_TYPE_ENTRY, 0);
     if (searchResult == NULL)
     {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
@@ -320,7 +338,7 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, &IC);
+            handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 1:
             handlerRetVal = handleAdrType1(srcOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
@@ -343,7 +361,7 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         case -1:
             break;
         case 0:
-            handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, &IC);
+            handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
             break;
         case 1:
             handlerRetVal = handleAdrType1(dstOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
