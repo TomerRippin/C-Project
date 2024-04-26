@@ -5,7 +5,7 @@ int main()
     int retVal;
     LinkedList *symbolTable;
     /* TODO: maybe change type to linkedList? */
-    int binaryCodesTable[MAX_LINES_NUM];
+    BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     FILE *inputFile, *inputFile2;
 
     printf("Starting main - test_first_pass!\n");

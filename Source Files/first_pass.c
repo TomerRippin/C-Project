@@ -108,7 +108,7 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
     return SUCCESS;
 }
 
-int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable)
+int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
         printf("WARNING: extern line contains label: <%s>", parsedLine->label);
@@ -121,33 +121,17 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int
     return SUCCESS;
 }
 
-int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, int *binaryCodesTable)
+int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    return SUCCESS;
-}
+    if (parsedLine->label != NULL) {
+        printf("WARNING: entry line contains label: <%s>", parsedLine->label);
+    }
 
-int calculateL(int srcType, int dstType) {
-    int L = 1; /* at least the base word */
-    if (srcType == -1 && dstType == -1)
-    {
-        return L;
-    }
-    else if (srcType == 4 && dstType == 4){
-        return L;
-    }
-    else if (srcType == 0 || srcType == 3 || srcType == 4){
-        L = L + 1;
-    }
-    else if (dstType == 0 || dstType == 3 || srcType == 4){
-        L = L + 1;
-    }
-    else if (dstType == 2){
-        L = L + 2;
-    }
-    else if (srcType == 2){
-        L = L + 2;
-    }
-    return L;
+    /* TODO: handle multiple labeles */
+    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
+    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
+    return SUCCESS;
 }
 
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
@@ -202,7 +186,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     return SUCCESS;
 }
 
-int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
+int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
     int IC = 100; /* Insturctions Counter */
@@ -213,7 +197,6 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
     int externCount = 0;
     AssemblyLine parsedLine;
     int handlerRetVal;
-    BinaryCodesTable *binaryTableTry = createBinaryCodesTable();
     ListNode *current;
 
     /* TODO: maybe check if line is too long */
@@ -255,11 +238,11 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryTableTry, &DC);
+                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryTableTry, &DC);
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
@@ -287,7 +270,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         
         else if (isCommandLine(&parsedLine)) {
             logger(LOG_LEVEL_INFO, "COMMAND LINE");
-            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryTableTry, &IC);
+            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, &IC);
             if (handlerRetVal != SUCCESS)
             {
                 freeAssemblyLine(&parsedLine);
@@ -312,7 +295,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, int *binaryCodesTable)
         }
         current = current->next;
     }  
-    printBinaryList(binaryTableTry);
+    printBinaryList(binaryCodesTable);
 
     /*freeBinaryCodesTable(binaryTableTry); */
 

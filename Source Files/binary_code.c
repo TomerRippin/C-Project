@@ -216,10 +216,10 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         /* search for the index if it is defiend elsewhere in the code */
         searchResult = searchList(symbolTable, index);
         if (searchResult == NULL){
-            return ERROR_INDEX_NOT_NUMBER_AND_NOT_DEFINED;
+            return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
         if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE)){
-            return ERROR_INDEX_NOT_DEFINE_OR_NUMBER;
+            return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
         /* bits 2-13 represent the index. bits 0-1 always 0 */
         indexBinaryCode |= (searchResult->lineNumber << 2);

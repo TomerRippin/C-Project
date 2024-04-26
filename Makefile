@@ -13,6 +13,6 @@
 ## Test second_pass
 # Ubuntu: gcc -ansi -Wall -I Header\ Files/ Source\ Files/logger.c Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Source\ Files/files_utils.c Source\ Files/first_pass.c Source\ Files/second_pass.c Tests/test_second_pass/test_second_pass.c -o second_pass.exe
 
-# gcc -ansi -Wall -I Header\ Files/ Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Source\ Files/logger.c Source\ Files/files_utils.c Source\ Files/first_pass.c Source\ Files/second_pass.c Tests/test_second_pass/test_second_pass.c -o second_pass.exe
+# gcc -ansi -Wall -I Header\ Files/ Source\ Files/assembly_line_parser.c Source\ Files/linked_list.c Source\ Files/utils.c Source\ Files/logger.c Source\ Files/files_utils.c Source\ Files/first_pass.c Source\ Files/second_pass.c Tests/test_second_pass/test_second_pass.c Source\ Files/binary_code.c Source\ Files/binary_codes_table.c -o second_pass.exe
 
 

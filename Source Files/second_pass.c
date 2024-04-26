@@ -1,12 +1,11 @@
 #include "../Header Files/second_pass.h"
 
-int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, int *binaryCodesTable)
+int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    /* int IC = 0; */
+    int IC = 100;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     ListNode *searchResult;
-    int handlerRetVal;
 
     /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -50,12 +49,25 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, in
         else {
             /* TODO: section 7-8 */
             printf("DEBUG - section 7-8\n");
-            handlerRetVal = parseOperands(&parsedLine);
-            printOperandsAfterParsing(&parsedLine);
-            printf("DEBUG - %d\n", handlerRetVal);
+            int funcsRetVal = parseOperands(&parsedLine);
+            if (funcsRetVal != SUCCESS)
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
+                return funcsRetVal;
+            }
+
+            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, &IC);  /* NOTE: this will still work even if operands is null */
+            if (funcsRetVal != SUCCESS)
+            {
+                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
+                return funcsRetVal;
+            }
+            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            IC = IC + L;
         }
     }
 
+    printBinaryList(binaryCodesTable);
     /* Print the extern labels and their addresses to the '.externals' output file */
     /* Print the entry labels and their addresses to the '.entries' output file */
     /* Free all the allocated memory and resources used during the second pass */

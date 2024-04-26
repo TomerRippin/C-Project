@@ -17,6 +17,7 @@
 #define SYMBOL_TYPE_MDEFINE "mdefine"
 #define SYMBOL_TYPE_DATA "data"
 #define SYMBOL_TYPE_EXTERNAL "external"
+#define SYMBOL_TYPE_ENTRY "entry"
 #define SYMBOL_TYPE_CODE "code"
 
 #define NUM_DIRECTIVES 4
