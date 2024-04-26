@@ -51,21 +51,19 @@ int main()
     printf("Original Name: %s\nNew fileName: %s\n", fileName, newFileName);
     free(newFileName);
 
+    printf("DEBUG - creating entries file\n");
+    char *entryExt = "ent";
+    char *entryFileName = replaceFileNameExt(fileName, entryExt);
+    printList(symbolTable);
+    retVal = handleEntryFile(entryFileName, symbolTable);
+
+    printf("DEBUG - creating externs file\n");
+    char *externalExt = "ext";
+    char *externalFileName = replaceFileNameExt(fileName, externalExt);
+    retVal = handleExternFile(externalFileName, symbolTable);
+
     printf("Printing symbolTable\n");
     printList(symbolTable);
-
-    /*
-    printf("Printing binaryCodesTable\n");
-    int i;
-    for (i = 0; i < MAX_LINES_NUM * sizeof(int); i++)
-    {
-        if (binaryCodesTable[i] == 99999)
-        {
-            break;
-        }
-        printf("binaryCodesTable[%d]: %d\n", i, binaryCodesTable[i]);
-    }
-    */
 
     printf("Closing files\n");
     fclose(inputFile);

@@ -49,6 +49,8 @@ void insertToList(LinkedList *list, char *name, char *data, int lineNumber);
 /* Searches for a node name in the linked list */ 
 ListNode *searchList(LinkedList *list, char *target_name);
 
+ListNode* searchListWithType(LinkedList *list, char *labelName, char *labelType, int toInclude);
+
 /* Function to free memory from a node */
 void freeNode(ListNode *node);
 

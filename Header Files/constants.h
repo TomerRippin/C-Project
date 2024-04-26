@@ -19,6 +19,7 @@
 #define SYMBOL_TYPE_EXTERNAL "external"
 #define SYMBOL_TYPE_ENTRY "entry"
 #define SYMBOL_TYPE_CODE "code"
+#define SYMBOL_TYPE_EXTERNAL_USAGE "external usage"
 
 #define NUM_DIRECTIVES 4
 #define NUM_REGISTERS 8
