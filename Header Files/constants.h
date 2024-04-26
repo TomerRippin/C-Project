@@ -8,6 +8,8 @@
 #define MACRO_START "mcr"
 #define MACRO_END "endmcr"
 
+#define BASE_INSTRUCTIONS_COUNTER 100
+
 #define DEFINE_DIRECTIVE ".define"
 #define DATA_DIRECTIVE ".data"
 #define STRING_DIRECTIVE ".string"
@@ -32,6 +34,10 @@
 #define DECODED_SYMBOL_1 '#'
 #define DECODED_SYMBOL_2 '%'
 #define DECODED_SYMBOL_3 '!'
+
+#define EXTENSION_ENT "ent"
+#define EXTENSION_EXT "ext"
+#define EXTENSION_OB "ob"
 
 extern const char *DIRECTIVES[NUM_DIRECTIVES];
 

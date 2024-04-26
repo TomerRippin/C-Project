@@ -52,15 +52,19 @@ int main()
     free(newFileName);
 
     printf("DEBUG - creating entries file\n");
-    char *entryExt = "ent";
-    char *entryFileName = replaceFileNameExt(fileName, entryExt);
+    char *entryFileName = replaceFileNameExt(fileName, EXTENSION_ENT);
     printList(symbolTable);
     retVal = handleEntryFile(entryFileName, symbolTable);
 
     printf("DEBUG - creating externs file\n");
-    char *externalExt = "ext";
-    char *externalFileName = replaceFileNameExt(fileName, externalExt);
+    char *externalFileName = replaceFileNameExt(fileName, EXTENSION_EXT);
     retVal = handleExternFile(externalFileName, symbolTable);
+
+    printf("DEBUG - creating objects file\n");
+    int IC, DC;
+    IC = DC = BASE_INSTRUCTIONS_COUNTER;
+    char *objectFileName = replaceFileNameExt(fileName, EXTENSION_OB);
+    retVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
 
     printf("Printing symbolTable\n");
     printList(symbolTable);

@@ -2,7 +2,7 @@
 
 int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    int IC = 100;
+    int IC = BASE_INSTRUCTIONS_COUNTER;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     ListNode *searchResult;
@@ -78,8 +78,14 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
 
 int handleEntryFile(char *filename, LinkedList *symbolTable){
     ListNode *current = symbolTable->head;
-    FILE* outputFile = fopen(filename, "w");
     int found = 0;
+
+    FILE* outputFile = fopen(filename, "w");
+    if (outputFile == NULL)
+    {
+        logger(LOG_LEVEL_ERROR, "Error opening entry file.\n");
+        return ERROR_OPEN_FILE;
+    }
 
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
@@ -95,8 +101,8 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
                 return ERROR_UNKNOWN_INSTRUCTION;
             }
             else {
-                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%d>", current->name, searchResult->lineNumber);
-                fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
+                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%04d>", current->name, searchResult->lineNumber);
+                fprintf(outputFile, "%s     %04d\n", searchResult->name, searchResult->lineNumber);
             }
         }
         current = current->next;
@@ -112,8 +118,13 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
 
 int handleExternFile(char *filename, LinkedList *symbolTable){
     ListNode *current = symbolTable->head;
-    FILE* outputFile = fopen(filename, "w");
     int found = 0;
+    FILE* outputFile = fopen(filename, "w");
+    if (outputFile == NULL)
+    {
+        logger(LOG_LEVEL_ERROR, "Error opening extern file.\n");
+        return ERROR_OPEN_FILE;
+    }
 
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
@@ -125,7 +136,7 @@ int handleExternFile(char *filename, LinkedList *symbolTable){
             {
                 if ((strcmp(current->name, searchResult->name) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
                     logger(LOG_LEVEL_INFO, "inserting label <%s> to extern file at location <%d>", current->name, searchResult->lineNumber);
-                    fprintf(outputFile, "%s     %d\n", searchResult->name, searchResult->lineNumber);
+                    fprintf(outputFile, "%s     %04d\n", searchResult->name, searchResult->lineNumber);
                     found = 1;
                 }
                 searchResult = searchResult->next;
@@ -135,9 +146,36 @@ int handleExternFile(char *filename, LinkedList *symbolTable){
     }
     fclose(outputFile);
     if (!found){
-        /* No Entries found. delete Entries file */
-        logger(LOG_LEVEL_INFO, "No externs found. Not creating a .ent file");
+        /* No Entries found. delete Extern file */
+        logger(LOG_LEVEL_INFO, "No externs found. Not creating a .ext file");
         remove(filename);
     }
+    return SUCCESS;
+}
+
+int createObjectFile(char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC)
+{
+    BinaryCodesNode *node;
+    char *line = (char*) malloc(sizeof(char) * BINARY_CODE_LEN);
+    FILE* outputFile = fopen(filename, "w");
+    if (outputFile == NULL)
+    {
+        logger(LOG_LEVEL_ERROR, "Error opening objects file.\n");
+        return ERROR_OPEN_FILE;
+    }
+
+    /* First line is header - <IC> <DC> */
+    sprintf(line, "%d %d\n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
+    fputs(line, outputFile);
+
+    for (node = binaryCodesTable->head; node != NULL; node = node->next)
+    {
+        sprintf(line, "%04d %s\n", node->decAddress, decodeBinaryCode(node->binaryCode));
+        fputs(line, outputFile);
+    }
+
+    fclose(outputFile);
+    free(line);
+
     return SUCCESS;
 }
