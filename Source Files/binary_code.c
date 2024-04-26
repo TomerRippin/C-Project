@@ -17,6 +17,11 @@ char *convertIntToBinary(int num, int len)
     return binary;
 }
 
+int convertBinaryToDecimal(char *binary)
+{
+    return (binary[0] - '0') * 2 + (binary[1] - '0');
+}
+
 /* TODO: delete? not in use anymore */
 char *convertIntToTCBinary(int num, int len)
 {
@@ -59,6 +64,36 @@ void reverseBits(char *bitsArray)
         start++;
         end--;
     }
+}
+
+char* decodeBinaryCode(char *binaryCode)
+{
+    int i, num;
+    char *decodedBinaryCode = (char*) malloc(sizeof(char) * DECODED_BINARY_CODE_LEN);
+
+    /* Loop through pairs of bits */
+    for (i = 0; i < BINARY_CODE_LEN - 1; i += 2)
+    {
+        char pair[3] = {binaryCode[i], binaryCode[i+1], '\0'};
+        /* Convert the pair of bits to an integer */
+        num = convertBinaryToDecimal(pair);
+        switch(num) {
+            case 0:
+                decodedBinaryCode[i/2] = DECODED_SYMBOL_0;
+                break;
+            case 1:
+                decodedBinaryCode[i/2] = DECODED_SYMBOL_1;
+                break;
+            case 2:
+                decodedBinaryCode[i/2] = DECODED_SYMBOL_2;
+                break;
+            case 3:
+                decodedBinaryCode[i/2] = DECODED_SYMBOL_3;
+                break;
+        }
+    }
+    decodedBinaryCode[i/2] = '\0';
+    return decodedBinaryCode;
 }
 
 int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)

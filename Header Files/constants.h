@@ -27,6 +27,11 @@
 #define NUM_REGISTERS 8
 
 #define BINARY_CODE_LEN 15
+#define DECODED_BINARY_CODE_LEN 8
+#define DECODED_SYMBOL_0 '*'
+#define DECODED_SYMBOL_1 '#'
+#define DECODED_SYMBOL_2 '%'
+#define DECODED_SYMBOL_3 '!'
 
 extern const char *DIRECTIVES[NUM_DIRECTIVES];
 
