@@ -14,7 +14,6 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
 
 int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable);
 
-/* NOTE: This function does nothing and always returns true */
 int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable);
 
 int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC);

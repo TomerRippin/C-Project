@@ -30,22 +30,42 @@ ListNode *searchList(LinkedList *list, char *targetName) {
     return NULL;
 }
 
+ListNode* searchListWithType(LinkedList *list, char *labelName, char *labelType, int toInclude){
+    ListNode *current = list->head;
+    while (current != NULL){
+        if ((strcmp(current->name, labelName) == 0) && (strcmp(current->data, labelType) != toInclude)){
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+int isAlreadyExiest(LinkedList *list, char* name, char* data, int lineNumber){
+    ListNode *current = list->head;
+    while(current != NULL){
+        if (strcmp(current->name, name) == 0 && strcmp(current->data, data) == 0 && current->lineNumber == lineNumber){
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 {
-    ListNode *searchResult;
     ListNode *new_node;
 
-    searchResult = searchList(list, name);
-
-    if(searchResult != NULL && strcmp(searchResult->data, data) != 0){
-        fprintf(stderr, "Internal Error"); /* TODO: assign an Error Code */
+    if(isAlreadyExiest(list, name, data, lineNumber)){
+        logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
         return;
     }
 
     /* Create a new node */ 
     new_node = (ListNode *)malloc(sizeof(ListNode));
     if (new_node == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
         exit(EXIT_FAILURE);
     }
 
