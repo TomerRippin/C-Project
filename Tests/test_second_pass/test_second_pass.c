@@ -5,7 +5,7 @@ int main()
     int retVal;
     printf("Starting main - test_first_pass!\n");
 
-    LinkedList *symbolTable = createList();
+    SymbolTable *symbolTable = createList();
     /* TODO: maybe change type to linkedList? */
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
 

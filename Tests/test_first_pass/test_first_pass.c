@@ -3,7 +3,7 @@
 int main()
 {
     int retVal;
-    LinkedList *symbolTable;
+    SymbolTable *symbolTable;
     /* TODO: maybe change type to linkedList? */
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     FILE *inputFile, *inputFile2;

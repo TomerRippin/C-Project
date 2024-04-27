@@ -1,60 +1,108 @@
-#include "symbol_table.h"
+#include "../Header Files/symbol_table.h"
 
-/* TODO: move to a strctures folder */
+void initializeList(SymbolTable *list) {
+    list->head = NULL;
+}
 
-SymbolTable *createSymbolTable()
+SymbolTable *createList()
 {
-    SymbolTable *table = (SymbolTable *)malloc(sizeof(SymbolTable));
-    if (table == NULL)
+    SymbolTable *list = (SymbolTable *)malloc(sizeof(SymbolTable));
+    if (list == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    table->head = NULL;
-    return table;
+    initializeList(list);
+    return list;
 }
 
-void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue)
+SymbolNode *searchList(SymbolTable *list, char *targetName) {
+    SymbolNode *current = list->head;
+    while (current != NULL) {
+        if (strcmp(current->symbolName, targetName) == 0)
+        {
+            /* Found the target, return the node */
+            return current;
+        }
+        current = current->next;
+    }
+    /* Target not found */
+    return NULL;
+}
+
+SymbolNode* searchListWithType(SymbolTable *list, char *labelName, char *labelType, int toInclude){
+    SymbolNode *current = list->head;
+    while (current != NULL){
+        if ((strcmp(current->symbolName, labelName) == 0) && (strcmp(current->symbolType, labelType) != toInclude)){
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+int isAlreadyExiest(SymbolTable *list, char* symbolName, char* symbolType, int symbolValue){
+    SymbolNode *current = list->head;
+    while(current != NULL){
+        if (strcmp(current->symbolName, symbolName) == 0 && strcmp(current->symbolType, symbolType) == 0 && current->symbolValue == symbolValue){
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+
+void insertToList(SymbolTable *list, char *symbolName, char *symbolType, int symbolValue)
 {
-    SymbolNode *newNode = (SymbolNode *)malloc(sizeof(SymbolNode));
-    /* TODO: is it really needed? maybe were Magzimim */
-    if (newNode == NULL)
-    {
-        fprintf(stderr, "Memory allocation failed\n");
+    SymbolNode *new_node;
+
+    if(isAlreadyExiest(list, symbolName, symbolType, symbolValue)){
+        logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
+        return;
+    }
+
+    /* Create a new node */ 
+    new_node = (SymbolNode *)malloc(sizeof(SymbolNode));
+    if (new_node == NULL) {
+        logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
         exit(EXIT_FAILURE);
     }
-    strcpy(newNode->symbolName, symbolName);
-    strcpy(newNode->symbolValue, symbolValue);
-    newNode->symbolValue = symbolValue;
-    newNode->next = NULL;
 
-    if (table->head == NULL) {
-        table->head = newNode;
-    }
-    if (table->last != NULL) {
-        table->last->next = newNode;
-    }
-    table->last = newNode;
+    /* Set symbolType and next pointer */
+    new_node->symbolName = strdup(symbolName);
+    new_node->symbolType = strdup(symbolType);
+    new_node->symbolValue = symbolValue;
+    new_node->next = list->head;
+
+    /* Update head to point to the new node */ 
+    list->head = new_node;
 }
 
-void freeSymbolNode(SymbolNode *node)
-{
+void freeNode(SymbolNode *node){
     free(node->symbolName);
     free(node->symbolType);
     free(node);
 }
 
-/* Function to free memory allocated for the list */
-void freeSymbolTable(SymbolTable *table) {
-    SymbolNode *current = table->head;
-    SymbolNode *tempNodeToFree;
+void freeList(SymbolTable *list) {
+    SymbolNode *current = list->head;
+    while (current != NULL) {
+        SymbolNode *temp = current;
+        current = current->next;
+        freeNode(temp);
+    }
+    list->head = NULL;
+}
+
+void printList(SymbolTable *list)
+{
+    SymbolNode *current = list->head;
+    printf("|    Name    |    Data    |    LineNum    |\n");
+    printf("|------------|------------|---------------|\n");
     while (current != NULL)
     {
-        tempNodeToFree = current;
+        printf("|    %s    |    %s    |       %d      |\n", current->symbolName, current->symbolType, current->symbolValue);
         current = current->next;
-        freeNode(tempNodeToFree);
     }
-    table->head = NULL;
-    table->last = NULL;
-    free(table);
 }
