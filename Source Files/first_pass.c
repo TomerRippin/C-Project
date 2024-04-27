@@ -92,18 +92,19 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
         return ERROR_STRING_IS_NOT_VALID;
     }
 
-    for (i = 1; i < stringLen - 1; i++) {
+    for (i = 1; i < stringLen -1; i++) {
         /* converts the ASCII value of the character to a binary string */
         intToBinaryRes = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN - 1);
         strcpy(binaryCode, intToBinaryRes);
-        /*
-        logger(LOG_LEVEL_DEBUG, "Insert to binaryCodesTable: <%c>-<%d>, at location: <%d>", parsedLine->operands[i], parsedLine->operands[i], *DC);
-        binaryCodesTable[*DC] = parsedLine->operands[i];
-        */
         logger(LOG_LEVEL_DEBUG, "insert to binaryCodesTable: <%c>-<%s> at location: <%d>", parsedLine->operands[i], binaryCode, *DC);
         insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, binaryCode, &parsedLine->operands[i]);
         *DC = *DC + 1;
     }
+
+    /* Null byte at the end of the string */
+    insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(0, BINARY_CODE_LEN - 1), &parsedLine->operands[i]);
+    *DC = *DC + 1;
+
     return SUCCESS;
 }
 
