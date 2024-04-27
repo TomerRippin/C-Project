@@ -46,7 +46,7 @@ int main()
         printf("--- GOT AN ERROR AS EXPECTED: %d ---\n", retVal);
     }
 
-    printf("Printing symbolTable\n");
+    printf("--- Printing symbolTable ---\n");
     printList(symbolTable);
 
     /**
@@ -58,11 +58,19 @@ int main()
     }
     */
 
-    printf("Closing files\n");
+    printf("--- Checking decodeBinaryCode ---\n");
+    char binary[15] = "00011011111001";
+    printf("Binary string: 00011011111001\n");
+    printf("Expected decoded string: *#%%!!%%#\n");
+    char *decoded = decodeBinaryCode(binary);
+    printf("Got decoded string: %s\n", decoded);
+    free(decoded);
+
+    printf("--- Closing files ---\n");
     fclose(inputFile);
     fclose(inputFile2);
 
-    printf("Freeing symbolTable\n");
+    printf("--- Freeing symbolTable ---\n");
     freeList(symbolTable);
 
     return 0;

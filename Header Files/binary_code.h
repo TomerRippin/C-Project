@@ -24,6 +24,16 @@
 char *convertIntToBinary(int num, int len);
 
 /**
+ * @brief Converts a binary string (representing bits) to a decimal number.
+ *
+ * @param binary - A pointer to a character array (string) representing binary string.
+ * @return A decimal represantation of the binary number.
+ */
+int convertBinaryToDecimal(char *binary);
+
+/**
+ * TODO: consider delete this - not in use
+ *
  * @brief Converts an integer to a binary string using the Two's complement method.
  * If needed, the returned value will be padded with zeros according to len.
  *
@@ -35,6 +45,8 @@ char *convertIntToBinary(int num, int len);
 char *convertIntToTCBinary(int num, int len);
 
 /**
+ * TODO: consider delete this - not in use
+ *
  * @brief Reverses a string of bits.
  * For example:
  *  - input: 0010
@@ -44,6 +56,19 @@ char *convertIntToTCBinary(int num, int len);
  * @noreturn This array is reversed in place.
  */
 void reverseBits(char *bitsArray);
+
+/**
+ * @brief Decodes a given binaryCode to a decoded string, in the format of `encrypted-base-4`:
+ * ----------------------------------------------
+ * |   Normal Base 4    |  0  |  1  |  2  |  3  |
+ * |--------------------|-----|-----|-----|-----|
+ * |  Encrypted Base 4  |  *  |  #  |  %  |  !  |
+ * ----------------------------------------------
+ * 
+ * @param binaryCode - A pointer to a character array (string) representing binary code.
+ * @return A pointer to the encrypted-base-4 binary string representation of the code.
+ */
+char* decodeBinaryCode(char *binaryCode);
 
 int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int IC);
 

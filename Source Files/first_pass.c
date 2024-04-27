@@ -186,7 +186,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
 int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
-    int IC = 100; /* Insturctions Counter */
+    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
     int isLabel = 0;

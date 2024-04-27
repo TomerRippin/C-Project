@@ -26,8 +26,10 @@ typedef enum ErrorCode
     ERROR_NOT_VALID_REGISTER = 20,
     ERROR_INDEX_NOT_NUMBER_AND_NOT_DEFINED = 21,
     ERROR_INDEX_NOT_DEFINE_OR_NUMBER = 22,
+    ERROR_OPEN_FILE = 23,
 } ErrorCode;
 
+/* TODO: better order in ErrorCode (by logic)  */
 /* TODO: maybe we will want for debugging, to print the errors name, maybe delete */
 
 /**
