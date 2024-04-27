@@ -164,35 +164,38 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
-    ListNode *searchResult;
+    ListNode *searchResult = symbolTable->head;
     int binaryCode, handlerRetVal, opcodeCode;
+    int found = 1;
     binaryCode = handlerRetVal = 0;
 
     opcodeCode = getOpcodeCode(parsedLine->instruction);
     /* Store the number of operands in the higher bits of binary */
 
-    searchResult = searchListWithType(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, 0);
-    if (searchResult == NULL)
-    {
+    while (searchResult != NULL && found){
+
+        if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0)
+        {
+            /* bits 1-2: ARE codex - 'R' - 10, label is internal */
+            binaryCode |= (opcodeCode << 2);
+            binaryCode |= 0x2;
+
+            found = 0;
+        }
+        else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+        {
+            /* bits 1-2: ARE codex - 'E' - 01, label is external */
+            binaryCode |= (opcodeCode << 2);
+            binaryCode |= 0x1;
+            /* insert to list that the external label was used in this IC */
+            insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            
+            found = 0;
+        }
+        searchResult = searchResult->next;
+    }
+    if (searchResult == NULL) {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-    }
-    else if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0)
-    {
-        /* bits 1-2: ARE codex - 'R' - 10, label is internal */
-        binaryCode |= (opcodeCode << 2);
-        binaryCode |= 0x2;
-    }
-    else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
-    {
-        /* bits 1-2: ARE codex - 'E' - 01, label is external */
-        binaryCode |= (opcodeCode << 2);
-        binaryCode |= 0x1;
-        /* insert to list that the external label was used in this IC */
-        insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
-    }
-    else
-    {
-        return ERROR_SYMBOL_WRONG_TYPE;
     }
 
     /* freeNode(searchResult); */
