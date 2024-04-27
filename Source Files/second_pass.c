@@ -75,7 +75,7 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
 
 int handleEntryFile(char *filename, LinkedList *symbolTable){
     ListNode *current = symbolTable->head;
-    int foundEntryInFile, foundEntryDecleration = 0;
+    int found = 0;
 
     FILE* outputFile = fopen(filename, "w");
     if (outputFile == NULL)
@@ -89,22 +89,12 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
         if (strcmp(current->data, SYMBOL_TYPE_ENTRY) == 0){
             /* Found an Entry, should create a file */
             logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
-            foundEntryInFile = 1;
-            ListNode *searchResult = symbolTable->head;
-            while (searchResult != NULL && foundEntryDecleration)
-            {
-                if (strcmp(current->name, searchResult->name) && (strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_DATA)))
-                {
-                    foundEntryDecleration = 1;
-                } 
-                searchResult = searchResult->next;
-            }
-            
+            found = 1;
+            ListNode *searchResult = searchListWithType(symbolTable, current->name, SYMBOL_TYPE_ENTRY, 0);
             logger(LOG_LEVEL_DEBUG, "result.data: %s", searchResult->data);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){
                 /* Found an entry but it is not defiend anywhere */
-                logger(LOG_LEVEL_ERROR, "Found an entry but it is not defiend anywhere");
                 return ERROR_UNKNOWN_INSTRUCTION;
             }
             else {
@@ -115,7 +105,7 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
         current = current->next;
     }
     fclose(outputFile);
-    if (!foundEntryInFile){
+    if (!found){
         /* No Entries found. delete Entries file */
         logger(LOG_LEVEL_INFO, "No Entries found. Not creating a .ent file");
         remove(filename);
