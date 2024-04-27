@@ -72,7 +72,7 @@ char* decodeBinaryCode(char *binaryCode)
     char *decodedBinaryCode = (char*) malloc(sizeof(char) * DECODED_BINARY_CODE_LEN);
 
     /* Loop through pairs of bits */
-    for (i = 0; i < BINARY_CODE_LEN - 1; i += 2)
+    for (i = 0; i < BINARY_CODE_LEN; i += 2)
     {
         char pair[3] = {binaryCode[i], binaryCode[i+1], '\0'};
         /* Convert the pair of bits to an integer */
@@ -105,15 +105,15 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     /* Store the number of operands in the higher bits of binary */
     binaryCode |= (opcodeCode << 6);
 
-    if (parsedLine->src->adrType != -1)
-    {
-        /* Store the address type of the destination operand in bits 2-3 of binary */
-        binaryCode |= (parsedLine->src->adrType << 2);
-    }
     if (parsedLine->dst->adrType != -1)
     {
+        /* Store the address type of the destination operand in bits 2-3 of binary */
+        binaryCode |= (parsedLine->dst->adrType << 2);
+    }
+    if (parsedLine->src->adrType != -1)
+    {
         /* Store the address type of the source operand in bits 4-5 of binary */
-        binaryCode |= (parsedLine->dst->adrType << 4);
+        binaryCode |= (parsedLine->src->adrType << 4);
     }
 
     funcRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->instruction);

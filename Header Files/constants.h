@@ -28,7 +28,7 @@
 #define NUM_OPCODES 16
 #define NUM_REGISTERS 8
 
-#define BINARY_CODE_LEN 15
+#define BINARY_CODE_LEN 14
 #define DECODED_BINARY_CODE_LEN 8
 #define DECODED_SYMBOL_0 '*'
 #define DECODED_SYMBOL_1 '#'
