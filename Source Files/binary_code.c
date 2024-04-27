@@ -164,35 +164,39 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    SymbolNode *searchResult;
     int binaryCode, handlerRetVal, opcodeCode;
+    int found = 1;
+    SymbolNode *searchResult = symbolTable->head;
     binaryCode = handlerRetVal = 0;
 
     opcodeCode = getOpcodeCode(parsedLine->instruction);
     /* Store the number of operands in the higher bits of binary */
 
-    searchResult = searchListWithType(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, 0);
-    if (searchResult == NULL)
-    {
+    while (searchResult != NULL && found){
+
+        if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0  || strcmp(searchResult->symbolName, SYMBOL_TYPE_CODE) == 0))
+        {
+            /* bits 1-2: ARE codex - 'R' - 10, label is internal */
+            binaryCode |= (opcodeCode << 2);
+            binaryCode |= 0x2;
+
+            found = 0;
+        }
+        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
+        {
+            /* bits 1-2: ARE codex - 'E' - 01, label is external */
+            binaryCode |= (opcodeCode << 2);
+            binaryCode |= 0x1;
+            /* insert to list that the external label was used in this IC */
+            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            
+            found = 0;
+        }
+        searchResult = searchResult->next;
+    }
+    if (searchResult == NULL) {
+        logger(LOG_LEVEL_ERROR, "GIVEN SYMBOL NOT EXIST");
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-    }
-    else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)
-    {
-        /* bits 1-2: ARE codex - 'R' - 10, label is internal */
-        binaryCode |= (opcodeCode << 2);
-        binaryCode |= 0x2;
-    }
-    else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
-    {
-        /* bits 1-2: ARE codex - 'E' - 01, label is external */
-        binaryCode |= (opcodeCode << 2);
-        binaryCode |= 0x1;
-        /* insert to list that the external label was used in this IC */
-        insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
-    }
-    else
-    {
-        return ERROR_SYMBOL_WRONG_TYPE;
     }
 
     /* freeNode(searchResult); */
@@ -211,9 +215,9 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
     char *index;
-    int labelLen;
-    int indexLen;
-    SymbolNode *searchResult;
+    int labelLen, indexLen;
+    int found = 0;
+    SymbolNode *searchResult = symbolTable->head;
 
     if (labelEnd == NULL || indexEnd == NULL)
     {
@@ -226,33 +230,41 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     strncpy(label, operand->value, labelLen);
     label[labelLen] = '\0';
 
-    searchResult = searchListWithType(symbolTable, label, SYMBOL_TYPE_ENTRY, 0);
-    if (searchResult == NULL)
+    while (searchResult != NULL && found)
     {
+        /* if label exists with type data or code */
+        if ((strcmp(searchResult->symbolName, operand->value) == 0)
+            && ((strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0
+                 || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)))
+        {
+            /* bits 0-1: ARE codex - 'R' - 10, label is internal */
+            labelAddressBinaryCode |= 0x2;
+
+            found = 0;
+        }
+        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
+        {
+            /* bits 0-1: ARE codex - 'E' - 01, label is external */
+            labelAddressBinaryCode |= 0x1;
+            /* insert to list that the external label was used in this IC */
+            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+
+            found = 0;
+        }
+        searchResult = searchResult->next;
+    }
+
+    if (searchResult == NULL) {
+        logger(LOG_LEVEL_ERROR, "GIVEN SYMBOL NOT EXIST");
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-    }
-    else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)
-    {
-        /* bits 0-1: ARE codex - 'R' - 10, label is internal */
-        labelAddressBinaryCode |= 0x2;
-    }
-    else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
-    {
-        /* bits 0-1: ARE codex - 'E' - 01, label is external */
-        labelAddressBinaryCode |= 0x1;
-        /* insert to list that the external label was used in this IC */
-        insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
-    }
-    else
-    {
-        return ERROR_SYMBOL_WRONG_TYPE;
     }
 
     /* bits 2-13 are the address of the label */
     labelAddressBinaryCode |= (searchResult->symbolValue << 2);
     handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(labelAddressBinaryCode, BINARY_CODE_LEN), label);
 
-    if (handlerRetVal != SUCCESS){
+    if (handlerRetVal != SUCCESS)
+    {
         return handlerRetVal;
     }
 
@@ -272,18 +284,22 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     else
     {
         /* search for the index if it is defiend elsewhere in the code */
+        /* TODO: replace to searchWithType - check if it can be only mdefine or LIST[2] also... */
         searchResult = searchSymbolNameInTable(symbolTable, index);
-        if (searchResult == NULL){
+        if (searchResult == NULL)
+        {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
-        if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE)){
+        if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE))
+        {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
         /* bits 2-13 represent the index. bits 0-1 always 0 */
         indexBinaryCode |= (searchResult->symbolValue << 2);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
     }
-    if (handlerRetVal != SUCCESS){
+    if (handlerRetVal != SUCCESS)
+    {
         return handlerRetVal;
     }
 
