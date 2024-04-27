@@ -30,7 +30,7 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
             if (parsedLine.label) {
                 logger(LOG_LEVEL_WARNING, "a label is declared in an entry line");
             }
-            searchResult = searchList(symbolTable, parsedLine.operands);
+            searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
             if (searchResult == NULL) {
                 return ERROR_GIVEN_SYMBOL_NOT_EXIST;
             }

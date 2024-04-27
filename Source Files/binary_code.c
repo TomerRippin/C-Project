@@ -132,7 +132,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else {
         token = operand->value + 1;
-        SymbolNode *searchResult = searchList(symbolTable, token);
+        SymbolNode *searchResult = searchSymbolNameInTable(symbolTable, token);
         if (searchResult == NULL){
             logger(LOG_LEVEL_ERROR, "Not a valid address after #");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
@@ -188,7 +188,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         binaryCode |= (opcodeCode << 2);
         binaryCode |= 0x1;
         /* insert to list that the external label was used in this IC */
-        insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+        insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
     }
     else
     {
@@ -241,7 +241,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         /* bits 0-1: ARE codex - 'E' - 01, label is external */
         labelAddressBinaryCode |= 0x1;
         /* insert to list that the external label was used in this IC */
-        insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+        insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
     }
     else
     {
@@ -272,7 +272,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     else
     {
         /* search for the index if it is defiend elsewhere in the code */
-        searchResult = searchList(symbolTable, index);
+        searchResult = searchSymbolNameInTable(symbolTable, index);
         if (searchResult == NULL){
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }

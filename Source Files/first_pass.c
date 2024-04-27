@@ -12,7 +12,7 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
     {
         return ERROR_PARSE_DEFINE_DIRECTIVE;
     }
-    else if (searchList(symbolTable, symbol) != NULL)
+    else if (searchSymbolNameInTable(symbolTable, symbol) != NULL)
     {
         return ERROR_SYMBOL_ALREADY_EXIST;
     }
@@ -26,7 +26,7 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         else
         {
             printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
-            insertToList(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
+            insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
     }
@@ -50,7 +50,7 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
             }
             else
             {
-                searchResult = searchList(symbolTable, token);
+                searchResult = searchSymbolNameInTable(symbolTable, token);
                 if (searchResult == NULL)
                 {
                     return ERROR_GIVEN_SYMBOL_NOT_EXIST;
@@ -116,7 +116,7 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
     /* TODO: handle multiple labeles */
     logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
-    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
+    insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
 }
 
@@ -129,7 +129,7 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
     /* TODO: handle multiple labeles */
     printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
-    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
+    insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
 }
 
@@ -140,7 +140,7 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
     if (parsedLine->label != NULL)
     {
         logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine->label, SYMBOL_TYPE_CODE, *IC);
-        insertToList(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
+        insertToSymbolTable(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
     }
     logger(LOG_LEVEL_DEBUG, "parsing operands");
     funcsRetVal = parseOperands(parsedLine);
@@ -210,11 +210,11 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         if (parsedLine.label != NULL)
         {
             isLabel = 1;
-            if (searchList(symbolTable, parsedLine.label) != NULL)
+            if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
             {
                 /* TODO think if this is legal to not do anything */
                 logger(LOG_LEVEL_WARNING, "symbol already exist");
-                /*return ERROR_SYMBOL_ALREADY_EXIST;*/
+                /* return ERROR_SYMBOL_ALREADY_EXIST; */
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
@@ -233,7 +233,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             {
                 if (isLabel) {
                     logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_DATA, DC);
-                    insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
