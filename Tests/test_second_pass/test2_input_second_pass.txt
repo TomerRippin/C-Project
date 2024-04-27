@@ -7,7 +7,6 @@ prn #-5
 mov STR[5],STR[2]
 sub r1,r4
 cmp r3,#sz
-bne W
 L1: inc L3
 bne LOOP
 END: hlt
