@@ -1,7 +1,7 @@
 #include "files_utils.h"
 #include "first_pass.h"
 
-int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable);
+int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable);
 
 /**
  * @brief Handler for the entries file.
@@ -14,7 +14,7 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
  *
  * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
  */
-int handleEntryFile(char *filename, LinkedList *symbolTable);
+int handleEntryFile(char *filename, SymbolTable *symbolTable);
 
 /**
  * @brief Handler for the extern file.
@@ -27,7 +27,7 @@ int handleEntryFile(char *filename, LinkedList *symbolTable);
  *
  * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
  */
-int handleExternFile(char *filename, LinkedList *symbolTable);
+int handleExternFile(char *filename, SymbolTable *symbolTable);
 
 /**
  * @brief Creates the main output of the assembler - an object file (.ob).

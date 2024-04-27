@@ -1,35 +1,20 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "utils.h"
 
-/** TODO: change lineNumber to type, in order to use in the symbol table 
- * for now:
- * name = symbolName
- * data = symbolType
- * lineNumber = symbolValue
-typedef struct SymbolNode
+/* Defines a structure for the linked list node */
+typedef struct ListNode
 {
-    char *symbolName;            
-    char *symbolType;            
-    int symbolValue;             
-    struct SymbolNode *next;
-};
-*/
-
-/* Defines a structure for the linked list node */ 
-typedef struct ListNode {
     char *name;            /* Name associated with the Node */
     char *data;            /* The data stored in the Node */
-    int lineNumber;       /* Line number of the Node  - TODO: decide if needed and change to titled*/
+    int lineNumber;        /* Line number of the Node  - TODO: decide if needed and change to titled*/
     struct ListNode *next; /* Pointer to the next node */
 } ListNode;
 
 /* Defines a structure for the linked list */
-typedef struct LinkedList {
+typedef struct LinkedList
+{
     ListNode *head;
 } LinkedList;
 
@@ -38,18 +23,18 @@ typedef struct LinkedList {
  */
 LinkedList *createList();
 
-/** Initializes an empty linked list 
+/** Initializes an empty linked list
  * TODO: consider delete this
  */
 void initializeList(LinkedList *list);
 
-/* Inserts a node at the beginning of the list */ 
+/* Inserts a node at the beginning of the list */
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber);
 
-/* Searches for a node name in the linked list */ 
+/* Searches for a node name in the linked list */
 ListNode *searchList(LinkedList *list, char *target_name);
 
-ListNode* searchListWithType(LinkedList *list, char *labelName, char *labelType, int toInclude);
+ListNode *searchListWithType(LinkedList *list, char *labelName, char *labelType, int toInclude);
 
 /* Function to free memory from a node */
 void freeNode(ListNode *node);

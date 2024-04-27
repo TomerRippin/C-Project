@@ -5,14 +5,14 @@
 
 const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry"};
 
-int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
+int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
 {
     char *symbol = strtok(parsedLine->operands, "=");
     if (symbol == NULL)
     {
         return ERROR_PARSE_DEFINE_DIRECTIVE;
     }
-    else if (searchList(symbolTable, symbol) != NULL)
+    else if (searchSymbolNameInTable(symbolTable, symbol) != NULL)
     {
         return ERROR_SYMBOL_ALREADY_EXIST;
     }
@@ -26,16 +26,16 @@ int handleDefine(AssemblyLine *parsedLine, LinkedList *symbolTable)
         else
         {
             printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
-            insertToList(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
+            insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
     }
 }
 
-int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
+int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
     char *token = strtok(parsedLine->operands, ",");
-    ListNode *searchResult;
+    SymbolNode *searchResult;
     int value, handlerRetVal;
 
     while (token != NULL)
@@ -50,19 +50,19 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Binar
             }
             else
             {
-                searchResult = searchList(symbolTable, token);
+                searchResult = searchSymbolNameInTable(symbolTable, token);
                 if (searchResult == NULL)
                 {
                     return ERROR_GIVEN_SYMBOL_NOT_EXIST;
                 }
                 /* TODO: add search to the rest of the params in linked list also */
-                else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) != 0)
+                else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) != 0)
                 {
                     return ERROR_SYMBOL_WRONG_TYPE;
                 }
                 else
                 {
-                    value = searchResult->lineNumber;
+                    value = searchResult->symbolValue;
                     printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
@@ -79,7 +79,7 @@ int handleDataDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Binar
     return SUCCESS;
 }
 
-int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
+int handleStringDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC)
 {
     int stringLen, i;
     char binaryCode[BINARY_CODE_LEN];
@@ -109,7 +109,7 @@ int handleStringDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
     return SUCCESS;
 }
 
-int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
+int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
         logger(LOG_LEVEL_WARNING, "extern line contains label: <%s>", parsedLine->label);
@@ -118,11 +118,11 @@ int handleExternDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bin
     /* TODO: handle multiple labeles */
     logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
-    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
+    insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
 }
 
-int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
+int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
         printf("WARNING: entry line contains label: <%s>", parsedLine->label);
@@ -131,18 +131,18 @@ int handleEntryDirective(AssemblyLine *parsedLine, LinkedList *symbolTable, Bina
     /* TODO: handle multiple labeles */
     printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
-    insertToList(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
+    insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
 }
 
-int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int funcsRetVal, L;
 
     if (parsedLine->label != NULL)
     {
         logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine->label, SYMBOL_TYPE_CODE, *IC);
-        insertToList(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
+        insertToSymbolTable(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
     }
     logger(LOG_LEVEL_DEBUG, "parsing operands");
     funcsRetVal = parseOperands(parsedLine);
@@ -185,7 +185,7 @@ int handleCommandLine(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryC
     return SUCCESS;
 }
 
-int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
+int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
     int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
@@ -196,7 +196,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
     int externCount = 0;
     AssemblyLine parsedLine;
     int handlerRetVal;
-    ListNode *current;
+    SymbolNode *current;
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -212,11 +212,11 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
         if (parsedLine.label != NULL)
         {
             isLabel = 1;
-            if (searchList(symbolTable, parsedLine.label) != NULL)
+            if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
             {
                 /* TODO think if this is legal to not do anything */
                 logger(LOG_LEVEL_WARNING, "symbol already exist");
-                /*return ERROR_SYMBOL_ALREADY_EXIST;*/
+                /* return ERROR_SYMBOL_ALREADY_EXIST; */
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
@@ -235,7 +235,7 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
             {
                 if (isLabel) {
                     logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_DATA, DC);
-                    insertToList(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
@@ -290,9 +290,9 @@ int firstPass(FILE *inputFile, LinkedList *symbolTable, BinaryCodesTable *binary
     current = symbolTable->head;
     while (current != NULL)
     {
-        if (strcmp(current->data, SYMBOL_TYPE_DATA) == 0)
+        if (strcmp(current->symbolType, SYMBOL_TYPE_DATA) == 0)
         {
-            current->lineNumber = current->lineNumber + IC;
+            current->symbolValue = current->symbolValue + IC;
         }
         current = current->next;
     }  

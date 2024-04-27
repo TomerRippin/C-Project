@@ -1,11 +1,11 @@
 #include "../Header Files/second_pass.h"
 
-int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable)
+int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     int IC = BASE_INSTRUCTIONS_COUNTER;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
-    ListNode *searchResult;
+    SymbolNode *searchResult;
 
     /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -30,11 +30,11 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
             if (parsedLine.label) {
                 logger(LOG_LEVEL_WARNING, "a label is declared in an entry line");
             }
-            searchResult = searchList(symbolTable, parsedLine.operands);
+            searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
             if (searchResult == NULL) {
                 return ERROR_GIVEN_SYMBOL_NOT_EXIST;
             }
-            else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
+            else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
             {
                 return ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL;
             }
@@ -73,8 +73,8 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
 }
 
 
-int handleEntryFile(char *filename, LinkedList *symbolTable){
-    ListNode *current = symbolTable->head;
+int handleEntryFile(char *filename, SymbolTable *symbolTable){
+    SymbolNode *current = symbolTable->head;
     int found = 0;
 
     FILE* outputFile = fopen(filename, "w");
@@ -86,20 +86,20 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
 
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
-        if (strcmp(current->data, SYMBOL_TYPE_ENTRY) == 0){
+        if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0){
             /* Found an Entry, should create a file */
-            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
+            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->symbolName);
             found = 1;
-            ListNode *searchResult = searchListWithType(symbolTable, current->name, SYMBOL_TYPE_ENTRY, 0);
-            logger(LOG_LEVEL_DEBUG, "result.data: %s", searchResult->data);
+            SymbolNode *searchResult = searchListWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
+            logger(LOG_LEVEL_DEBUG, "result.symbolType: %s", searchResult->symbolType);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){
                 /* Found an entry but it is not defiend anywhere */
                 return ERROR_UNKNOWN_INSTRUCTION;
             }
             else {
-                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%04d>", current->name, searchResult->lineNumber);
-                fprintf(outputFile, "%s     %04d\n", searchResult->name, searchResult->lineNumber);
+                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%04d>", current->symbolName, searchResult->symbolValue);
+                fprintf(outputFile, "%s     %04d\n", searchResult->symbolName, searchResult->symbolValue);
             }
         }
         current = current->next;
@@ -113,8 +113,8 @@ int handleEntryFile(char *filename, LinkedList *symbolTable){
     return SUCCESS;
 }
 
-int handleExternFile(char *filename, LinkedList *symbolTable){
-    ListNode *current = symbolTable->head;
+int handleExternFile(char *filename, SymbolTable *symbolTable){
+    SymbolNode *current = symbolTable->head;
     int found = 0;
     FILE* outputFile = fopen(filename, "w");
     if (outputFile == NULL)
@@ -125,15 +125,15 @@ int handleExternFile(char *filename, LinkedList *symbolTable){
 
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
-        if (strcmp(current->data, SYMBOL_TYPE_EXTERNAL) == 0){
+        if (strcmp(current->symbolType, SYMBOL_TYPE_EXTERNAL) == 0){
             /* Found an Entry, should create a file */
-            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->name);
-            ListNode *searchResult = symbolTable->head;
+            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->symbolName);
+            SymbolNode *searchResult = symbolTable->head;
             while (searchResult != NULL)
             {
-                if ((strcmp(current->name, searchResult->name) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
-                    logger(LOG_LEVEL_INFO, "inserting label <%s> to extern file at location <%d>", current->name, searchResult->lineNumber);
-                    fprintf(outputFile, "%s     %04d\n", searchResult->name, searchResult->lineNumber);
+                if ((strcmp(current->symbolName, searchResult->symbolName) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
+                    logger(LOG_LEVEL_INFO, "inserting label <%s> to extern file at location <%d>", current->symbolName, searchResult->symbolValue);
+                    fprintf(outputFile, "%s     %04d\n", searchResult->symbolName, searchResult->symbolValue);
                     found = 1;
                 }
                 searchResult = searchResult->next;

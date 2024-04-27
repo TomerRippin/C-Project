@@ -81,11 +81,13 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
 void printBinaryList(BinaryCodesTable *list)
 {
     BinaryCodesNode *current = list->head;
-    printf("|    dec    |    binary code    |    source code     |\n");
-    printf("|-----------|-------------------|--------------------|\n");
+    printf("--------------------------------------------\n");
+    printf("| Addr | %-15s | %-15s |\n", "Binary Code", "Source Code");
+    printf("|------|-----------------|-----------------|\n");
     while (current != NULL)
     {
-        printf("|     %d     |  %s  |      %s     |\n", current->decAddress, current->binaryCode, current->sourceCode);
+        printf("| %04d | %-15s | %-15s |\n", current->decAddress, current->binaryCode, current->sourceCode);
         current = current->next;
     }
+    printf("--------------------------------------------\n");
 }

@@ -3,13 +3,13 @@
 int main()
 {
     int retVal;
-    LinkedList *symbolTable;
+    SymbolTable *symbolTable;
     /* TODO: maybe change type to linkedList? */
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     FILE *inputFile, *inputFile2;
 
     printf("Starting main - test_first_pass!\n");
-    symbolTable = createList();
+    symbolTable = createSymbolTable();
 
     /* Open the input files */
     inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
@@ -34,10 +34,10 @@ int main()
     }
 
     printf("Printing symbolTable\n");
-    printList(symbolTable);
+    printSymbolTable(symbolTable);
 
-    freeList(symbolTable);
-    symbolTable = createList();
+    freeSymbolTable(symbolTable);
+    symbolTable = createSymbolTable();
 
     printf("Input file: test_input_first_pass_symbol_exist\n");
     retVal = firstPass(inputFile2, symbolTable, binaryCodesTable);
@@ -47,7 +47,7 @@ int main()
     }
 
     printf("--- Printing symbolTable ---\n");
-    printList(symbolTable);
+    printSymbolTable(symbolTable);
 
     /**
     printf("Printing binaryCodesTable\n");
@@ -71,7 +71,7 @@ int main()
     fclose(inputFile2);
 
     printf("--- Freeing symbolTable ---\n");
-    freeList(symbolTable);
+    freeSymbolTable(symbolTable);
 
     return 0;
 }

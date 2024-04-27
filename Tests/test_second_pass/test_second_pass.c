@@ -5,7 +5,7 @@ int main()
     int retVal;
     printf("Starting main - test_first_pass!\n");
 
-    LinkedList *symbolTable = createList();
+    SymbolTable *symbolTable = createSymbolTable();
     /* TODO: maybe change type to linkedList? */
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
 
@@ -53,7 +53,7 @@ int main()
 
     printf("DEBUG - creating entries file\n");
     char *entryFileName = replaceFileNameExt(fileName, EXTENSION_ENT);
-    printList(symbolTable);
+    printSymbolTable(symbolTable);
     retVal = handleEntryFile(entryFileName, symbolTable);
 
     printf("DEBUG - creating externs file\n");
@@ -67,13 +67,13 @@ int main()
     retVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
 
     printf("Printing symbolTable\n");
-    printList(symbolTable);
+    printSymbolTable(symbolTable);
 
     printf("Closing files\n");
     fclose(inputFile);
 
     printf("Freeing symbolTable\n");
-    freeList(symbolTable);
+    freeSymbolTable(symbolTable);
 
     return 0;
 }
