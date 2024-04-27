@@ -174,7 +174,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
     while (searchResult != NULL && found){
 
-        if (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0)
+        if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
         {
             /* bits 1-2: ARE codex - 'R' - 10, label is internal */
             binaryCode |= (opcodeCode << 2);
@@ -182,7 +182,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
             found = 0;
         }
-        else if (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+        else if ((strcmp(searchResult->name, operand->value) == 0) && strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
         {
             /* bits 1-2: ARE codex - 'E' - 01, label is external */
             binaryCode |= (opcodeCode << 2);
