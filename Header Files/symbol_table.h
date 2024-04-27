@@ -1,5 +1,5 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#ifndef SYMBOL_TABLE_H
+#define SYMBOL_TABLE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,4 +54,4 @@ void freeList(SymbolTable *list);
 /* TODO: consider deleting this */
 void printList(SymbolTable *list);
 
-#endif /* LINKED_LIST_H */
+#endif /* SYMBOL_TABLE_H */

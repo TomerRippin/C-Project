@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "constants.h"
-#include "symbol_table.h"
+#include "linked_list.h"
 
 /**
  * @brief Reads a file and saves all the macros in it to a given linked list.
@@ -14,7 +11,7 @@
  * @param inputFile A pointer to the input file.
  * @param macrosList A pointer to the linked list where the macros will be stored.
  */
-void extractMacrosFromFile(FILE *inputFile, SymbolTable *macrosList);
+void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList);
 
 /**
  * @brief Reads a file, calls extractMacrosFromFile and remove all the macros from the file.

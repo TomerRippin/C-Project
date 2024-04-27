@@ -1,6 +1,6 @@
 #include "../Header Files/pre_assembler.h"
 
-void extractMacrosFromFile(FILE *inputFile, SymbolTable *macrosList)
+void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList)
 {
     char line[MAX_LINE_LEN];
     char macroData[MAX_MACRO_LEN] = "";  /* TODO: maybe don't assume the macro size and use realloc? */ 
@@ -56,7 +56,7 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
 /* TODO: maybe return int and many return options (different errors) */
 int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
 {
-    SymbolTable *macrosList = createList();
+    LinkedList *macrosList = createList();
 
     extractMacrosFromFile(inputFile, macrosList);
 
@@ -72,7 +72,7 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     /* Replaces the macro names with their content */
     char line[MAX_LINE_LEN];
     fseek(tempFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    SymbolNode *result;
+    ListNode *result;
     int index = 0;
 
     while (fgets(line, sizeof(line), tempFile) != NULL)
@@ -80,7 +80,7 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
         result = searchList(macrosList, line); /* TODO: now not working because null bytes... */
         if (result != NULL) {
             /* Replaces line with macro content */
-            fprintf(outputFile, "%s", result->symbolType);
+            fprintf(outputFile, "%s", result->data);
         } else {
             /* Writes original line to output file */
             fprintf(outputFile, "%s", line);
