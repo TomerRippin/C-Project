@@ -16,11 +16,8 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
         parsedLine = parseAssemblyLine(line);
         printAssemblyLine(&parsedLine);
 
-        if (parsedLine.label) {
-            /* TODO: not sure if the meaning is to skip this line or skip the label */
-            continue;
-        }
-        else if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
+
+        if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
                  strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
                  strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
                  strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
@@ -56,7 +53,7 @@ int secondPass(FILE *inputFile, char *inputFileName, LinkedList *symbolTable, Bi
                 return funcsRetVal;
             }
 
-            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, &IC);  /* NOTE: this will still work even if operands is null */
+            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC + 1);  /* NOTE: this will still work even if operands is null */
             if (funcsRetVal != SUCCESS)
             {
                 logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);

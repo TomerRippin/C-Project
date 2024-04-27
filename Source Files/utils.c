@@ -98,19 +98,19 @@ int calculateL(int srcType, int dstType) {
     {
         return L;
     }
-    else if (srcType == 4 && dstType == 4){
-        return L;
+    if (srcType == 3 && dstType == 3){
+        return L + 1;
     }
-    else if (srcType == 0 || srcType == 3 || srcType == 4){
+    if (srcType == 0 || srcType == 3 || srcType == 1){
         L = L + 1;
     }
-    else if (dstType == 0 || dstType == 3 || srcType == 4){
+    if (dstType == 0 || dstType == 3 || dstType == 1){
         L = L + 1;
     }
-    else if (dstType == 2){
+    if (dstType == 2){
         L = L + 2;
     }
-    else if (srcType == 2){
+    if (srcType == 2){
         L = L + 2;
     }
     return L;

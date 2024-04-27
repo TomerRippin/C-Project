@@ -10,7 +10,7 @@ int main()
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
 
     /* Open the input file */
-    FILE *inputFile = fopen("./Tests/test_second_pass/test_input_second_pass.txt", "r");
+    FILE *inputFile = fopen("./Tests/test_second_pass/test2_input_second_pass.txt", "r");
     char *fileName = "test_input_second_pass.txt";
 
     if (inputFile == NULL)
