@@ -1,4 +1,4 @@
-#include "binary_code.h"
+#include "../HeaderFiles/binary_code.h"
 
 char *convertIntToBinary(int num, int len)
 {

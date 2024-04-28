@@ -1,4 +1,4 @@
-#include "../Header Files/second_pass.h"
+#include "../HeaderFiles/second_pass.h"
 
 int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
@@ -90,7 +90,7 @@ int handleEntryFile(char *filename, SymbolTable *symbolTable){
             /* Found an Entry, should create a file */
             logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->symbolName);
             found = 1;
-            SymbolNode *searchResult = searchListWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
+            SymbolNode *searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
             logger(LOG_LEVEL_DEBUG, "result.symbolType: %s", searchResult->symbolType);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){

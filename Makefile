@@ -1,18 +1,28 @@
-## TODO
+# Usage:
+# * make all
+# * make first_pass
+# * make clean
 
-## Test pre assembler
-# gcc --ansi -Wall -I './Header Files/' './Source Files/symbol_table.c' './Source Files/pre_assembler.c' './Source Files/test_pre_assembler.c' -o pre_assembler.exe
+CC=gcc
+CFLAGS=-ansi -Wall -I HeaderFiles/
+SOURCES=SourceFiles/logger.c SourceFiles/assembly_line_parser.c SourceFiles/binary_code.c SourceFiles/symbol_table.c SourceFiles/utils.c SourceFiles/files_utils.c SourceFiles/binary_codes_table.c SourceFiles/first_pass.c SourceFiles/second_pass.c
+SOURCES_PRE_ASSEMBLER=$(SOURCES) SourceFiles/linked_list.c SourceFiles/pre_assembler.c Tests/test_pre_assembler/test_pre_assembler.c
 
-## Test cleaning file function
-# gcc -ansi -Wall -I Header\ Files/ Tests/test_clean_file/test_clean_file.c Source\ Files/utils.c -o test.exe
+all: first_pass second_pass
 
-## Test first_pass after clean_file
-# Windows: gcc --ansi -Wall -I './Header Files/' './Source Files/first_pass.c' './Source Files/assembly_line_parser.c' '.\Source Files\symbol_table.c' '.\Source Files\utils.c' './Tests/test_first_pass/test_first_pass.c' -o first_pass.exe
-# Ubuntu: gcc -ansi -Wall -I Header\ Files/ Source\ Files/first_pass.c Source\ Files/binary_codes_table.c Source\ Files/assembly_line_parser.c Source\ Files/symbol_table.c Source\ Files/binary_code.c Source\ Files/logger.c Source\ Files/utils.c Tests/test_first_pass/test_first_pass.c -o first_pass.exe
+pre_assembler: $(SOURCES_PRE_ASSEMBLER)
+	$(CC) $(CFLAGS) $(SOURCES_PRE_ASSEMBLER) -o pre_assembler.exe
 
-## Test second_pass
-# Ubuntu: gcc -ansi -Wall -I Header\ Files/ Source\ Files/logger.c Source\ Files/assembly_line_parser.c Source\ Files/symbol_table.c Source\ Files/utils.c Source\ Files/files_utils.c Source\ Files/first_pass.c Source\ Files/second_pass.c Tests/test_second_pass/test_second_pass.c -o second_pass.exe
+first_pass: $(SOURCES) Tests/test_first_pass/test_first_pass.c
+	$(CC) $(CFLAGS) $(SOURCES) Tests/test_first_pass/test_first_pass.c -o first_pass.exe
 
-# gcc -ansi -Wall -I Header\ Files/ Source\ Files/assembly_line_parser.c Source\ Files/symbol_table.c Source\ Files/utils.c Source\ Files/logger.c Source\ Files/files_utils.c Source\ Files/first_pass.c Source\ Files/second_pass.c Tests/test_second_pass/test_second_pass.c Source\ Files/binary_code.c Source\ Files/binary_codes_table.c -o second_pass.exe
+second_pass: $(SOURCES) Tests/test_second_pass/test_second_pass.c
+	$(CC) $(CFLAGS) $(SOURCES) Tests/test_second_pass/test_second_pass.c -o second_pass.exe
 
-
+clean:
+	rm -f *.exe
+	rm -rf *.o
+	rm -rf *.am
+	rm -rf *.ent
+	rm -rf *.ext
+	rm -rf *.ob

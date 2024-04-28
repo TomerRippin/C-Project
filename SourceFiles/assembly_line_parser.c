@@ -1,4 +1,4 @@
-#include "../Header Files/assembly_line_parser.h"
+#include "../HeaderFiles/assembly_line_parser.h"
 
 const Opcode OPCODES[] = {
     {0, "mov", 2},

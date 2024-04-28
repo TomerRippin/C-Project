@@ -1,4 +1,4 @@
-#include "../../Header Files/second_pass.h"
+#include "../../HeaderFiles/second_pass.h"
 
 int main()
 {

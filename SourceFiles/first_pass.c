@@ -1,4 +1,4 @@
-#include "../Header Files/first_pass.h"
+#include "../HeaderFiles/first_pass.h"
 
 /* TODO: rename this file */
 /* TODO: delete all debug prints - starting with "DEBUG" */
