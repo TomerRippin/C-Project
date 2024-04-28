@@ -165,28 +165,25 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
 {
     ListNode *searchResult = symbolTable->head;
-    int binaryCode, handlerRetVal, opcodeCode;
+    int binaryCode, handlerRetVal;
     int found = 1;
     binaryCode = handlerRetVal = 0;
-
-    opcodeCode = getOpcodeCode(parsedLine->instruction);
-    /* Store the number of operands in the higher bits of binary */
 
     while (searchResult != NULL && found){
 
         if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
         {
             /* bits 1-2: ARE codex - 'R' - 10, label is internal */
-            binaryCode |= (opcodeCode << 2);
-            binaryCode |= 0x2;
+            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
+            binaryCode |= (searchResult->lineNumber << 2);
+            binaryCode |= 2;
 
             found = 0;
         }
         else if ((strcmp(searchResult->name, operand->value) == 0) && strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
         {
             /* bits 1-2: ARE codex - 'E' - 01, label is external */
-            binaryCode |= (opcodeCode << 2);
-            binaryCode |= 0x1;
+            binaryCode |= 1;
             /* insert to list that the external label was used in this IC */
             insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
             
@@ -217,7 +214,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     char *index;
     int labelLen;
     int indexLen;
-    int found = 0;
+    int found = 1;
     ListNode *searchResult = symbolTable->head;
 
     if (labelEnd == NULL || indexEnd == NULL)
@@ -230,19 +227,21 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     label = malloc(labelLen + 1);
     strncpy(label, operand->value, labelLen);
     label[labelLen] = '\0';
-
     while (searchResult != NULL && found){
-        if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
+        if ((strcmp(searchResult->name, label) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
         {
             /* bits 0-1: ARE codex - 'R' - 10, label is internal */
-            labelAddressBinaryCode |= 0x2;
+            labelAddressBinaryCode |= 2;
+
+            labelAddressBinaryCode |= (searchResult->lineNumber << 2);
+            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
 
             found = 0;
         }
         else if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0))
         {
             /* bits 0-1: ARE codex - 'E' - 01, label is external */
-            labelAddressBinaryCode |= 0x1;
+            labelAddressBinaryCode |= 1;
             /* insert to list that the external label was used in this IC */
             insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
@@ -257,7 +256,6 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
 
     /* bits 2-13 are the address of the label */
-    labelAddressBinaryCode |= (searchResult->lineNumber << 2);
     handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(labelAddressBinaryCode, BINARY_CODE_LEN), label);
 
     if (handlerRetVal != SUCCESS){
