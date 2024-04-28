@@ -1,4 +1,4 @@
-#include "../Header Files/utils.h"
+#include "../HeaderFiles/utils.h"
 
 void removeExtraSpacesTabs(char *str) {
     int i, j;

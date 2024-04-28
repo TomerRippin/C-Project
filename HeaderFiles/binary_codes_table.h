@@ -32,6 +32,10 @@ BinaryCodesTable *createBinaryCodesTable();
  * @return SUCCESS code or ERROR code. */
 int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode);
 
+/** Sorts the table by decAddress in ascending order, using bubble sort.
+ * NOTE: if table is very large this function might be a bit slow. */
+void sortBinaryCodesTable(BinaryCodesTable *table);
+
 /* Function to free memory from a node */
 void freeBinaryCodesNode(BinaryCodesNode *node);
 

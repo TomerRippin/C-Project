@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbol_table.h"
 
 /**
  * @brief Replaces the extension of a file name with a new extension.
@@ -17,8 +16,5 @@
  * @return char* The file name with the new extension.
  */
 char *replaceFileNameExt(char *fileName, char *newExtension);
-
-int createExternalsFile(SymbolTable *symbolTable, char *originalFilePath);
-int createEntriesFile(SymbolTable *symbolTable, char *originalFilePath);
 
 #endif /* FILES_UTILS_H */

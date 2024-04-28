@@ -1,4 +1,4 @@
-#include "../Header Files/symbol_table.h"
+#include "../HeaderFiles/symbol_table.h"
 
 SymbolTable *createSymbolTable()
 {
@@ -29,7 +29,7 @@ SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *targetName)
     return NULL;
 }
 
-SymbolNode *searchListWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude)
+SymbolNode *searchSymbolTableWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude)
 {
     SymbolNode *current = table->head;
     while (current != NULL)
@@ -62,7 +62,7 @@ SymbolNode *searchSymbolNameTypeInTable(SymbolTable *table, char *symbolName, ch
     return NULL;
 }
 
-int isAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue)
+int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue)
 {
     SymbolNode *current = table->head;
     while (current != NULL)
@@ -76,7 +76,7 @@ int isAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int s
     return 0;
 }
 
-void sortSymbolTableByValue(SymbolTable * table)
+void sortSymbolTable(SymbolTable * table)
 {
     if (table->head == NULL || table->head->next == NULL)
     {
@@ -124,7 +124,7 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
 
     printf("DEBUG - insertToSymbolTable\n");
 
-    if (isAlreadyExist(table, symbolName, symbolType, symbolValue))
+    if (isSymbolAlreadyExist(table, symbolName, symbolType, symbolValue))
     {
         logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
         return;
