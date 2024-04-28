@@ -170,12 +170,10 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     binaryCode = handlerRetVal = 0;
 
     while (searchResult != NULL && found){
-
-        if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0  || strcmp(searchResult->symbolName, SYMBOL_TYPE_CODE) == 0))
+        if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0  || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0))
         {
             /* bits 1-2: ARE codex - 'R' - 10, label is internal */
-            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
-            binaryCode |= (searchResult->lineNumber << 2);
+            binaryCode |= (searchResult->symbolValue << 2);
             binaryCode |= 2;
 
             found = 0;
@@ -237,8 +235,8 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             /* bits 0-1: ARE codex - 'R' - 10, label is internal */
             labelAddressBinaryCode |= 2;
             /* bits 2-13 are the address of the label */
-            labelAddressBinaryCode |= (searchResult->lineNumber << 2);
-            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
+            labelAddressBinaryCode |= (searchResult->symbolValue << 2);
+            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->symbolValue);
 
             found = 0;
         }
