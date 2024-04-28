@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     int funcRetVal, IC, DC;
     IC = DC = BASE_INSTRUCTIONS_COUNTER; /* TODO: change later, make them a variable of the passes */
+    /* TODO: really need to change this, because ob file is wrong */
 
     const char *inputFileName = argv[1];
     FILE *inputFile = fopen(inputFileName, "r");
@@ -69,6 +70,8 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
         return funcRetVal;
     }
+    logger(LOG_LEVEL_INFO, "First pass - SUCCESS! printing binaryCodesTable:");
+    printBinaryCodesTable(binaryCodesTable);
 
     logger(LOG_LEVEL_INFO, "Second pass");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
@@ -79,6 +82,8 @@ int main(int argc, char *argv[])
         return funcRetVal;
     }
     fclose(amFile);
+    logger(LOG_LEVEL_INFO, "Second pass - SUCCESS! printing binaryCodesTable:");
+    printBinaryCodesTable(binaryCodesTable);
 
     logger(LOG_LEVEL_INFO, "Exporting files");
     const char *entryFileName = replaceFileNameExt(inputFileName, EXTENSION_ENT);

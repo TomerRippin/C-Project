@@ -61,7 +61,6 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     sortSymbolTable(symbolTable);
     sortBinaryCodesTable(binaryCodesTable);
 
-    printBinaryList(binaryCodesTable);
     /* Print the extern labels and their addresses to the '.externals' output file */
     /* Print the entry labels and their addresses to the '.entries' output file */
     /* Free all the allocated memory and resources used during the second pass */
@@ -86,10 +85,8 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
     while (current != NULL){
         if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0){
             /* Found an Entry, should create a file */
-            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->symbolName);
             found = 1;
             SymbolNode *searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
-            logger(LOG_LEVEL_DEBUG, "result.symbolType: %s", searchResult->symbolType);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){
                 /* Found an entry but it is not defiend anywhere */
@@ -108,6 +105,10 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
         logger(LOG_LEVEL_INFO, "No Entries found. Not creating a .ent file");
         remove(filename);
     }
+    else
+    {
+        logger(LOG_LEVEL_INFO, "Succesfully created entry file");
+    }
     return SUCCESS;
 }
 
@@ -123,10 +124,11 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable){
     }
 
     /* Search for an Entry in the symbol table*/
-    while (current != NULL){
-        if (strcmp(current->symbolType, SYMBOL_TYPE_EXTERNAL) == 0){
+    while (current != NULL)
+    {
+        if (strcmp(current->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
+        {
             /* Found an Entry, should create a file */
-            logger(LOG_LEVEL_DEBUG, "Found an Entry - label name: <%s>", current->symbolName);
             SymbolNode *searchResult = symbolTable->head;
             while (searchResult != NULL)
             {
@@ -141,10 +143,15 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable){
         current = current->next;
     }
     fclose(outputFile);
-    if (!found){
+    if (!found)
+    {
         /* No Entries found. delete Extern file */
         logger(LOG_LEVEL_INFO, "No externs found. Not creating a .ext file");
         remove(filename);
+    }
+    else
+    {
+        logger(LOG_LEVEL_INFO, "Succesfully created extern file");
     }
     return SUCCESS;
 }
@@ -162,7 +169,7 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
     }
 
     /* First line is header - <IC> <DC> */
-    sprintf(line, " %d %d \n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
+    sprintf(line, "  %d %d  \n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
     fputs(line, outputFile);
 
     for (node = binaryCodesTable->head; node != NULL; node = node->next)
@@ -173,6 +180,8 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
 
     fclose(outputFile);
     free(line);
+
+    logger(LOG_LEVEL_INFO, "Succesfully created object file");
 
     return SUCCESS;
 }

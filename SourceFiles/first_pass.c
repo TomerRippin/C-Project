@@ -51,7 +51,6 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
             }
             else
             {
-                printf("HEREEE, token: %s\n", token);
                 searchResult = searchSymbolNameInTable(symbolTable, token);
                 if (searchResult == NULL)
                 {
@@ -65,7 +64,6 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 else
                 {
                     value = searchResult->symbolValue;
-                    printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
         }
@@ -165,15 +163,12 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
         funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
-            if (funcsRetVal == ERROR_GIVEN_SYMBOL_NOT_EXIST)
-            {
-                /* got an error in AddressType 1, ignore thie error and wait to second pass */
-            }
-            else
+            if (funcsRetVal != ERROR_GIVEN_SYMBOL_NOT_EXIST)
             {
                 logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
                 return funcsRetVal;
             }
+            /* ERROR_GIVEN_SYMBOL_NOT_EXIST - ignore thie error and wait to second pass */
         }
     }
 
@@ -294,8 +289,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             current->symbolValue = current->symbolValue + IC;
         }
         current = current->next;
-    }  
-    printBinaryList(binaryCodesTable);
+    } 
 
     /*freeBinaryCodesTable(binaryTableTry); */
 
