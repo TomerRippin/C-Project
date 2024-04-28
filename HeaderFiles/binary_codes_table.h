@@ -1,9 +1,6 @@
 #ifndef BINARY_CODES_TABLE_H
 #define BINARY_CODES_TABLE_H
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "constants.h"
 #include "assembly_line_parser.h"
 

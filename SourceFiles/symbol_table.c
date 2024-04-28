@@ -122,8 +122,6 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
 {
     SymbolNode *newNode;
 
-    printf("DEBUG - insertToSymbolTable\n");
-
     if (isSymbolAlreadyExist(table, symbolName, symbolType, symbolValue))
     {
         logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
@@ -152,6 +150,8 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
         table->last->next = newNode;
     }
     table->last = newNode;
+
+    logger(LOG_LEVEL_DEBUG, "Inserted to symbolTable: symbol name - <%s> | symbol type - <%d> | symbol value: <%d>", symbolName, symbolType, symbolValue);
 }
 
 void freeSymbolNode(SymbolNode *node){

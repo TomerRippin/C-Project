@@ -1,10 +1,5 @@
 #include "../HeaderFiles/linked_list.h"
 
-void initializeList(LinkedList *list)
-{
-    list->head = NULL;
-}
-
 LinkedList *createList()
 {
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
@@ -13,7 +8,7 @@ LinkedList *createList()
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
-    initializeList(list);
+    list->head = NULL;
     return list;
 }
 
@@ -111,6 +106,7 @@ void freeList(LinkedList *list)
 void printList(LinkedList *list)
 {
     ListNode *current = list->head;
+    printf("-------------------------------------------\n");
     printf("|    Name    |    Data    |    LineNum    |\n");
     printf("|------------|------------|---------------|\n");
     while (current != NULL)
@@ -118,4 +114,5 @@ void printList(LinkedList *list)
         printf("|    %s    |    %s    |       %d      |\n", current->name, current->data, current->lineNumber);
         current = current->next;
     }
+    printf("-------------------------------------------\n");
 }

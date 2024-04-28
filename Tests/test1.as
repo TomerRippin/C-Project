@@ -11,8 +11,8 @@ mov     STR[5], STR[2]
     m_mcr
 L1: inc K
 bne LOOP
-END: hlt
+   END: hlt
 .define len = 4
-STR: .string “abcdef”
-LIST: .data 6, -9, len
 K: .data 22
+STR: .string "abcdef"
+LIST: .data 6, -9, len

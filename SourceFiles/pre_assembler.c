@@ -53,8 +53,7 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
     }
 }
 
-/* TODO: maybe return int and many return options (different errors) */
-int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
+int preAssembler(FILE *inputFile, FILE *outputFile)
 {
     LinkedList *macrosList = createList();
 
@@ -64,8 +63,7 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     FILE *tempFile = tmpfile();
     if (tempFile == NULL)
     {
-        printf("Error creating temporary file.\n");
-        return -1;
+        return ERROR_OPEN_FILE;
     }
     removeMacrosFromFile(inputFile, tempFile);
 
@@ -78,10 +76,13 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     while (fgets(line, sizeof(line), tempFile) != NULL)
     {
         result = searchList(macrosList, line); /* TODO: now not working because null bytes... */
-        if (result != NULL) {
+        if (result != NULL)
+        {
             /* Replaces line with macro content */
             fprintf(outputFile, "%s", result->data);
-        } else {
+        }
+        else
+        {
             /* Writes original line to output file */
             fprintf(outputFile, "%s", line);
         }
@@ -91,8 +92,6 @@ int replaceMacrosInFile(FILE *inputFile, FILE *outputFile)
     fclose(tempFile);
     freeList(macrosList);
     free(macrosList);
-
-    /* TODO: create a new file - .am */
     
-    return 1;
+    return SUCCESS;
 }

@@ -1,8 +1,6 @@
 #ifndef BINARY_CODE_H
 #define BINARY_CODE_H
 
-#include <stdio.h>
-#include <string.h>
 #include "errors.h"
 #include "logger.h"
 #include "constants.h"

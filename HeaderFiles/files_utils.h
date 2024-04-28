@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "constants.h"
+#include "errors.h"
+
 
 /**
  * @brief Replaces the extension of a file name with a new extension.
@@ -15,6 +18,23 @@
  * @param newExtension The new extension to replace the old one.
  * @return char* The file name with the new extension.
  */
-char *replaceFileNameExt(char *fileName, char *newExtension);
+char *replaceFileNameExt(const char *fileName, char *newExtension);
+
+/* Removes extra spaces and tabs from a string */
+void removeExtraSpacesTabs(char *str);
+
+/* Removes comments (lines starting with ';') from a string */
+void removeComments(char *str);
+
+/**
+ * @brief Removes extra spaces, tabs and comments from an input file and writes the cleaned lines to an output file.
+ *
+ * @param inputFile Pointer to the input file.
+ * @param outputFile Pointer to the output file.
+ *
+ * @return int SUCCESS code.
+ * TODO: check alll edge cases + maybe return error code?
+ */
+int cleanAssemblyFile(FILE *inputFile, FILE *outputFile);
 
 #endif /* FILES_UTILS_H */

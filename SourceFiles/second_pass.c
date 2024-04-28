@@ -1,6 +1,6 @@
 #include "../HeaderFiles/second_pass.h"
 
-int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
+int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     int IC = BASE_INSTRUCTIONS_COUNTER;
     char line[MAX_LINE_LEN];
@@ -71,7 +71,7 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
 }
 
 
-int handleEntryFile(char *filename, SymbolTable *symbolTable){
+int handleEntryFile(const char *filename, SymbolTable *symbolTable){
     SymbolNode *current = symbolTable->head;
     int found = 0;
 
@@ -111,7 +111,7 @@ int handleEntryFile(char *filename, SymbolTable *symbolTable){
     return SUCCESS;
 }
 
-int handleExternFile(char *filename, SymbolTable *symbolTable){
+int handleExternFile(const char *filename, SymbolTable *symbolTable){
     SymbolNode *current = symbolTable->head;
     int found = 0;
 
@@ -149,7 +149,7 @@ int handleExternFile(char *filename, SymbolTable *symbolTable){
     return SUCCESS;
 }
 
-int createObjectFile(char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC)
+int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC)
 {
     BinaryCodesNode *node;
     char *line = (char*) malloc(sizeof(char) * BINARY_CODE_LEN);

@@ -25,7 +25,6 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         }
         else
         {
-            printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
@@ -40,16 +39,19 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
 
     while (token != NULL)
     {
-        if (isNumber(token)) {
+        if (isNumber(token))
+        {
             value = atoi(token);
         }
-        else {
+        else
+        {
             if (isValidLabel(token) != 1)
             {
                 return ERROR_LABEL_NOT_VALID;
             }
             else
             {
+                printf("HEREEE, token: %s\n", token);
                 searchResult = searchSymbolNameInTable(symbolTable, token);
                 if (searchResult == NULL)
                 {
@@ -67,7 +69,6 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 }
             }
         }
-        printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
         if (handlerRetVal != SUCCESS){
             return handlerRetVal;
@@ -129,7 +130,6 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
     }
 
     /* TODO: handle multiple labeles */
-    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
@@ -187,7 +187,6 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
 
 int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
     int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];

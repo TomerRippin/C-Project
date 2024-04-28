@@ -1,3 +1,4 @@
+#include "errors.h"
 #include "constants.h"
 #include "linked_list.h"
 
@@ -33,7 +34,9 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile);
  * Finally, it reads the input file and replaces lines with macro names with macro content and returns 
  * the new file.
  *
- * @param inputFile A pointer to the input file.
- * @param outputFile A pointer to the output file where the new content will be written.
+ * @param inputFile - A pointer to the input file.
+ * @param outputFile - A pointer to the output file where the new content will be written (usually ends with .am).
+ * 
+ * @return int - SUCCESS code or Error code
  */
-int replaceMacrosInFile(FILE *inputFile, FILE *outputFile);
+int preAssembler(FILE *inputFile, FILE *outputFile);
