@@ -56,6 +56,49 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
     return SUCCESS;
 }
 
+void sortBinaryCodesTable(BinaryCodesTable *table)
+{
+    if (table->head == NULL || table->head->next == NULL)
+    {
+        return; /* No need to sort empty or single-node lists */
+    }
+
+    BinaryCodesNode *node;
+    int swapped;
+
+    do
+    {
+        swapped = 0;
+        node = table->head;
+
+        while (node->next != table->last)
+        {
+            /* If current node's dec address is greater than the next node's value */
+            if (node->decAddress > node->next->decAddress)
+            {
+                /* Swap node values */
+                char *tempBinary = node->binaryCode;
+                char *tempSource = node->sourceCode;
+                int tempAddr = node->decAddress;
+
+                node->binaryCode = node->next->binaryCode;
+                node->sourceCode = node->next->sourceCode;
+                node->decAddress = node->next->decAddress;
+
+                node->next->binaryCode = tempBinary;
+                node->next->sourceCode = tempSource;
+                node->next->decAddress = tempAddr;
+
+                swapped = 1; /* Set swapped flag to true */
+            }
+            node = node->next;
+        }
+
+        table->last = node;
+
+    } while (swapped); /* Repeat if any values were swapped in the last pass */
+}
+
 void freeBinaryCodesNode(BinaryCodesNode *node)
 {
     free(node->binaryCode);

@@ -7,7 +7,6 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
 
-    /* TODO: maybe dont go over all the lines, and just go over the symbolTable + binaryCodesTable */
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         /* Remove the newline character at the end of the line */
@@ -16,11 +15,10 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
         parsedLine = parseAssemblyLine(line);
         printAssemblyLine(&parsedLine);
 
-
         if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
-                 strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
-                 strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
-                 strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
+            strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
+            strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
+            strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
         {
             logger(LOG_LEVEL_DEBUG, "string/data/extern - do nothing");
             continue;
@@ -40,23 +38,19 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
             }
             else {
                 /* TODO: line 6 - update entry symbol */
-                printf("DEBUG - line 6 - TODO");
+                printf("DEBUG - line 6 - TODOOOOOOOOOOOOO");
             }
         }
         else {
-            /* TODO: section 7-8 */
-            printf("DEBUG - section 7-8\n");
             int funcsRetVal = parseOperands(&parsedLine);
             if (funcsRetVal != SUCCESS)
             {
-                logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
                 return funcsRetVal;
             }
 
             funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC + 1);  /* NOTE: this will still work even if operands is null */
             if (funcsRetVal != SUCCESS)
             {
-                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
                 return funcsRetVal;
             }
             int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
@@ -64,10 +58,14 @@ int secondPass(FILE *inputFile, char *inputFileName, SymbolTable *symbolTable, B
         }
     }
 
+    sortSymbolTable(symbolTable);
+    sortBinaryCodesTable(binaryCodesTable);
+
     printBinaryList(binaryCodesTable);
     /* Print the extern labels and their addresses to the '.externals' output file */
     /* Print the entry labels and their addresses to the '.entries' output file */
     /* Free all the allocated memory and resources used during the second pass */
+    /* TODO: insert the below functions to second_pass */
 
     return SUCCESS;
 }
@@ -116,6 +114,7 @@ int handleEntryFile(char *filename, SymbolTable *symbolTable){
 int handleExternFile(char *filename, SymbolTable *symbolTable){
     SymbolNode *current = symbolTable->head;
     int found = 0;
+
     FILE* outputFile = fopen(filename, "w");
     if (outputFile == NULL)
     {
@@ -154,7 +153,8 @@ int createObjectFile(char *filename, BinaryCodesTable *binaryCodesTable, int IC,
 {
     BinaryCodesNode *node;
     char *line = (char*) malloc(sizeof(char) * BINARY_CODE_LEN);
-    FILE* outputFile = fopen(filename, "w");
+
+    FILE *outputFile = fopen(filename, "w");
     if (outputFile == NULL)
     {
         logger(LOG_LEVEL_ERROR, "Error opening objects file.\n");
@@ -162,7 +162,7 @@ int createObjectFile(char *filename, BinaryCodesTable *binaryCodesTable, int IC,
     }
 
     /* First line is header - <IC> <DC> */
-    sprintf(line, "%d %d\n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
+    sprintf(line, " %d %d \n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
     fputs(line, outputFile);
 
     for (node = binaryCodesTable->head; node != NULL; node = node->next)

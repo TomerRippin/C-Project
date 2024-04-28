@@ -76,7 +76,7 @@ int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType,
     return 0;
 }
 
-void sortSymbolTableByValue(SymbolTable * table)
+void sortSymbolTable(SymbolTable * table)
 {
     if (table->head == NULL || table->head->next == NULL)
     {

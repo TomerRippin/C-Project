@@ -36,7 +36,7 @@ int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType,
 
 /** Sorts the table by symbolValue in ascending order, using bubble sort.
  * NOTE: if table is very large this function might be a bit slow. */
-void sortSymbolTableByValue(SymbolTable *table);
+void sortSymbolTable(SymbolTable *table);
 
 /* Function to free memory from a node */
 void freeSymbolNode(SymbolNode *node);
