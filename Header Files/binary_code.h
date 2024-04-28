@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "constants.h"
 #include "assembly_line_parser.h"
-#include "linked_list.h"
+#include "symbol_table.h"
 #include "binary_codes_table.h"
 
 /* TOOD: decide if this function will insert to binaryCodesTable also or no */
@@ -70,7 +70,7 @@ void reverseBits(char *bitsArray);
  */
 char* decodeBinaryCode(char *binaryCode);
 
-int getOperandsBinaryCode(AssemblyLine *parsedLine, LinkedList *symbolTable, BinaryCodesTable *binaryCodesTable, int IC);
+int getOperandsBinaryCode(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int IC);
 
 /**
  * @brief Creates the binary code of an opcode and inserts to binaryCodesTable.
@@ -95,7 +95,7 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
  *
  * @return SUCCESS code or ERROR code.
  */
-int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC);
 
 /**
  * @brief Creates the binary code of an operand with address type = 1 and inserts to binaryCodesTable.
@@ -108,9 +108,9 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
  *
  * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type).
  */
-int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
+int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC);
 
-int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC);
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC);
 
 /**
  * @brief Creates the binary code of an operand with address type = 3.
@@ -142,6 +142,6 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
  */
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int IC);
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int IC);
 
 #endif /* BINARY_CODE_H */

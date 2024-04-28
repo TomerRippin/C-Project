@@ -121,7 +121,7 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return funcRetVal;
 }
 
-int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
+int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
     int binaryCode, handlerRetVal, num;
     char *token;
@@ -132,14 +132,14 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else {
         token = operand->value + 1;
-        ListNode *searchResult = searchList(symbolTable, token);
+        SymbolNode *searchResult = searchSymbolNameInTable(symbolTable, token);
         if (searchResult == NULL){
             logger(LOG_LEVEL_ERROR, "Not a valid address after #");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         } 
-        else if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE) == 0){
+        else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) == 0){
             logger(LOG_LEVEL_DEBUG, "Found a valid defiend label");
-            num = searchResult->lineNumber;
+            num = searchResult->symbolValue;
         }
         else {
             logger(LOG_LEVEL_ERROR, "found label, not in the right type");
@@ -162,16 +162,16 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
+int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    ListNode *searchResult = symbolTable->head;
     int binaryCode, handlerRetVal;
     int found = 1;
+    SymbolNode *searchResult = symbolTable->head;
     binaryCode = handlerRetVal = 0;
 
     while (searchResult != NULL && found){
 
-        if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
+        if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0  || strcmp(searchResult->symbolName, SYMBOL_TYPE_CODE) == 0))
         {
             /* bits 1-2: ARE codex - 'R' - 10, label is internal */
             logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
@@ -180,12 +180,12 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
             found = 0;
         }
-        else if ((strcmp(searchResult->name, operand->value) == 0) && strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0)
+        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
         {
             /* bits 1-2: ARE codex - 'E' - 01, label is external */
             binaryCode |= 1;
             /* insert to list that the external label was used in this IC */
-            insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
             
             found = 0;
         }
@@ -204,7 +204,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int *IC)
+int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
     int labelAddressBinaryCode, indexBinaryCode, handlerRetVal;
     labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
@@ -212,10 +212,9 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
     char *index;
-    int labelLen;
-    int indexLen;
     int found = 1;
-    ListNode *searchResult = symbolTable->head;
+    int labelLen, indexLen;
+    SymbolNode *searchResult = symbolTable->head;
 
     if (labelEnd == NULL || indexEnd == NULL)
     {
@@ -227,23 +226,28 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     label = malloc(labelLen + 1);
     strncpy(label, operand->value, labelLen);
     label[labelLen] = '\0';
-    while (searchResult != NULL && found){
-        if ((strcmp(searchResult->name, label) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_DATA) == 0 || strcmp(searchResult->data, SYMBOL_TYPE_CODE) == 0))
+
+    while (searchResult != NULL && found)
+    {
+        /* if label exists with type data or code */
+        if ((strcmp(searchResult->symbolName, label) == 0)
+            && ((strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0
+                 || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)))
         {
             /* bits 0-1: ARE codex - 'R' - 10, label is internal */
             labelAddressBinaryCode |= 2;
-
+            /* bits 2-13 are the address of the label */
             labelAddressBinaryCode |= (searchResult->lineNumber << 2);
             logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->lineNumber);
 
             found = 0;
         }
-        else if ((strcmp(searchResult->name, operand->value) == 0) && (strcmp(searchResult->data, SYMBOL_TYPE_EXTERNAL) == 0))
+        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
         {
             /* bits 0-1: ARE codex - 'E' - 01, label is external */
             labelAddressBinaryCode |= 1;
             /* insert to list that the external label was used in this IC */
-            insertToList(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
             found = 0;
         }
@@ -255,10 +259,11 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 
-    /* bits 2-13 are the address of the label */
+    
     handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(labelAddressBinaryCode, BINARY_CODE_LEN), label);
 
-    if (handlerRetVal != SUCCESS){
+    if (handlerRetVal != SUCCESS)
+    {
         return handlerRetVal;
     }
 
@@ -279,18 +284,21 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     {
         /* search for the index if it is defiend elsewhere in the code */
         /* TODO: replace to searchWithType - check if it can be only mdefine or LIST[2] also... */
-        searchResult = searchList(symbolTable, index);
-        if (searchResult == NULL){
+        searchResult = searchSymbolNameInTable(symbolTable, index);
+        if (searchResult == NULL)
+        {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
-        if (strcmp(searchResult->data, SYMBOL_TYPE_MDEFINE)){
+        if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE))
+        {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
         /* bits 2-13 represent the index. bits 0-1 always 0 */
-        indexBinaryCode |= (searchResult->lineNumber << 2);
+        indexBinaryCode |= (searchResult->symbolValue << 2);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(indexBinaryCode, BINARY_CODE_LEN), index);
     }
-    if (handlerRetVal != SUCCESS){
+    if (handlerRetVal != SUCCESS)
+    {
         return handlerRetVal;
     }
 
@@ -363,7 +371,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
     return handlerRetVal;
 }
 
-int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, LinkedList *symbolTable, int IC)
+int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int IC)
 {
     Operand *srcOperand = parsedLine->src;
     Operand *dstOperand = parsedLine->dst;

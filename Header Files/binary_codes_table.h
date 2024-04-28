@@ -38,6 +38,7 @@ void freeBinaryCodesNode(BinaryCodesNode *node);
 /* Function to free memory allocated for the list */
 void freeBinaryCodesTable(BinaryCodesTable *table);
 
+/* Pretty print of binary codes list */
 void printBinaryList(BinaryCodesTable *list);
 
 #endif  /* BINARY_CODES_TABLE_H */
