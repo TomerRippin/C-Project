@@ -1,4 +1,4 @@
-#include "binary_codes_table.h"
+#include "../HeaderFiles/binary_codes_table.h"
 
 BinaryCodesTable *createBinaryCodesTable()
 {

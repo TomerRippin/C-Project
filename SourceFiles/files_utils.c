@@ -1,4 +1,4 @@
-#include "../Header Files/files_utils.h"
+#include "../HeaderFiles/files_utils.h"
 
 char *replaceFileNameExt(char *fileName, char *newExtension)
 {

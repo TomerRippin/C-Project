@@ -1,9 +1,6 @@
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "utils.h"
 
 typedef struct SymbolNode
@@ -30,12 +27,12 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
 /* Searches a symbol in the symbol table by name */
 SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *symbolName);
 
-SymbolNode* searchListWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude);
+SymbolNode* searchSymbolTableWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude);
 
 /* Searches a symbol in the symbol table by name AND type */
 SymbolNode *searchSymbolNameTypeInTable(SymbolTable *table, char *symbolName, char *symbolType);
 
-int isAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue);
+int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue);
 
 /** Sorts the table by symbolValue in ascending order, using bubble sort.
  * NOTE: if table is very large this function might be a bit slow. */

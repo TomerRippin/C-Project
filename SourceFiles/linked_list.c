@@ -1,4 +1,4 @@
-#include "../Header Files/linked_list.h"
+#include "../HeaderFiles/linked_list.h"
 
 void initializeList(LinkedList *list)
 {
