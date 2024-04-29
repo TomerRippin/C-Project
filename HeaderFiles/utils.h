@@ -7,21 +7,6 @@
 #include "constants.h"
 #include "logger.h"
 
-/* Removes extra spaces and tabs from a string */
-void removeExtraSpacesTabs(char *str);
-
-/* Removes comments (lines starting with ';') from a string */
-void removeComments(char *str);
-
-/**
- * @brief Removes extra spaces, tabs and comments from an input file and writes the cleaned lines to an output file.
- *
- * @param inputFile Pointer to the input file.
- * @param outputFile Pointer to the output file.
- * @return 1 after successfully processing the input file.
- */
-int removeExtraSpacesTabsAndComments(FILE *inputFile, FILE *outputFile);
-
 /**
  * Checks whether a given string represents a valid number.
  *

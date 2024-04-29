@@ -1,9 +1,6 @@
 #ifndef BINARY_CODES_TABLE_H
 #define BINARY_CODES_TABLE_H
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "constants.h"
 #include "assembly_line_parser.h"
 
@@ -42,7 +39,7 @@ void freeBinaryCodesNode(BinaryCodesNode *node);
 /* Function to free memory allocated for the list */
 void freeBinaryCodesTable(BinaryCodesTable *table);
 
-/* Pretty print of binary codes list */
-void printBinaryList(BinaryCodesTable *list);
+/* Pretty print of binary codes table */
+void printBinaryCodesTable(BinaryCodesTable *table);
 
 #endif  /* BINARY_CODES_TABLE_H */

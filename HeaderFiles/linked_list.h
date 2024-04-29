@@ -23,11 +23,6 @@ typedef struct LinkedList
  */
 LinkedList *createList();
 
-/** Initializes an empty linked list
- * TODO: consider delete this
- */
-void initializeList(LinkedList *list);
-
 /* Inserts a node at the beginning of the list */
 void insertToList(LinkedList *list, char *name, char *data, int lineNumber);
 

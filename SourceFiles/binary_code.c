@@ -210,7 +210,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
     char *index;
-    int found = 1;
+    int found = 0;
     int labelLen, indexLen;
     SymbolNode *searchResult = symbolTable->head;
 
@@ -238,7 +238,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             labelAddressBinaryCode |= (searchResult->symbolValue << 2);
             logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->symbolValue);
 
-            found = 0;
+            found = 1;
         }
         else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
         {
@@ -247,13 +247,12 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             /* insert to list that the external label was used in this IC */
             insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
-            found = 0;
+            found = 1;
         }
         searchResult = searchResult->next;
     }
 
     if (searchResult == NULL) {
-        logger(LOG_LEVEL_ERROR, "GIVEN SYMBOL NOT EXIST");
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 

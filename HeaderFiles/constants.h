@@ -35,6 +35,9 @@
 #define DECODED_SYMBOL_2 '%'
 #define DECODED_SYMBOL_3 '!'
 
+#define EXTENSION_AS "as"
+#define EXTENSION_AS_CLEAN "as-clean"
+#define EXTENSION_AM "am"
 #define EXTENSION_ENT "ent"
 #define EXTENSION_EXT "ext"
 #define EXTENSION_OB "ob"

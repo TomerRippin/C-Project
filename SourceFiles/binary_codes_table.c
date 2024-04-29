@@ -121,9 +121,9 @@ void freeBinaryCodesTable(BinaryCodesTable *table) {
     free(table);
 }
 
-void printBinaryList(BinaryCodesTable *list)
+void printBinaryCodesTable(BinaryCodesTable *table)
 {
-    BinaryCodesNode *current = list->head;
+    BinaryCodesNode *current = table->head;
     printf("--------------------------------------------\n");
     printf("| Addr | %-15s | %-15s |\n", "Binary Code", "Source Code");
     printf("|------|-----------------|-----------------|\n");

@@ -25,7 +25,6 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         }
         else
         {
-            printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
@@ -40,10 +39,12 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
 
     while (token != NULL)
     {
-        if (isNumber(token)) {
+        if (isNumber(token))
+        {
             value = atoi(token);
         }
-        else {
+        else
+        {
             if (isValidLabel(token) != 1)
             {
                 return ERROR_LABEL_NOT_VALID;
@@ -63,11 +64,9 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 else
                 {
                     value = searchResult->symbolValue;
-                    printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
         }
-        printf("DEBUG - Insert to binaryCodesTable: <%d>, at location: <%d>\n", value, *DC);
         handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
         if (handlerRetVal != SUCCESS){
             return handlerRetVal;
@@ -129,7 +128,6 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
     }
 
     /* TODO: handle multiple labeles */
-    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
@@ -165,15 +163,12 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
         funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
         if (funcsRetVal != SUCCESS)
         {
-            if (funcsRetVal == ERROR_GIVEN_SYMBOL_NOT_EXIST)
-            {
-                /* got an error in AddressType 1, ignore thie error and wait to second pass */
-            }
-            else
+            if (funcsRetVal != ERROR_GIVEN_SYMBOL_NOT_EXIST)
             {
                 logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
                 return funcsRetVal;
             }
+            /* ERROR_GIVEN_SYMBOL_NOT_EXIST - ignore thie error and wait to second pass */
         }
     }
 
@@ -187,7 +182,6 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
 
 int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
-    /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
     int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
     int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
@@ -295,8 +289,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             current->symbolValue = current->symbolValue + IC;
         }
         current = current->next;
-    }  
-    printBinaryList(binaryCodesTable);
+    } 
 
     /*freeBinaryCodesTable(binaryTableTry); */
 
