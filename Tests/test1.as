@@ -1,7 +1,7 @@
 .define sz = 2
 .entry TO
 .extern W
-MAIN: mov r3, LIST[sz]
+MAIN: mov r10, LIST[sz]
 LOOP: jmp L1
 mcr m_mcr
     cmp r3, #sz
