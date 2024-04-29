@@ -3,6 +3,8 @@
 int main()
 {
     int retVal;
+    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
+    int DC = 0;                         /* Data counter */
     SymbolTable *symbolTable;
     /* TODO: maybe change type to linkedList? */
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
@@ -24,7 +26,7 @@ int main()
     printf("Testing First Pass\n");
     
     printf("Input file: test_input_first_pass\n");
-    retVal = firstPass(inputFile, symbolTable, binaryCodesTable);
+    retVal = firstPass(inputFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (retVal != SUCCESS) {
         printf("DEBUG - ERROR: %d\n", retVal);
         /* return retVal; */
@@ -40,7 +42,7 @@ int main()
     symbolTable = createSymbolTable();
 
     printf("Input file: test_input_first_pass_symbol_exist\n");
-    retVal = firstPass(inputFile2, symbolTable, binaryCodesTable);
+    retVal = firstPass(inputFile2, symbolTable, binaryCodesTable, &IC, &DC);
     if (retVal != SUCCESS)
     {
         printf("--- GOT AN ERROR AS EXPECTED: %d ---\n", retVal);

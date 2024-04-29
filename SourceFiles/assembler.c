@@ -10,8 +10,9 @@ int main(int argc, char *argv[])
 
     SymbolTable *symbolTable = createSymbolTable();
     BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
-    int funcRetVal, IC, DC;
-    IC = DC = BASE_INSTRUCTIONS_COUNTER; /* TODO: change later, make them a variable of the passes */
+    int funcRetVal;
+    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
+    int DC = 0; /* Data counter */
     /* TODO: really need to change this, because ob file is wrong */
 
     const char *inputFileName = argv[1];
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", amFileName);
         return ERROR_OPEN_FILE;
     }
-    funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable);
+    funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);

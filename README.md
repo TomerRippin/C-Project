@@ -1,6 +1,10 @@
 # C-Project
 Lilach and Tomers C Project for the Open University (mmn 14).
 
+### Usage ###
+`make assembler
+assembler.exe <.as file path>`
+
 ### Flow ###
 0. Cleans file - removing extra whitespaces, fixes spaces in each line. for example:
                  `LAB:  .data         7, 8,  5` turns into: `LAB: .data 7,8,5`

@@ -180,10 +180,8 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
     return SUCCESS;
 }
 
-int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
+int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC)
 {
-    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
-    int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
     int isLabel = 0;
     int entryCount = 0;
@@ -229,15 +227,15 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             {
                 if (isLabel) {
                     logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_DATA, DC);
-                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
@@ -265,7 +263,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         
         else if (isCommandLine(&parsedLine)) {
             logger(LOG_LEVEL_INFO, "COMMAND LINE");
-            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, &IC);
+            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, IC);
             if (handlerRetVal != SUCCESS)
             {
                 freeAssemblyLine(&parsedLine);
@@ -286,7 +284,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     {
         if (strcmp(current->symbolType, SYMBOL_TYPE_DATA) == 0)
         {
-            current->symbolValue = current->symbolValue + IC;
+            current->symbolValue = current->symbolValue + *IC;
         }
         current = current->next;
     } 
