@@ -350,6 +350,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
         }
         /* Only one argument, should be destination */
         strcpy(potDest, parsedLine->operands);
+        potSrc = "";
     }
 
     /* if no operands */

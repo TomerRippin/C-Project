@@ -1,7 +1,7 @@
 .define sz=2
 .entry TO
 .extern W
-MAIN: mov r10,LIST[sz]
+MAIN: mov r3,LIST[sz]
 LOOP: jmp L1
 TO: .data 7
 prn #-5
@@ -12,7 +12,7 @@ bne END
 L1: inc K
 lea STR,W
 bne LOOP
-END: hlt
+END: hlt a
 .define len=4
 K: .data 22
 STR: .string "abcdef"
