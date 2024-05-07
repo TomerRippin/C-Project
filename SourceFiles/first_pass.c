@@ -125,11 +125,11 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
 int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
-        printf("WARNING: entry line contains label: <%s>", parsedLine->label);
+        logger(LOG_LEVEL_WARNING, "entry line contains label: <%s>", parsedLine->label);
     }
 
     /* TODO: handle multiple labeles */
-    printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
+    logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
@@ -150,7 +150,7 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
     {
         return errorCode;
     }
-    printOperandsAfterParsing(parsedLine);
+    /* printOperandsAfterParsing(parsedLine); */
 
     errorCode = handleOpcodeBinaryCode(parsedLine, binaryCodesTable, IC);
     if (errorCode != SUCCESS)
@@ -204,10 +204,10 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
-        printf("#####################################\n");
+        /* printf("#####################################\n"); */
         logger(LOG_LEVEL_DEBUG, "read line: %s", line);
         parsedLine = parseAssemblyLine(line);
-        printAssemblyLine(&parsedLine);
+        /* printAssemblyLine(&parsedLine); */
 
         if (parsedLine.label != NULL)
         {

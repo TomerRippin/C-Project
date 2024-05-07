@@ -12,7 +12,7 @@ bne END
 L1: inc K
 lea STR,W
 bne LOOP
-END: hlt a
+END: hlt
 .define len=4
 K: .data 22
 STR: .string "abcdef"
