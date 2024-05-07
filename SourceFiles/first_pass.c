@@ -25,7 +25,7 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         }
         else
         {
-            printf("DEBUG - Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
+            logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
@@ -63,7 +63,7 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 else
                 {
                     value = searchResult->symbolValue;
-                    printf("DEBUG - found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
+                    logger(LOG_LEVEL_DEBUG, "Found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
         }

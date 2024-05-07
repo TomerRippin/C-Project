@@ -5,7 +5,7 @@ BinaryCodesTable *createBinaryCodesTable()
     BinaryCodesTable *table = (BinaryCodesTable *)malloc(sizeof(BinaryCodesTable));
     if (table == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     table->head = NULL;
@@ -20,7 +20,7 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
     /* TODO: is it really needed? maybe were Magzimim */
     if (newNode == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     if (binaryCode == NULL || sourceCode == NULL)

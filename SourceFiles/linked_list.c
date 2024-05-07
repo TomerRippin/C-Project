@@ -5,7 +5,7 @@ LinkedList *createList()
     LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
     if (list == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     list->head = NULL;
