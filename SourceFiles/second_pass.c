@@ -3,12 +3,17 @@
 int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     int IC = BASE_INSTRUCTIONS_COUNTER;
+    int errorCode = SUCCESS;
+    int hasError = 0;
+    int lineNumber = 0;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
+        lineNumber++;
+
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
@@ -30,11 +35,15 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
             }
             searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
             if (searchResult == NULL) {
-                return ERROR_GIVEN_SYMBOL_NOT_EXIST;
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_GIVEN_SYMBOL_NOT_EXIST);
+                hasError = 1;
+                continue;
             }
             else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
             {
-                return ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL;
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL);
+                hasError = 1;
+                continue;
             }
             else {
                 /* TODO: line 6 - update entry symbol */
@@ -42,16 +51,20 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
             }
         }
         else {
-            int funcsRetVal = parseOperands(&parsedLine);
-            if (funcsRetVal != SUCCESS)
+            errorCode = parseOperands(&parsedLine);
+            if (errorCode != SUCCESS)
             {
-                return funcsRetVal;
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
+                hasError = 1;
+                continue;
             }
 
-            funcsRetVal = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC + 1);  /* NOTE: this will still work even if operands is null */
-            if (funcsRetVal != SUCCESS)
+            errorCode = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC + 1);  /* NOTE: this will still work even if operands is null */
+            if (errorCode != SUCCESS)
             {
-                return funcsRetVal;
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
+                hasError = 1;
+                continue;
             }
             int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             IC = IC + L;
@@ -66,7 +79,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     /* Free all the allocated memory and resources used during the second pass */
     /* TODO: insert the below functions to second_pass */
 
-    return SUCCESS;
+    return hasError;
 }
 
 

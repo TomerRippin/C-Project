@@ -67,23 +67,23 @@ int main(int argc, char *argv[])
     funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured");
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "First pass - SUCCESS! printing binaryCodesTable:");
-    printBinaryCodesTable(binaryCodesTable);
+    /* printBinaryCodesTable(binaryCodesTable); */
 
     logger(LOG_LEVEL_INFO, "Second pass");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured");
         return funcRetVal;
     }
     fclose(amFile);
     logger(LOG_LEVEL_INFO, "Second pass - SUCCESS! printing binaryCodesTable:");
-    printBinaryCodesTable(binaryCodesTable);
+    /* printBinaryCodesTable(binaryCodesTable); */
 
     logger(LOG_LEVEL_INFO, "Exporting files");
     const char *entryFileName = replaceFileNameExt(inputFileName, EXTENSION_ENT);

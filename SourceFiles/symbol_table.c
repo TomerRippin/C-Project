@@ -5,7 +5,7 @@ SymbolTable *createSymbolTable()
     SymbolTable *table = (SymbolTable *)malloc(sizeof(SymbolTable));
     if (table == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     table->head = NULL;

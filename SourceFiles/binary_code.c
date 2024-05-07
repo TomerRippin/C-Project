@@ -134,7 +134,6 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         token = operand->value + 1;
         SymbolNode *searchResult = searchSymbolNameInTable(symbolTable, token);
         if (searchResult == NULL){
-            logger(LOG_LEVEL_ERROR, "Not a valid address after #");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         } 
         else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) == 0){
@@ -142,7 +141,6 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             num = searchResult->symbolValue;
         }
         else {
-            logger(LOG_LEVEL_ERROR, "found label, not in the right type");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
     }
@@ -190,7 +188,6 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         searchResult = searchResult->next;
     }
     if (searchResult == NULL) {
-        logger(LOG_LEVEL_ERROR, "GIVEN SYMBOL NOT EXIST");
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 
@@ -210,7 +207,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
     char *index;
-    int found = 0;
+    int found = 1;
     int labelLen, indexLen;
     SymbolNode *searchResult = symbolTable->head;
 
@@ -238,7 +235,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             labelAddressBinaryCode |= (searchResult->symbolValue << 2);
             logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->symbolValue);
 
-            found = 1;
+            found = 0;
         }
         else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
         {
@@ -247,12 +244,12 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             /* insert to list that the external label was used in this IC */
             insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
-            found = 1;
+            found = 0;
         }
         searchResult = searchResult->next;
     }
 
-    if (searchResult == NULL) {
+    if (searchResult == NULL && found == 1) {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 
