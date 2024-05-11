@@ -6,6 +6,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     int errorCode = SUCCESS;
     int hasError = 0;
     int lineNumber = 0;
+    int L = 0;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
@@ -66,7 +67,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
                 hasError = 1;
                 continue;
             }
-            int L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
+            L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             IC = IC + L;
         }
     }
@@ -85,6 +86,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
 
 int handleEntryFile(const char *filename, SymbolTable *symbolTable){
     SymbolNode *current = symbolTable->head;
+    SymbolNode *searchResult;
     int found = 0;
 
     FILE* outputFile = fopen(filename, "w");
@@ -99,7 +101,7 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
         if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0){
             /* Found an Entry, should create a file */
             found = 1;
-            SymbolNode *searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
+            searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){
                 /* Found an entry but it is not defiend anywhere */
