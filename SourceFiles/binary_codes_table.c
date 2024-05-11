@@ -58,13 +58,13 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
 
 void sortBinaryCodesTable(BinaryCodesTable *table)
 {
+    BinaryCodesNode *node;
+    int swapped;
+    
     if (table->head == NULL || table->head->next == NULL)
     {
         return; /* No need to sort empty or single-node lists */
     }
-
-    BinaryCodesNode *node;
-    int swapped;
 
     do
     {

@@ -56,11 +56,14 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
 int preAssembler(FILE *inputFile, FILE *outputFile)
 {
     LinkedList *macrosList = createList();
+    FILE *tempFile = tmpfile();
+    char line[MAX_LINE_LEN];
+    ListNode *result;
+    int index = 0;
 
     extractMacrosFromFile(inputFile, macrosList);
 
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    FILE *tempFile = tmpfile();
     if (tempFile == NULL)
     {
         return ERROR_OPEN_FILE;
@@ -68,10 +71,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
     removeMacrosFromFile(inputFile, tempFile);
 
     /* Replaces the macro names with their content */
-    char line[MAX_LINE_LEN];
     fseek(tempFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    ListNode *result;
-    int index = 0;
 
     while (fgets(line, sizeof(line), tempFile) != NULL)
     {

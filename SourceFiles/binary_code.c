@@ -74,7 +74,10 @@ char* decodeBinaryCode(char *binaryCode)
     /* Loop through pairs of bits */
     for (i = 0; i < BINARY_CODE_LEN; i += 2)
     {
-        char pair[3] = {binaryCode[i], binaryCode[i+1], '\0'};
+        char pair[3];
+        pair[0] = binaryCode[i];
+        pair[1] = binaryCode[i + 1];
+        pair[2] = '\0';
         /* Convert the pair of bits to an integer */
         num = convertBinaryToDecimal(pair);
         switch(num) {
@@ -125,6 +128,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 {
     int binaryCode, handlerRetVal, num;
     char *token;
+    SymbolNode *searchResult;
     binaryCode = handlerRetVal = 0;
 
     if (isNumber(operand->value + 1)){
@@ -132,7 +136,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else {
         token = operand->value + 1;
-        SymbolNode *searchResult = searchSymbolNameInTable(symbolTable, token);
+        searchResult = searchSymbolNameInTable(symbolTable, token);
         if (searchResult == NULL){
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         } 
@@ -201,8 +205,9 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    int labelAddressBinaryCode, indexBinaryCode, handlerRetVal;
-    labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
+    int labelAddressBinaryCode = 0;
+    int indexBinaryCode = 0;
+    int handlerRetVal = 0;
     const char *labelEnd = strchr(operand->value, '[');
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
