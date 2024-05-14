@@ -18,6 +18,11 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
+        if (isEmptyLine(line) || isCommentedLine(line)){
+            logger(LOG_LEVEL_DEBUG, "Empty or Commentd Line! Line number: %d", lineNumber);
+            continue;
+        }
+
         parsedLine = parseAssemblyLine(line);
         printAssemblyLine(&parsedLine);
 

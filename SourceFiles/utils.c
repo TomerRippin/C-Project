@@ -70,3 +70,21 @@ int calculateL(int srcType, int dstType) {
     }
     return L;
 }
+
+
+int isEmptyLine(const char *line) {
+    while (*line != '\0') {
+        if (!isspace(*line)) {
+            return 0;
+        }
+        line++; 
+    }
+    return 1;
+}
+
+int isCommentedLine(const char *line) {
+    if (*line == ';'){
+        return 1;
+    }
+    return 0;
+}

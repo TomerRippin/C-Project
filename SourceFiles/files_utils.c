@@ -73,15 +73,6 @@ void removeExtraSpacesTabs(char *str)
     str[j] = '\0';
 }
 
-void removeComments(char *str)
-{
-    char *commentStart = strchr(str, ';');
-    if (commentStart != NULL)
-    {
-        *commentStart = '\0'; /* Null terminate at the comment start to remove the comment */
-    }
-}
-
 /* TODO: remove enters also, and then maybe rename to removeWhitespacesAndCommentsFromFile */
 int cleanAssemblyFile(FILE *inputFile, FILE *outputFile)
 {
@@ -89,7 +80,6 @@ int cleanAssemblyFile(FILE *inputFile, FILE *outputFile)
     while (fgets(line, sizeof(line), inputFile))
     {
         removeExtraSpacesTabs(line);
-        removeComments(line);
         fprintf(outputFile, "%s", line);
     }
     return SUCCESS;
