@@ -26,6 +26,9 @@ void removeExtraSpacesTabs(char *str);
 /* Removes comments (lines starting with ';') from a string */
 void removeComments(char *str);
 
+/* Removes extra spaces in the end of the line */
+void removeTrailingSpaces(char *line);
+
 /**
  * @brief Removes extra spaces, tabs and comments from an input file and writes the cleaned lines to an output file.
  *

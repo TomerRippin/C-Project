@@ -242,12 +242,12 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
             found = 0;
         }
-        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
+        else if ((strcmp(searchResult->symbolName, label) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
         {
             /* bits 0-1: ARE codex - 'E' - 01, label is external */
             labelAddressBinaryCode |= 1;
             /* insert to list that the external label was used in this IC */
-            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            insertToSymbolTable(symbolTable, label, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
             found = 0;
         }
@@ -320,7 +320,7 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
 
     /* Check if the register number is valid */
     /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
-    if (num < 1 || num > 8){
+    if (num < 0 || num > 8){
         return ERROR_NOT_VALID_REGISTER;
     }
 
