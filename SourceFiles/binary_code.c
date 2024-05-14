@@ -320,7 +320,7 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
 
     /* Check if the register number is valid */
     /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
-    if (num < 0 || num > 8){
+    if (num < 0 || num > 7){
         return ERROR_NOT_VALID_REGISTER;
     }
 
