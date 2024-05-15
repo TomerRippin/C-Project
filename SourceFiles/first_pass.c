@@ -204,6 +204,11 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
+        if (isEmptyLine(line) || isCommentedLine(line)){
+            logger(LOG_LEVEL_DEBUG, "Empty or Commentd Line! Line number: %d", lineNumber);
+            continue;
+        }
+
         /* printf("#####################################\n"); */
         logger(LOG_LEVEL_DEBUG, "read line: %s", line);
         parsedLine = parseAssemblyLine(line);

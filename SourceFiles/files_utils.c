@@ -73,23 +73,26 @@ void removeExtraSpacesTabs(char *str)
     str[j] = '\0';
 }
 
-void removeComments(char *str)
-{
-    char *commentStart = strchr(str, ';');
-    if (commentStart != NULL)
-    {
-        *commentStart = '\0'; /* Null terminate at the comment start to remove the comment */
+void removeTrailingSpaces(char *line) {
+    int found = 0;
+    int len = strlen(line);
+    while (len > 0 && (line[len - 2] == ' ' || line[len - 2] == '\t')) {
+        line[--len] = '\0';
+        found = 1;
     }
+    if (found){
+        line[len - 1] = '\n';
+    }
+    
 }
 
-/* TODO: remove enters also, and then maybe rename to removeWhitespacesAndCommentsFromFile */
 int cleanAssemblyFile(FILE *inputFile, FILE *outputFile)
 {
     char line[MAX_LINE_LEN];
     while (fgets(line, sizeof(line), inputFile))
     {
         removeExtraSpacesTabs(line);
-        removeComments(line);
+        removeTrailingSpaces(line);
         fprintf(outputFile, "%s", line);
     }
     return SUCCESS;
