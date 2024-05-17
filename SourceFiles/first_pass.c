@@ -25,6 +25,7 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         }
         else
         {
+            logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
@@ -35,16 +36,14 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
 {
     char *token = strtok(parsedLine->operands, ",");
     SymbolNode *searchResult;
-    int value, handlerRetVal;
+    int value, errorCode;
 
     while (token != NULL)
     {
-        if (isNumber(token))
-        {
+        if (isNumber(token)) {
             value = atoi(token);
         }
-        else
-        {
+        else {
             if (isValidLabel(token) != 1)
             {
                 return ERROR_LABEL_NOT_VALID;
@@ -64,12 +63,14 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 else
                 {
                     value = searchResult->symbolValue;
+                    logger(LOG_LEVEL_DEBUG, "Found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
         }
-        handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
-        if (handlerRetVal != SUCCESS){
-            return handlerRetVal;
+        /* Insert the binary */
+        errorCode = insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, convertIntToBinary(value, BINARY_CODE_LEN), parsedLine->operands);
+        if (errorCode != SUCCESS){
+            return errorCode;
         }
         *DC = *DC + 1;
 
@@ -124,10 +125,11 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
 int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
-        printf("WARNING: entry line contains label: <%s>", parsedLine->label);
+        logger(LOG_LEVEL_WARNING, "entry line contains label: <%s>", parsedLine->label);
     }
 
     /* TODO: handle multiple labeles */
+    logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
@@ -135,7 +137,7 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
 
 int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    int funcsRetVal, L;
+    int errorCode, L;
 
     if (parsedLine->label != NULL)
     {
@@ -143,32 +145,32 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
         insertToSymbolTable(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
     }
     logger(LOG_LEVEL_DEBUG, "parsing operands");
-    funcsRetVal = parseOperands(parsedLine);
-    if (funcsRetVal != SUCCESS)
+    errorCode = parseOperands(parsedLine);
+    if (errorCode != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "got an error in 'parseOperands': %d", funcsRetVal);
-        return funcsRetVal;
+        return errorCode;
     }
-    printOperandsAfterParsing(parsedLine);
+    /* printOperandsAfterParsing(parsedLine); */
 
-    funcsRetVal = handleOpcodeBinaryCode(parsedLine, binaryCodesTable, IC);
-    if (funcsRetVal != SUCCESS)
+    errorCode = handleOpcodeBinaryCode(parsedLine, binaryCodesTable, IC);
+    if (errorCode != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "got an error in 'handleOpcodeBinaryCode': %d", funcsRetVal);
-        return funcsRetVal;
+        return errorCode;
     }
 
     if (parsedLine->operands != NULL)
     {
-        funcsRetVal = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
-        if (funcsRetVal != SUCCESS)
+        errorCode = handleOperandsBinaryCode(parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
+        if (errorCode != SUCCESS)
         {
-            if (funcsRetVal != ERROR_GIVEN_SYMBOL_NOT_EXIST)
+            if (errorCode == ERROR_GIVEN_SYMBOL_NOT_EXIST)
             {
-                logger(LOG_LEVEL_ERROR, "got an error in 'handleOperandsBinaryCode': %d", funcsRetVal);
-                return funcsRetVal;
+                /* got an error in AddressType 1, ignore thie error and wait to second pass */
             }
-            /* ERROR_GIVEN_SYMBOL_NOT_EXIST - ignore thie error and wait to second pass */
+            else
+            {
+                return errorCode;
+            }
         }
     }
 
@@ -187,19 +189,27 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     int entryCount = 0;
     int externCount = 0;
     AssemblyLine parsedLine;
-    int handlerRetVal;
+    int errorCode = SUCCESS;
+    int hasError = 0;
     SymbolNode *current;
+    int lineNumber;
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
+        lineNumber++;
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
-        printf("#####################################\n");
+        if (isEmptyLine(line) || isCommentedLine(line)){
+            logger(LOG_LEVEL_DEBUG, "Empty or Commentd Line! Line number: %d", lineNumber);
+            continue;
+        }
+
+        /* printf("#####################################\n"); */
         logger(LOG_LEVEL_DEBUG, "read line: %s", line);
         parsedLine = parseAssemblyLine(line);
-        printAssemblyLine(&parsedLine);
+        /* printAssemblyLine(&parsedLine); */
 
         if (parsedLine.label != NULL)
         {
@@ -212,13 +222,15 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
-                return ERROR_LABEL_NOT_VALID;
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_LABEL_NOT_VALID);
+                hasError = 1;
+                continue;
             }
         }
 
         if (strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)
         {
-            handlerRetVal = handleDefine(&parsedLine, symbolTable);
+            errorCode = handleDefine(&parsedLine, symbolTable);
         }
         else if (isDirectiveLine(&parsedLine))
         {
@@ -231,52 +243,53 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    handlerRetVal = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
+                    errorCode = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
                 else
                 {
-                    handlerRetVal = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
+                    errorCode = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
             {
-                handlerRetVal = handleExternDirective(&parsedLine, symbolTable, binaryCodesTable);
+                errorCode = handleExternDirective(&parsedLine, symbolTable, binaryCodesTable);
                 externCount += 1;
             }
             else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0)
             {
-                handlerRetVal = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
+                errorCode = handleEntryDirective(&parsedLine, symbolTable, binaryCodesTable);
                 entryCount += 1;
             }
             else {
                 /* TODO; not supposed to come here, but just in case */
                 freeAssemblyLine(&parsedLine);
-                return GENERAL_ERROR;
+                logger(LOG_LEVEL_ERROR, "Error while freeing the line %d", lineNumber);
             }
+            if (errorCode != SUCCESS){
+                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
 
-            if (handlerRetVal != SUCCESS)
-            {
-                freeAssemblyLine(&parsedLine);
-                return handlerRetVal;
-            }
+            } 
         }
         
         else if (isCommandLine(&parsedLine)) {
             logger(LOG_LEVEL_INFO, "COMMAND LINE");
-            handlerRetVal = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, IC);
-            if (handlerRetVal != SUCCESS)
-            {
-                freeAssemblyLine(&parsedLine);
-                return handlerRetVal;
-            }
+            errorCode = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, IC);
         }
 
         else {
             logger(LOG_LEVEL_ERROR, "unknown instruction type");
             freeAssemblyLine(&parsedLine);
-            return ERROR_UNKNOWN_INSTRUCTION;
+            errorCode = ERROR_UNKNOWN_INSTRUCTION;
         }
         isLabel = 0;
+
+        /* Log the Error of the line */
+        if (errorCode != SUCCESS)
+        {
+            freeAssemblyLine(&parsedLine);
+            logger(LOG_LEVEL_ERROR, "Found Error in line %d, Error code: %d", lineNumber, errorCode);
+            hasError = 1;
+        }
     }
 
     current = symbolTable->head;
@@ -287,10 +300,8 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             current->symbolValue = current->symbolValue + *IC;
         }
         current = current->next;
-    } 
-
-    /*freeBinaryCodesTable(binaryTableTry); */
+    }
 
     /* TODO - free things */
-    return SUCCESS;
+    return hasError;
 }

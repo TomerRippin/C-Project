@@ -74,7 +74,10 @@ char* decodeBinaryCode(char *binaryCode)
     /* Loop through pairs of bits */
     for (i = 0; i < BINARY_CODE_LEN; i += 2)
     {
-        char pair[3] = {binaryCode[i], binaryCode[i+1], '\0'};
+        char pair[3];
+        pair[0] = binaryCode[i];
+        pair[1] = binaryCode[i + 1];
+        pair[2] = '\0';
         /* Convert the pair of bits to an integer */
         num = convertBinaryToDecimal(pair);
         switch(num) {
@@ -125,6 +128,7 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 {
     int binaryCode, handlerRetVal, num;
     char *token;
+    SymbolNode *searchResult;
     binaryCode = handlerRetVal = 0;
 
     if (isNumber(operand->value + 1)){
@@ -132,9 +136,8 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else {
         token = operand->value + 1;
-        SymbolNode *searchResult = searchSymbolNameInTable(symbolTable, token);
+        searchResult = searchSymbolNameInTable(symbolTable, token);
         if (searchResult == NULL){
-            logger(LOG_LEVEL_ERROR, "Not a valid address after #");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         } 
         else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) == 0){
@@ -142,7 +145,6 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             num = searchResult->symbolValue;
         }
         else {
-            logger(LOG_LEVEL_ERROR, "found label, not in the right type");
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
     }
@@ -190,7 +192,6 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         searchResult = searchResult->next;
     }
     if (searchResult == NULL) {
-        logger(LOG_LEVEL_ERROR, "GIVEN SYMBOL NOT EXIST");
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 
@@ -204,13 +205,14 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    int labelAddressBinaryCode, indexBinaryCode, handlerRetVal;
-    labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
+    int labelAddressBinaryCode = 0;
+    int indexBinaryCode = 0;
+    int handlerRetVal = 0;
     const char *labelEnd = strchr(operand->value, '[');
     const char *indexEnd = strchr(labelEnd, ']');
     char *label;
     char *index;
-    int found = 0;
+    int found = 1;
     int labelLen, indexLen;
     SymbolNode *searchResult = symbolTable->head;
 
@@ -238,21 +240,21 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             labelAddressBinaryCode |= (searchResult->symbolValue << 2);
             logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->symbolValue);
 
-            found = 1;
+            found = 0;
         }
-        else if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
+        else if ((strcmp(searchResult->symbolName, label) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
         {
             /* bits 0-1: ARE codex - 'E' - 01, label is external */
             labelAddressBinaryCode |= 1;
             /* insert to list that the external label was used in this IC */
-            insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
+            insertToSymbolTable(symbolTable, label, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
-            found = 1;
+            found = 0;
         }
         searchResult = searchResult->next;
     }
 
-    if (searchResult == NULL) {
+    if (searchResult == NULL && found == 1) {
         return ERROR_GIVEN_SYMBOL_NOT_EXIST;
     }
 
@@ -318,7 +320,7 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
 
     /* Check if the register number is valid */
     /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
-    if (num < 1 || num > 8){
+    if (num < 0 || num > 7){
         return ERROR_NOT_VALID_REGISTER;
     }
 

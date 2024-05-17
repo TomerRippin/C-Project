@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "constants.h"
 #include "logger.h"
 
@@ -48,5 +49,24 @@ int countOccurrences(char *str, char target);
  * @return How many words of information the command needs.
  */
 int calculateL(int srcType, int dstType);
+
+/**
+ * Checks if a line is empty or not (empty = containes only spaces)
+ *
+ * @param line The adressing type of the src Operand. 
+ *
+ * @return is the line empty or not.
+ */
+int isEmptyLine(const char *line);
+
+
+/**
+ * Checks if a line starts with ";". if so it should be ignored.
+ *
+ * @param line The adressing type of the src Operand. 
+ *
+ * @return does the line starts with comment or not.
+ */
+int isCommentedLine(const char *line);
 
 #endif /* UTILS_H */

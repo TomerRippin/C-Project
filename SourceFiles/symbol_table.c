@@ -5,7 +5,7 @@ SymbolTable *createSymbolTable()
     SymbolTable *table = (SymbolTable *)malloc(sizeof(SymbolTable));
     if (table == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     table->head = NULL;
@@ -78,13 +78,13 @@ int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType,
 
 void sortSymbolTable(SymbolTable * table)
 {
+    SymbolNode *node;
+    int swapped;
+    
     if (table->head == NULL || table->head->next == NULL)
     {
         return; /* No need to sort empty or single-node lists */
     }
-
-    SymbolNode *node;
-    int swapped;
 
     do {
         swapped = 0;

@@ -6,12 +6,13 @@ int main()
     int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
     int DC = 0;                         /* Data counter */
     SymbolTable *symbolTable;
+    BinaryCodesTable *binaryCodesTable;
     /* TODO: maybe change type to linkedList? */
-    BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     FILE *inputFile, *inputFile2;
 
     printf("Starting main - test_first_pass!\n");
     symbolTable = createSymbolTable();
+    binaryCodesTable = createBinaryCodesTable();
 
     /* Open the input files */
     inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
@@ -61,12 +62,9 @@ int main()
     */
 
     printf("--- Checking decodeBinaryCode ---\n");
-    char binary[15] = "00011011111001";
     printf("Binary string: 00011011111001\n");
     printf("Expected decoded string: *#%%!!%%#\n");
-    char *decoded = decodeBinaryCode(binary);
-    printf("Got decoded string: %s\n", decoded);
-    free(decoded);
+    printf("Got decoded string: %s\n", decodeBinaryCode("00011011111001"));
 
     printf("--- Closing files ---\n");
     fclose(inputFile);
