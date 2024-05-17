@@ -4,8 +4,8 @@ int main()
 {
     printf("Starting main - test_pre_assembler!\n");
     /* Open the input and output files */
-    FILE *inputFile = fopen("./Tests/input_test_pre_assembler.txt", "r");
-    FILE *outputFile = fopen("./Tests/output_test_pre_assembler.txt.txt", "w");
+    FILE *inputFile = fopen("./Tests/test_pre_assembler/input_test_pre_assembler.txt", "r");
+    FILE *outputFile = fopen("./Tests/test_pre_assembler/output_test_pre_assembler.txt", "w");
 
     if (inputFile == NULL || outputFile == NULL)
     {
@@ -13,8 +13,8 @@ int main()
         return 1;
     }
 
-    printf("replaceMacrosInFile\n");
-    replaceMacrosInFile(inputFile, outputFile);
+    printf("preAssembler\n");
+    preAssembler(inputFile, outputFile);
 
     printf("Closing files\n");
     fclose(inputFile);
