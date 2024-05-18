@@ -190,6 +190,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
+
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
@@ -290,6 +291,8 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
         current = current->next;
     }
+
+    printSymbolTable(symbolTable);
 
     /* TODO - free things */
     return hasError;

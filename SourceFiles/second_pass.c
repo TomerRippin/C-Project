@@ -20,6 +20,8 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
+        logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
+
         if (isEmptyLine(line) || isCommentedLine(line)){
             logger(LOG_LEVEL_WARNING, "Empty or Commented Line! Line number: %d", lineNumber);
             continue;
@@ -54,8 +56,9 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
                 continue;
             }
             else {
-                /* TODO: line 6 - update entry symbol */
-                printf("DEBUG - line 6 - TODOOOOOOOOOOOOO");
+                /* NOTE: this is not neccessary because of the way we do the first pass (inserting as entries) and 
+                  create entries file (ignore duplicates)*/
+                insertToSymbolTable(symbolTable, parsedLine.operands, SYMBOL_TYPE_ENTRY, searchResult->symbolValue);
             }
         }
         else {
