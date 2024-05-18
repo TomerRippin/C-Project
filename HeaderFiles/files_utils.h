@@ -7,6 +7,13 @@
 #include "constants.h"
 #include "errors.h"
 
+/**
+ * Detects if the line ending style is CRLF in a text file.
+ *
+ * @param file The input file to check.
+ * @return 1 if CRLF (Windows) line endings are detected, 0 if LF (Unix) line endings are detected.
+ */
+int isCRLF(FILE *file);
 
 /**
  * @brief Replaces the extension of a file name with a new extension.
