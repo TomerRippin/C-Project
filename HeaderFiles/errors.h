@@ -27,7 +27,8 @@ typedef enum ErrorCode
     ERROR_INDEX_NOT_NUMBER_AND_NOT_DEFINED = 21,
     ERROR_INDEX_NOT_DEFINE_OR_NUMBER = 22,
     ERROR_OPEN_FILE = 23,
-    ERROR_WRONG_ASSEMBLER_USAGE = 24
+    ERROR_CRLF_FILE_FORMAT = 24,
+    ERROR_WRONG_ASSEMBLER_USAGE = 25
 } ErrorCode;
 
 /* TODO: better order in ErrorCode (by logic)  */

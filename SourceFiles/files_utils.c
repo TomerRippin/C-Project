@@ -1,5 +1,26 @@
 #include "../HeaderFiles/files_utils.h"
 
+int isCRLF(FILE *file)
+{
+    int prevChar = EOF;
+    int currentChar;
+
+    while ((currentChar = fgetc(file)) != EOF)
+    {
+        if (currentChar == '\n')
+        {
+            if (prevChar == '\r')
+            {
+                return 1; /* CRLF detected */
+            }
+        }
+        prevChar = currentChar;
+    }
+
+    printf("File uses LF (Unix) line endings.\n");
+    return 0; /* LF detected */
+}
+
 char *replaceFileNameExt(const char *fileName, char *newExtension)
 {
     char *lastPeriod, *newFileName;

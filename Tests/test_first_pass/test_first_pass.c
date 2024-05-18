@@ -2,15 +2,15 @@
 
 int main()
 {
-    int retVal;
-    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
-    int DC = 0;                         /* Data counter */
+    int retVal, IC, DC;
     SymbolTable *symbolTable;
     BinaryCodesTable *binaryCodesTable;
     /* TODO: maybe change type to linkedList? */
     FILE *inputFile, *inputFile2;
 
     printf("Starting main - test_first_pass!\n");
+    IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
+    DC = 0;                         /* Data counter */
     symbolTable = createSymbolTable();
     binaryCodesTable = createBinaryCodesTable();
 

@@ -1,36 +1,31 @@
-# C-Project
-Lilach and Tomers C Project for the Open University (mmn 14).
+# C Lab Project
+Lilach's & Tomer's C Project for the Open University (mmn 14).
 
 ### Usage ###
-`make assembler
-assembler.exe <.as file path>`
+`make assembler`
+<br>
+`assembler.exe <.as file path>`
 
 ### Flow ###
-0. Cleans file - removing extra whitespaces, fixes spaces in each line. for example:
-                 `LAB:  .data         7, 8,  5` turns into: `LAB: .data 7,8,5`
-1. Pre assembler - unpacking macros
-2. First Pass - parses all symbols and created binary code of the (except entry)
+0. Cleans file - removing extra whitespaces, fixes spaces in each line. For example:
+                 line: `LAB:  .data         7, 8,  5`<br>
+                 turns into: `LAB: .data 7,8,5`<br>
+                 creates a new file - `.as-clean`
+1. Pre assembler - unpacking macros using `LinkedList` to a file - `.am`
+2. First Pass - parses all symbols to `SymbolTable` and created binary code of the assembly lines (except entry), inserts to `BinaryCodesTable`
 3. Second Pass - parses entry symbols
-4. Export to files - writing entry, external and object file
+4. Export to files - writing entry `.ent`, external `.ext` and object file `.ob`
 
 ### Main Code Frames
-
-#### PreAssembler
-
-#### FirstPass
-
-#### SecondPass
+- PreAssembler
+- FirstPass
+- SecondPass
 
 ### Parsers
-
-#### AssemblyLineParser
-
-#### BinaryCode
+- AssemblyLineParser
+- BinaryCode
 
 ### Data Structures
-
-#### LinkedList
-
-#### SymbolTabel
-
-#### BinaryCodesTable
+- LinkedList
+- SymbolTabel
+- BinaryCodesTable

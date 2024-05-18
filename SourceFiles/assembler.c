@@ -32,6 +32,11 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", inputFileName);
         return ERROR_OPEN_FILE;
     }
+    else if (isCRLF(inputFile) == 1)
+    {
+        logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
+        return ERROR_CRLF_FILE_FORMAT;
+    }
 
     logger(LOG_LEVEL_INFO, "Cleaning file");
     cleanFileName = replaceFileNameExt(inputFileName, EXTENSION_AS_CLEAN);
@@ -49,6 +54,7 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
         return funcRetVal;
     }
+    logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
 
     logger(LOG_LEVEL_INFO, "Pre assembler - unpacking macros");
     amFileName = replaceFileNameExt(inputFileName, EXTENSION_AM);
@@ -67,6 +73,7 @@ int main(int argc, char *argv[])
     }
     fclose(cleanFile);
     fclose(amFile);
+    logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
     logger(LOG_LEVEL_INFO, "First pass");
     amFile = fopen(amFileName, "r");
@@ -81,19 +88,19 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured");
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "First pass - SUCCESS! printing binaryCodesTable:");
+    logger(LOG_LEVEL_INFO, "Done first pass");
     /* printBinaryCodesTable(binaryCodesTable); */
 
     logger(LOG_LEVEL_INFO, "Second pass");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
-    funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable);
+    funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
         logger(LOG_LEVEL_ERROR, "An error as occured");
         return funcRetVal;
     }
     fclose(amFile);
-    logger(LOG_LEVEL_INFO, "Second pass - SUCCESS! printing binaryCodesTable:");
+    logger(LOG_LEVEL_INFO, "Done second pass");
     /* printBinaryCodesTable(binaryCodesTable); */
 
     logger(LOG_LEVEL_INFO, "Exporting files");
@@ -104,6 +111,7 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
         return funcRetVal;
     }
+    logger(LOG_LEVEL_INFO, "Done creating file: %s", entryFileName);
 
     externalFileName = replaceFileNameExt(inputFileName, EXTENSION_EXT);
     funcRetVal = handleExternFile(externalFileName, symbolTable);
@@ -112,6 +120,7 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
         return funcRetVal;
     }
+    logger(LOG_LEVEL_INFO, "Done creating file: %s", externalFileName);
 
     objectFileName = replaceFileNameExt(inputFileName, EXTENSION_OB);
     funcRetVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
@@ -120,10 +129,12 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
         return funcRetVal;
     }
+    logger(LOG_LEVEL_INFO, "Done creating file: %s", objectFileName);
 
     logger(LOG_LEVEL_INFO, "SUCCESS! Done assembler");
 
     /* free and close files */
+    /* TODO: close file */
 
     freeSymbolTable(symbolTable);
     freeBinaryCodesTable(binaryCodesTable);
