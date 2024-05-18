@@ -1,5 +1,6 @@
 # C Lab Project
 Lilach's & Tomer's C Project for the Open University (mmn 14).
+This code is an assembler for an assembly-like language. 
 
 ### Usage ###
 `make assembler`
