@@ -185,6 +185,7 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable){
 int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC)
 {
     BinaryCodesNode *node;
+    int state = -1;
     char *line = (char*) malloc(sizeof(char) * BINARY_CODE_LEN);
 
     FILE *outputFile = fopen(filename, "w");
@@ -200,8 +201,13 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
 
     for (node = binaryCodesTable->head; node != NULL; node = node->next)
     {
+        /* works only if symbol table is sorted - check if a line is already been inserted.*/
+        if (node->decAddress == state){
+            continue;
+        }
         sprintf(line, "%04d %s\n", node->decAddress, decodeBinaryCode(node->binaryCode));
         fputs(line, outputFile);
+        state = node->decAddress;
     }
 
     fclose(outputFile);

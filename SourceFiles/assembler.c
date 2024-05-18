@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
     /* Second Pass */
     logger(LOG_LEVEL_INFO, "Second pass");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
+    IC = 100;
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
