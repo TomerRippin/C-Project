@@ -1,4 +1,4 @@
-# Usage:
+# Usage Example:
 # * make all
 # * make first_pass
 # * make clean
@@ -28,7 +28,7 @@ second_pass: $(SOURCES) Tests/test_second_pass/test_second_pass.c
 clean:
 	rm -f *.exe
 	rm -rf *.o
-	rm -rf */*.as-cleaned
+	rm -rf */*.as-clean
 	rm -rf */*.am
 	rm -rf */*.ent
 	rm -rf */*.ext
