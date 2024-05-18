@@ -76,11 +76,11 @@ int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType,
     return 0;
 }
 
-void sortSymbolTable(SymbolTable * table)
+void sortSymbolTable(SymbolTable *table)
 {
     SymbolNode *node;
     int swapped;
-    
+
     if (table->head == NULL || table->head->next == NULL)
     {
         return; /* No need to sort empty or single-node lists */

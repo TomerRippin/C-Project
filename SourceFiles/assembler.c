@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
         return ERROR_CRLF_FILE_FORMAT;
     }
+    fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
 
+    /* Clean File */
     logger(LOG_LEVEL_INFO, "Cleaning file");
     cleanFileName = replaceFileNameExt(inputFileName, EXTENSION_AS_CLEAN);
     cleanFile = fopen(cleanFileName, "w");
@@ -56,6 +58,7 @@ int main(int argc, char *argv[])
     }
     logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
 
+    /* Pre Assembler */
     logger(LOG_LEVEL_INFO, "Pre assembler - unpacking macros");
     amFileName = replaceFileNameExt(inputFileName, EXTENSION_AM);
     amFile = fopen(amFileName, "w");
@@ -75,6 +78,7 @@ int main(int argc, char *argv[])
     fclose(amFile);
     logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
+    /* First Pass */
     logger(LOG_LEVEL_INFO, "First pass");
     amFile = fopen(amFileName, "r");
     if (!amFile)
@@ -91,6 +95,7 @@ int main(int argc, char *argv[])
     logger(LOG_LEVEL_INFO, "Done first pass");
     /* printBinaryCodesTable(binaryCodesTable); */
 
+    /* Second Pass */
     logger(LOG_LEVEL_INFO, "Second pass");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
@@ -101,9 +106,9 @@ int main(int argc, char *argv[])
     }
     fclose(amFile);
     logger(LOG_LEVEL_INFO, "Done second pass");
-    /* printBinaryCodesTable(binaryCodesTable); */
 
-    logger(LOG_LEVEL_INFO, "Exporting files");
+    /* Export Files */
+    logger(LOG_LEVEL_INFO, "Export files");
     entryFileName = replaceFileNameExt(inputFileName, EXTENSION_ENT);
     funcRetVal = handleEntryFile(entryFileName, symbolTable);
     if (funcRetVal != SUCCESS)
