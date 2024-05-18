@@ -1,8 +1,7 @@
 #include "../HeaderFiles/second_pass.h"
 
-int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
+int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC)
 {
-    int IC = BASE_INSTRUCTIONS_COUNTER;
     int errorCode = SUCCESS;
     int hasError = 0;
     int lineNumber = 0;
@@ -11,6 +10,9 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
 
+    /* TODO: maybe init IC here and not in the main?
+     *IC = BASE_INSTRUCTIONS_COUNTER; */
+
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
@@ -18,20 +20,22 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
+        logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
+
         if (isEmptyLine(line) || isCommentedLine(line)){
-            logger(LOG_LEVEL_DEBUG, "Empty or Commentd Line! Line number: %d", lineNumber);
+            logger(LOG_LEVEL_WARNING, "Empty or Commented Line! Line number: %d", lineNumber);
             continue;
         }
 
         parsedLine = parseAssemblyLine(line);
-        printAssemblyLine(&parsedLine);
+        /* printAssemblyLine(&parsedLine); */
 
         if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
             strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
             strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
-            strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to od with define? */
+            strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to do with define? */
         {
-            logger(LOG_LEVEL_DEBUG, "string/data/extern - do nothing");
+            /* string/data/extern - do nothing */
             continue;
         }
         else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0) {
@@ -52,8 +56,9 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
                 continue;
             }
             else {
-                /* TODO: line 6 - update entry symbol */
-                printf("DEBUG - line 6 - TODOOOOOOOOOOOOO");
+                /* NOTE: this is not neccessary because of the way we do the first pass (inserting as entries) and 
+                  create entries file (ignore duplicates)*/
+                insertToSymbolTable(symbolTable, parsedLine.operands, SYMBOL_TYPE_ENTRY, searchResult->symbolValue);
             }
         }
         else {
@@ -65,51 +70,52 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
                 continue;
             }
 
-            errorCode = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, IC + 1);  /* NOTE: this will still work even if operands is null */
+            errorCode = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
             if (errorCode != SUCCESS)
             {
                 logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
                 hasError = 1;
                 continue;
             }
+
             L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
-            IC = IC + L;
+            *IC = *IC + L;
         }
     }
 
     sortSymbolTable(symbolTable);
     sortBinaryCodesTable(binaryCodesTable);
 
-    /* Print the extern labels and their addresses to the '.externals' output file */
-    /* Print the entry labels and their addresses to the '.entries' output file */
-    /* Free all the allocated memory and resources used during the second pass */
-    /* TODO: insert the below functions to second_pass */
+    /* TODO: insert the below functions to second_pass - or maybe not?*/
 
     return hasError;
 }
 
 
 int handleEntryFile(const char *filename, SymbolTable *symbolTable){
-    SymbolNode *current = symbolTable->head;
-    SymbolNode *searchResult;
-    int found = 0;
+    SymbolNode *current, *searchResult;
+    int found;
+    FILE *outputFile;
 
-    FILE* outputFile = fopen(filename, "w");
+    outputFile = fopen(filename, "w");
     if (outputFile == NULL)
     {
         logger(LOG_LEVEL_ERROR, "Error opening entry file.\n");
         return ERROR_OPEN_FILE;
     }
 
+    current = symbolTable->head;
+    found = 0;
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
-        if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0){
+        if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0)
+        {
             /* Found an Entry, should create a file */
             found = 1;
             searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL){
-                /* Found an entry but it is not defiend anywhere */
+                /* Found an entry but it is not defined anywhere */
                 return ERROR_UNKNOWN_INSTRUCTION;
             }
             else {

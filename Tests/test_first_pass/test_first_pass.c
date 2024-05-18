@@ -2,14 +2,17 @@
 
 int main()
 {
-    int retVal;
+    int retVal, IC, DC;
     SymbolTable *symbolTable;
+    BinaryCodesTable *binaryCodesTable;
     /* TODO: maybe change type to linkedList? */
-    BinaryCodesTable *binaryCodesTable = createBinaryCodesTable();
     FILE *inputFile, *inputFile2;
 
     printf("Starting main - test_first_pass!\n");
+    IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
+    DC = 0;                         /* Data counter */
     symbolTable = createSymbolTable();
+    binaryCodesTable = createBinaryCodesTable();
 
     /* Open the input files */
     inputFile = fopen("./Tests/test_first_pass/test_input_first_pass.txt", "r");
@@ -24,7 +27,7 @@ int main()
     printf("Testing First Pass\n");
     
     printf("Input file: test_input_first_pass\n");
-    retVal = firstPass(inputFile, symbolTable, binaryCodesTable);
+    retVal = firstPass(inputFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (retVal != SUCCESS) {
         printf("DEBUG - ERROR: %d\n", retVal);
         /* return retVal; */
@@ -40,7 +43,7 @@ int main()
     symbolTable = createSymbolTable();
 
     printf("Input file: test_input_first_pass_symbol_exist\n");
-    retVal = firstPass(inputFile2, symbolTable, binaryCodesTable);
+    retVal = firstPass(inputFile2, symbolTable, binaryCodesTable, &IC, &DC);
     if (retVal != SUCCESS)
     {
         printf("--- GOT AN ERROR AS EXPECTED: %d ---\n", retVal);
@@ -59,12 +62,9 @@ int main()
     */
 
     printf("--- Checking decodeBinaryCode ---\n");
-    char binary[15] = "00011011111001";
     printf("Binary string: 00011011111001\n");
     printf("Expected decoded string: *#%%!!%%#\n");
-    char *decoded = decodeBinaryCode(binary);
-    printf("Got decoded string: %s\n", decoded);
-    free(decoded);
+    printf("Got decoded string: %s\n", decodeBinaryCode("00011011111001"));
 
     printf("--- Closing files ---\n");
     fclose(inputFile);

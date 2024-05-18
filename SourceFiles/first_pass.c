@@ -96,7 +96,6 @@ int handleStringDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
         /* converts the ASCII value of the character to a binary string */
         intToBinaryRes = convertIntToBinary((int)parsedLine->operands[i], BINARY_CODE_LEN);
         strcpy(binaryCode, intToBinaryRes);
-        logger(LOG_LEVEL_DEBUG, "insert to binaryCodesTable: <%c>-<%s> at location: <%d>", parsedLine->operands[i], binaryCode, *DC);
         insertToBinaryCodesTable(binaryCodesTable, *DC, parsedLine, binaryCode, &parsedLine->operands[i]);
         *DC = *DC + 1;
     }
@@ -116,7 +115,6 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
     }
 
     /* TODO: handle multiple labeles */
-    logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_EXTERNAL);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
@@ -129,7 +127,6 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
     }
 
     /* TODO: handle multiple labeles */
-    logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <NULL>\n", parsedLine->operands, SYMBOL_TYPE_ENTRY);
     /* TODO: wanted to insert NULL instead of 0 but it didnt work */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
@@ -174,43 +171,36 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
         }
     }
 
-    /* TODO: why is needed, maybe after each to binary code this updates */
     L = calculateL(parsedLine->src->adrType, parsedLine->dst->adrType);
-    logger(LOG_LEVEL_DEBUG, "calculated L = %d", L);
     *IC = *IC + L;
 
     return SUCCESS;
 }
 
-int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
+int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC)
 {
-    /* TODO: binaryCodesTable should hold decimalAdr and binaryMachineCode */
-    int IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
-    int DC = 0;   /* Data Counter */
     char line[MAX_LINE_LEN];
-    int isLabel = 0;
-    int entryCount = 0;
-    int externCount = 0;
+    int isLabel, entryCount, externCount, hasError, errorCode, lineNumber;
     AssemblyLine parsedLine;
-    int errorCode = SUCCESS;
-    int hasError = 0;
     SymbolNode *current;
-    int lineNumber;
+    isLabel = entryCount = externCount = hasError = 0;
+    errorCode = SUCCESS;
 
     /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
+
         /* Remove the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
+        logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
+
         if (isEmptyLine(line) || isCommentedLine(line)){
-            logger(LOG_LEVEL_DEBUG, "Empty or Commentd Line! Line number: %d", lineNumber);
+            logger(LOG_LEVEL_WARNING, "Empty or Commented Line! Line number: %d", lineNumber);
             continue;
         }
 
-        /* printf("#####################################\n"); */
-        logger(LOG_LEVEL_DEBUG, "read line: %s", line);
         parsedLine = parseAssemblyLine(line);
         /* printAssemblyLine(&parsedLine); */
 
@@ -237,20 +227,18 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
         else if (isDirectiveLine(&parsedLine))
         {
-            logger(LOG_LEVEL_INFO, "DIRECTIVE LINE");
             if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
             {
                 if (isLabel) {
-                    logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine.label, SYMBOL_TYPE_DATA, DC);
-                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, DC);
+                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
-                    errorCode = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    errorCode = handleDataDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
                 else
                 {
-                    errorCode = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, &DC);
+                    errorCode = handleStringDirective(&parsedLine, symbolTable, binaryCodesTable, DC);
                 }
             }
             else if (strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0)
@@ -275,12 +263,11 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
         
         else if (isCommandLine(&parsedLine)) {
-            logger(LOG_LEVEL_INFO, "COMMAND LINE");
-            errorCode = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, &IC);
+            errorCode = handleCommandLine(&parsedLine, symbolTable, binaryCodesTable, IC);
         }
 
         else {
-            logger(LOG_LEVEL_ERROR, "unknown instruction type");
+            logger(LOG_LEVEL_ERROR, "unknown instruction type in line: %d", lineNumber);
             freeAssemblyLine(&parsedLine);
             errorCode = ERROR_UNKNOWN_INSTRUCTION;
         }
@@ -300,10 +287,12 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     {
         if (strcmp(current->symbolType, SYMBOL_TYPE_DATA) == 0)
         {
-            current->symbolValue = current->symbolValue + IC;
+            current->symbolValue = current->symbolValue + *IC;
         }
         current = current->next;
     }
+
+    printSymbolTable(symbolTable);
 
     /* TODO - free things */
     return hasError;

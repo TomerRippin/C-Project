@@ -4,7 +4,21 @@
 #include "files_utils.h"
 #include "first_pass.h"
 
-int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable);
+/**
+ * @brief This function performs the second pass over the assembly code.
+ *
+ * TODO: write what this function does
+ *
+ * @param inputFile Pointer to the input file containing the assembly code.
+ * @param symbolTable Pointer to a symbol table to be populated.
+ * @param binaryCodesTable Pointer to a binary codes table to be populated.
+ * @param IC Pointer to Intructions Counter
+ * @param DC Pointer to Data Counter
+ *
+ * @return int SUCCESS or Error code.
+ *
+ */
+int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC);
 
 /**
  * @brief Handler for the entries file.

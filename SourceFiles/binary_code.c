@@ -238,7 +238,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
             labelAddressBinaryCode |= 2;
             /* bits 2-13 are the address of the label */
             labelAddressBinaryCode |= (searchResult->symbolValue << 2);
-            logger(LOG_LEVEL_WARNING, "search address found! line number: %d\n", searchResult->symbolValue);
+            logger(LOG_LEVEL_WARNING, "search address found! line number: %d", searchResult->symbolValue);
 
             found = 0;
         }

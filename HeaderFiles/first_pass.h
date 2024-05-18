@@ -100,10 +100,12 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
  * @param inputFile Pointer to the input file containing the assembly code.
  * @param symbolTable Pointer to a symbol table to be populated.
  * @param binaryCodesTable Pointer to a binary codes table to be populated.
+ * @param IC Pointer to Intructions Counter
+ * @param DC Pointer to Data Counter
  *
  * @return int SUCCESS or Error code.
  *
  */
-int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable);
+int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC);
 
 #endif /* FIRST_PASS_H */
