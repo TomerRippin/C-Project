@@ -90,7 +90,7 @@ void sortSymbolTable(SymbolTable *table)
         swapped = 0;
         node = table->head;
 
-        while (node->next != table->last)
+        while (node->next != NULL)
         {
             /* If current node's value is greater than the next node's value */
             if (node->symbolValue > node->next->symbolValue)
@@ -115,7 +115,8 @@ void sortSymbolTable(SymbolTable *table)
 
         table->last = node;
 
-    } while (swapped); /* Repeat if any values were swapped in the last pass */
+    } while (swapped);
+     /* Repeat if any values were swapped in the last pass */
 }
 
 void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue)
