@@ -71,7 +71,7 @@ void sortBinaryCodesTable(BinaryCodesTable *table)
         swapped = 0;
         node = table->head;
 
-        while (node->next != table->last)
+        while (node->next != NULL)
         {
             /* If current node's dec address is greater than the next node's value */
             if (node->decAddress > node->next->decAddress)
