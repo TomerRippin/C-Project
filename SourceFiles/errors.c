@@ -20,10 +20,10 @@ const char *getErrorMessage(ErrorCode error)
         return "Error parsing define directive";
     case ERROR_SYMBOL_ALREADY_EXIST:
         return "Symbol already exists";
-    case ERROR_LABEL_NOT_VALID:
-        return "Label not valid";
-    case ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL:
-        return "Label declared as entry and external";
+    case ERROR_SYMBOL_NOT_VALID:
+        return "Symbol not valid";
+    case ERROR_SYMBOL_DECLARED_AS_ENTRY_AND_EXTERNAL:
+        return "Symbol declared as entry and external";
     case ERROR_GIVEN_SYMBOL_NOT_EXIST:
         return "Given symbol does not exist";
     case ERROR_SYMBOL_WRONG_TYPE:

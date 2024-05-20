@@ -45,7 +45,7 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
         else {
             if (isValidLabel(token) != 1)
             {
-                return ERROR_LABEL_NOT_VALID;
+                return ERROR_SYMBOL_NOT_VALID;
             }
             else
             {
@@ -210,7 +210,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
-                printError(lineNumber, ERROR_LABEL_NOT_VALID);
+                printError(lineNumber, ERROR_SYMBOL_NOT_VALID);
                 hasError = 1;
                 continue;
             }

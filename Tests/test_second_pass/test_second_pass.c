@@ -14,7 +14,6 @@ int main()
     DC = 0;                         /* Data counter */
 
     symbolTable = createSymbolTable();
-    /* TODO: maybe change type to linkedList? */
     binaryCodesTable = createBinaryCodesTable();
 
     /* Open the input file */

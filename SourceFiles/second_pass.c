@@ -2,19 +2,19 @@
 
 int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC)
 {
-    int errorCode = SUCCESS;
-    int hasError = 0;
-    int lineNumber = 0;
-    int L = 0;
+    int errorCode, hasError, lineNumber, L;
     char line[MAX_LINE_LEN];
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
+
+    errorCode = SUCCESS;
+    hasError = lineNumber = L = 0;
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
 
-        /* Remove the newline character at the end of the line */
+        /* Removes the newline character at the end of the line */
         line[strcspn(line, "\n")] = '\0';
 
         logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
@@ -29,31 +29,33 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
             strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
             strcmp(parsedLine.instruction, EXTERN_DIRECTIVE) == 0 ||
-            strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)  /* TODO: what to do with define? */
+            strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)
         {
             /* string/data/extern - do nothing */
+            /* NOTE: The book didn't said what to do with define, we assume it also should be ignored */
             continue;
         }
         else if (strcmp(parsedLine.instruction, ENTRY_DIRECTIVE) == 0) {
-            logger(LOG_LEVEL_DEBUG, "entry - do line 6");
             if (parsedLine.label) {
-                logger(LOG_LEVEL_WARNING, "a label is declared in an entry line");
+                logger(LOG_LEVEL_WARNING, "A label is declared in an entry line! Line number: %d", lineNumber);
             }
-            searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
+            /* Check if there is also an .extern decleration to the same symbol */
+            searchResult = searchSymbolNameTypeInTable(symbolTable, parsedLine.operands, SYMBOL_TYPE_EXTERNAL);
             if (searchResult == NULL) {
-                printError(lineNumber, ERROR_GIVEN_SYMBOL_NOT_EXIST);
+                printError(lineNumber, ERROR_SYMBOL_DECLARED_AS_ENTRY_AND_EXTERNAL);
                 hasError = 1;
                 continue;
             }
-            else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
+            searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
+            if (searchResult == NULL)
             {
-                printError(lineNumber, ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL);
+                printError(lineNumber, ERROR_GIVEN_SYMBOL_NOT_EXIST);
                 hasError = 1;
                 continue;
             }
             else {
                 /* NOTE: this is not neccessary because of the way we do the first pass (inserting as entries) and 
-                  create entries file (ignore duplicates)*/
+                  create entries file (ignore duplicates), but still we decided to keep this way to make it more clear */
                 insertToSymbolTable(symbolTable, parsedLine.operands, SYMBOL_TYPE_ENTRY, searchResult->symbolValue);
             }
         }

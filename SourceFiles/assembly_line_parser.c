@@ -248,7 +248,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
             {
                 free(label);
                 free(index);
-                return ERROR_LABEL_NOT_VALID;
+                return ERROR_SYMBOL_NOT_VALID;
             }
 
             *operandType = 2;
@@ -261,7 +261,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     {
         /* TODO: is it okay that this is here? */
         if (!isValidLabel(operand)) {
-            return ERROR_LABEL_NOT_VALID;
+            return ERROR_SYMBOL_NOT_VALID;
         }
         *operandType = 1;
         return SUCCESS;
