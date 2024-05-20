@@ -5,14 +5,14 @@ char *convertIntToBinary(int num, int len)
     char *binary = (char *)malloc(sizeof(char) * len);
     int i, k = 0;
 
-    /* Iterate over each bit in the integer */
+    /* Iterates over each bit in the integer */
     for (i = (1 << (len - 1)); i > 0; i = i / 2)
-        /** Use bitwise AND to check if the current bit is set or not
+        /** Uses bitwise AND to check if the current bit is set or not
          * If the bit is set, add '1' to the binary string
          * If the bit is not set, add '0' to the binary string */
         binary[k++] = (num & i) ? '1' : '0';
 
-    /* Add a null character at the end of the binary string */
+    /* Adds a null character at the end of the binary string */
     binary[k] = '\0';
     return binary;
 }
@@ -25,16 +25,17 @@ int convertBinaryToDecimal(char *binary)
 char* decodeBinaryCode(char *binaryCode)
 {
     int i, num;
-    char *decodedBinaryCode = (char*) malloc(sizeof(char) * DECODED_BINARY_CODE_LEN);
+    char *decodedBinaryCode;
+    decodedBinaryCode = (char *)malloc(sizeof(char) * DECODED_BINARY_CODE_LEN);
 
-    /* Loop through pairs of bits */
+    /* Loops through pairs of bits */
     for (i = 0; i < BINARY_CODE_LEN; i += 2)
     {
         char pair[3];
         pair[0] = binaryCode[i];
         pair[1] = binaryCode[i + 1];
         pair[2] = '\0';
-        /* Convert the pair of bits to an integer */
+        /* Converts the pair of bits to an integer */
         num = convertBinaryToDecimal(pair);
         switch(num) {
             case 0:
@@ -57,27 +58,28 @@ char* decodeBinaryCode(char *binaryCode)
 
 int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    int opcodeCode = getOpcodeCode(parsedLine->instruction);
-    int binaryCode = 0;
-    int funcRetVal;
+    int opcodeCode, binaryCode, handlerRetVal;
 
-    /* Store the number of operands in the higher bits of binary */
+    opcodeCode = getOpcodeCode(parsedLine->instruction);
+    binaryCode = handlerRetVal = 0;
+
+    /* Stores the number of operands in the higher bits of binary */
     binaryCode |= (opcodeCode << 6);
 
     if (parsedLine->dst->adrType != -1)
     {
-        /* Store the address type of the destination operand in bits 2-3 of binary */
+        /* Stores the address type of the destination operand in bits 2-3 of binary */
         binaryCode |= (parsedLine->dst->adrType << 2);
     }
     if (parsedLine->src->adrType != -1)
     {
-        /* Store the address type of the source operand in bits 4-5 of binary */
+        /* Stores the address type of the source operand in bits 4-5 of binary */
         binaryCode |= (parsedLine->src->adrType << 4);
     }
 
-    funcRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->instruction);
+    handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->instruction);
 
-    return funcRetVal;
+    return handlerRetVal;
 }
 
 int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
@@ -160,16 +162,17 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    int labelAddressBinaryCode = 0;
-    int indexBinaryCode = 0;
-    int handlerRetVal = 0;
-    const char *labelEnd = strchr(operand->value, '[');
-    const char *indexEnd = strchr(labelEnd, ']');
-    char *label;
-    char *index;
-    int found = 1;
-    int labelLen, indexLen;
-    SymbolNode *searchResult = symbolTable->head;
+    int labelAddressBinaryCode, indexBinaryCode, handlerRetVal, found, labelLen, indexLen;
+    char *labelEnd, *indexEnd;
+    char *label, *index;
+    SymbolNode *searchResult;
+
+    labelEnd = strchr(operand->value, '[');
+    indexEnd = strchr(labelEnd, ']');
+    searchResult = symbolTable->head;
+    labelAddressBinaryCode = indexBinaryCode = handlerRetVal = 0;
+    found = 1;
+    handlerRetVal = 0;
 
     if (labelEnd == NULL || indexEnd == NULL)
     {
@@ -222,7 +225,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
 
     *IC = *IC + 1;
-    /* handle the index */
+    /* handles the index */
     indexLen = indexEnd - labelEnd - 1; /* -1 to exclude the '[' character */
     index = malloc(indexLen + 1);
     strncpy(index, labelEnd + 1, indexLen); /* +1 to exclude the '[' character */
@@ -236,14 +239,10 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else
     {
-        /* search for the index if it is defiend elsewhere in the code */
-        /* TODO: replace to searchWithType - check if it can be only mdefine or LIST[2] also... */
-        searchResult = searchSymbolNameInTable(symbolTable, index);
+        /* searches for the index if it is defiend elsewhere in the code */
+        /* TODO: check if it can be only mdefine or LIST[2] also... */
+        searchResult = searchSymbolNameTypeInTable(symbolTable, index, SYMBOL_TYPE_MDEFINE);
         if (searchResult == NULL)
-        {
-            return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-        }
-        if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE))
         {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         }
@@ -264,27 +263,25 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleAdrType3(Operand *operand, int isSrcOperand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
-    int binaryCode, handlerRetVal;
-    int num;
-    binaryCode = handlerRetVal = 0;
+    int binaryCode, handlerRetVal, num;
 
-    /* Parse the number from the operand */
+    binaryCode = handlerRetVal = 0;
+    /* Parses the number from the operand */
     num = atoi(operand->value + 1);
 
-    /* Check if the register number is valid */
-    /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
+    /* Checks if the register number is valid */
     if (num < 0 || num > 7){
         return ERROR_REGISTER_NOT_VALID;
     }
 
-    if (isSource){
-        /* Add the bits representing the src number to bits 5-7 */
+    if (isSrcOperand){
+        /* Adds the bits representing the src number to bits 5-7 */
         binaryCode |= (num << 5);
     }
     else {
-        /* Add the bits representing the dst number to bits 2-4 */
+        /* Adds the bits representing the dst number to bits 2-4 */
         binaryCode |= (num << 2);
     }
 
@@ -297,6 +294,7 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int binaryCode, handlerRetVal, srcNum, dstNum;
+
     binaryCode = handlerRetVal = 0;
 
     if (isValidRegisterOperand(parsedLine->src->value) != 1 || isValidRegisterOperand(parsedLine->dst->value) != 1)
@@ -304,19 +302,14 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
         return ERROR_REGISTER_NOT_VALID;
     }
 
-    /* Parse the number from the operand */
+    /* Parses the number from the operand */
     srcNum = atoi(parsedLine->src->value + 1);
     dstNum = atoi(parsedLine->dst->value + 1);
 
-    /* Check if the register number is valid
-    if ((srcNum < 1 || srcNum > 8) || (dstNum < 1 || dstNum > 8)){
-        return ERROR_REGISTER_NOT_VALID;
-    }*/
-
-    /* Add the bits representing the src number to bits 5-7 */
+    /* Adds the bits representing the src number to bits 5-7 */
     binaryCode |= (srcNum << 5);
 
-    /* Add the bits representing the dst number to bits 2-4 */
+    /* Adds the bits representing the dst number to bits 2-4 */
     binaryCode |= (dstNum << 2);
 
     handlerRetVal = insertToBinaryCodesTable(binaryCodesTable, *IC, parsedLine, convertIntToBinary(binaryCode, BINARY_CODE_LEN), parsedLine->operands);
@@ -327,9 +320,13 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
 
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int IC)
 {
-    Operand *srcOperand = parsedLine->src;
-    Operand *dstOperand = parsedLine->dst;
-    int handlerRetVal = 0;
+    int handlerRetVal;
+    Operand *srcOperand, *dstOperand;
+
+    srcOperand = parsedLine->src;
+    dstOperand = parsedLine->dst;
+
+    handlerRetVal = 0;
 
     if (srcOperand->adrType == 3 && dstOperand->adrType == 3)
     {
@@ -340,6 +337,7 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         switch (parsedLine->src->adrType)
         {
         case -1:
+            handlerRetVal = SUCCESS;
             break;
         case 0:
             handlerRetVal = handleAdrType0(srcOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
@@ -363,6 +361,7 @@ int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryC
         switch (parsedLine->dst->adrType)
         {
         case -1:
+            handlerRetVal = SUCCESS;
             break;
         case 0:
             handlerRetVal = handleAdrType0(dstOperand, parsedLine, binaryCodesTable, symbolTable, &IC);
