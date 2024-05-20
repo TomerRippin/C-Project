@@ -39,9 +39,6 @@ char *replaceFileNameExt(const char *fileName, char *newExtension);
 /* Removes extra spaces and tabs from a string */
 void removeExtraSpacesTabs(char *str);
 
-/* Removes comments (lines starting with ';') from a string */
-void removeComments(char *str);
-
 /* Removes extra spaces in the end of the line */
 void removeTrailingSpaces(char *line);
 
@@ -52,7 +49,6 @@ void removeTrailingSpaces(char *line);
  * @param outputFile Pointer to the output file.
  *
  * @return int SUCCESS code.
- * TODO: check alll edge cases + maybe return error code?
  */
 int cleanAssemblyFile(FILE *inputFile, FILE *outputFile);
 

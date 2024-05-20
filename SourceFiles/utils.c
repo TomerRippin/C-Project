@@ -75,7 +75,7 @@ int calculateL(int srcType, int dstType) {
 int isEmptyLine(const char *line) {
     while (*line != '\0') {
         if (!isspace(*line)) {
-            return 0;
+            return 0;  /* Not empty */
         }
         line++; 
     }
@@ -84,7 +84,7 @@ int isEmptyLine(const char *line) {
 
 int isCommentedLine(const char *line) {
     if (*line == ';'){
-        return 1;
+        return 1; /* Commented line*/
     }
     return 0;
 }

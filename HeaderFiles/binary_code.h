@@ -32,19 +32,6 @@ int convertBinaryToDecimal(char *binary);
 /**
  * TODO: consider delete this - not in use
  *
- * @brief Converts an integer to a binary string using the Two's complement method.
- * If needed, the returned value will be padded with zeros according to len.
- *
- * @param num The integer to be converted.
- * @param len The length of the binary string representation.
- * @return A pointer to the binary string representation of the integer.
- *
- */
-char *convertIntToTCBinary(int num, int len);
-
-/**
- * TODO: consider delete this - not in use
- *
  * @brief Reverses a string of bits.
  * For example:
  *  - input: 0010

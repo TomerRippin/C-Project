@@ -1,6 +1,6 @@
 #include "../HeaderFiles/pre_assembler.h"
 
-void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList)
+void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
 {
     char line[MAX_LINE_LEN];
     char macroData[MAX_MACRO_LEN] = "";  /* TODO: maybe don't assume the macro size and use realloc? */ 
@@ -19,8 +19,7 @@ void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList)
         else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
             macroSection = 0;
-            insertToList(macrosList, macroName, macroData, -1);
-            /* TODO: decide if give line number or not */
+            insertToMacrosList(macrosList, macroName, macroData);
         }
         else if (macroSection)
         {
@@ -55,10 +54,10 @@ void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
 
 int preAssembler(FILE *inputFile, FILE *outputFile)
 {
-    LinkedList *macrosList = createList();
+    MacrosList *macrosList = createMacrosList();
     FILE *tempFile = tmpfile();
     char line[MAX_LINE_LEN];
-    ListNode *result;
+    MacroNode *result;
     int index = 0;
 
     extractMacrosFromFile(inputFile, macrosList);
@@ -75,7 +74,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
 
     while (fgets(line, sizeof(line), tempFile) != NULL)
     {
-        result = searchList(macrosList, line); /* TODO: now not working because null bytes... */
+        result = searchMacrosList(macrosList, line); /* TODO: now not working because null bytes... */
         if (result != NULL)
         {
             /* Replaces line with macro content */
@@ -90,7 +89,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
     }
 
     fclose(tempFile);
-    freeList(macrosList);
+    freeMacrosList(macrosList);
     free(macrosList);
     
     return SUCCESS;

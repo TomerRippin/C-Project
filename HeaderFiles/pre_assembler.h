@@ -1,6 +1,6 @@
 #include "errors.h"
 #include "constants.h"
-#include "linked_list.h"
+#include "macros_list.h"
 
 /**
  * @brief Reads a file and saves all the macros in it to a given linked list.
@@ -12,7 +12,7 @@
  * @param inputFile A pointer to the input file.
  * @param macrosList A pointer to the linked list where the macros will be stored.
  */
-void extractMacrosFromFile(FILE *inputFile, LinkedList *macrosList);
+void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList);
 
 /**
  * @brief Reads a file, calls extractMacrosFromFile and remove all the macros from the file.
