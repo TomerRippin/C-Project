@@ -1,5 +1,16 @@
 #include "../HeaderFiles/files_utils.h"
 
+FILE *openFile(const char *fileName, const char *mode)
+{
+    FILE *file = fopen(fileName, mode);
+    if (!file)
+    {
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m | Couldn't open file: `%s`", getErrorMessage(ERROR_OPEN_FILE), ERROR_OPEN_FILE, fileName);
+        exit(ERROR_OPEN_FILE);
+    }
+    return file;
+}
+
 int isCRLF(FILE *file)
 {
     int prevChar = EOF;
@@ -16,8 +27,6 @@ int isCRLF(FILE *file)
         }
         prevChar = currentChar;
     }
-
-    printf("File uses LF (Unix) line endings.\n");
     return 0; /* LF detected */
 }
 

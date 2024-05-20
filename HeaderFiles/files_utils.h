@@ -8,6 +8,15 @@
 #include "errors.h"
 
 /**
+ * `fopen` wrapper for handling open file error effectively.
+ *
+ * @param fileName file path to open.
+ * @param mode mode to open file (e.g: "r" for read or "w" for writing).
+ * @return if succeeded - an open file object, or exiting with error code.
+*/
+FILE *openFile(const char *fileName, const char *mode);
+
+/**
  * Detects if the line ending style is CRLF in a text file.
  *
  * @param file The input file to check.

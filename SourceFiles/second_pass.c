@@ -93,15 +93,10 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
     int found;
     FILE *outputFile;
 
-    outputFile = fopen(filename, "w");
-    if (outputFile == NULL)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening entry file.\n");
-        return ERROR_OPEN_FILE;
-    }
-
+    outputFile = openFile(filename, "w");
     current = symbolTable->head;
     found = 0;
+
     /* Search for an Entry in the symbol table*/
     while (current != NULL){
         if (strcmp(current->symbolType, SYMBOL_TYPE_ENTRY) == 0)
@@ -134,16 +129,13 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
     return SUCCESS;
 }
 
-int handleExternFile(const char *filename, SymbolTable *symbolTable){
-    SymbolNode *current = symbolTable->head;
+int handleExternFile(const char *filename, SymbolTable *symbolTable) {
     int found = 0;
+    FILE *outputFile;
+    SymbolNode *current;
 
-    FILE* outputFile = fopen(filename, "w");
-    if (outputFile == NULL)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening extern file.\n");
-        return ERROR_OPEN_FILE;
-    }
+    outputFile = openFile(filename, "w");
+    current = symbolTable->head;
 
     /* Search for an Entry in the symbol table*/
     while (current != NULL)
@@ -184,13 +176,9 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
     int state = -1;
     int count = 1;
     char *line = (char*) malloc(sizeof(char) * BINARY_CODE_LEN);
+    FILE *outputFile;
 
-    FILE *outputFile = fopen(filename, "w");
-    if (outputFile == NULL)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening objects file.\n");
-        return ERROR_OPEN_FILE;
-    }
+    outputFile = openFile(filename, "w");
 
     /* First line is header - <IC> <DC> */
     sprintf(line, "  %d %d  \n", IC - BASE_INSTRUCTIONS_COUNTER, DC);

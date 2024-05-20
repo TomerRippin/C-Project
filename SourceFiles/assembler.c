@@ -26,13 +26,9 @@ int main(int argc, char *argv[])
     /* TODO: really need to change this, because ob file is wrong */
 
     inputFileName = argv[1];
-    inputFile = fopen(inputFileName, "r");  /* TODO: create function to open file */
-    if (!inputFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", inputFileName);
-        return ERROR_OPEN_FILE;
-    }
-    else if (isCRLF(inputFile) == 1)
+    inputFile = openFile(inputFileName, "r");
+
+    if (isCRLF(inputFile) == 1)
     {
         logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
         return ERROR_UNSUPPORTED_CRLF_FORMAT;
@@ -42,12 +38,7 @@ int main(int argc, char *argv[])
     /* Clean File */
     logger(LOG_LEVEL_INFO, "Cleaning file");
     cleanFileName = replaceFileNameExt(inputFileName, EXTENSION_AS_CLEAN);
-    cleanFile = fopen(cleanFileName, "w");
-    if (!cleanFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", cleanFileName);
-        return ERROR_OPEN_FILE;
-    }
+    cleanFile = openFile(cleanFileName, "w");
     funcRetVal = cleanAssemblyFile(inputFile, cleanFile);
     fclose(inputFile);
     fclose(cleanFile);
@@ -61,13 +52,8 @@ int main(int argc, char *argv[])
     /* Pre Assembler */
     logger(LOG_LEVEL_INFO, "Pre assembler - unpacking macros");
     amFileName = replaceFileNameExt(inputFileName, EXTENSION_AM);
-    amFile = fopen(amFileName, "w");
-    cleanFile = fopen(cleanFileName, "r");
-    if (!cleanFile || !amFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s or %s\n", cleanFileName, amFileName);
-        return ERROR_OPEN_FILE;
-    }
+    amFile = openFile(amFileName, "w");
+    cleanFile = openFile(cleanFileName, "r");
     funcRetVal = preAssembler(cleanFile, amFile);
     if (funcRetVal != SUCCESS)
     {
@@ -80,12 +66,7 @@ int main(int argc, char *argv[])
 
     /* First Pass */
     logger(LOG_LEVEL_INFO, "First pass");
-    amFile = fopen(amFileName, "r");
-    if (!amFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s, EXIT", amFileName);
-        return ERROR_OPEN_FILE;
-    }
+    amFile = openFile(amFileName, "r");
     funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
