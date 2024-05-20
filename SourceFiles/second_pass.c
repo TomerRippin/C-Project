@@ -119,7 +119,7 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable){
                 return ERROR_UNKNOWN_INSTRUCTION;
             }
             else {
-                logger(LOG_LEVEL_INFO, "inserting label <%s> to entries file at location <%04d>", current->symbolName, searchResult->symbolValue);
+                logger(LOG_LEVEL_DEBUG, "inserting label <%s> to entries file at location <%04d>", current->symbolName, searchResult->symbolValue);
                 fprintf(outputFile, "%s     %04d\n", searchResult->symbolName, searchResult->symbolValue);
             }
         }
@@ -159,7 +159,7 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable){
             while (searchResult != NULL)
             {
                 if ((strcmp(current->symbolName, searchResult->symbolName) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
-                    logger(LOG_LEVEL_INFO, "inserting label <%s> to extern file at location <%d>", current->symbolName, searchResult->symbolValue);
+                    logger(LOG_LEVEL_DEBUG, "inserting label <%s> to extern file at location <%d>", current->symbolName, searchResult->symbolValue);
                     fprintf(outputFile, "%s     %04d\n", searchResult->symbolName, searchResult->symbolValue);
                     found = 1;
                 }
