@@ -52,6 +52,8 @@ char *replaceFileNameExt(const char *fileName, char *newExtension)
         newExtension = temp;
     }
 
+    /* TODO: maybe free temp? */
+
     /* Append the new extension to the file name */
     strcat(newFileName, newExtension);
 

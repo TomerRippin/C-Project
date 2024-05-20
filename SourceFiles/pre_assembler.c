@@ -90,7 +90,6 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
 
     fclose(tempFile);
     freeMacrosList(macrosList);
-    free(macrosList);
     
     return SUCCESS;
 }

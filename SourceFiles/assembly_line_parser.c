@@ -304,22 +304,24 @@ int getOpcodeOperandsNumber(char *instruction) {
 int parseOperands(struct AssemblyLine *parsedLine)
 {
     /* TODO: init memory */
-    char *potSrc = (char*)malloc(sizeof(char));
-    char *potDest = (char*)malloc(sizeof(char));
-    Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
-    Operand *destOperand = (Operand*)malloc(sizeof(Operand));
-    int opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
-    int parseRetVal = 0;
-    int opcodeCode;
+    char *potSrc, *potDest;
+    Operand *srcOperand, *destOperand;
+    int opcodeOperandsNum, parseRetVal, opcodeCode;
 
-    /* Cannot find the operand */
+    opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
+    /* Shouldn't be returned because it can only be if opcode is NULL and it checked earlier */
     if (opcodeOperandsNum == -1)
     {
         return ERROR_OPERAND_NOT_VALID;
     }
 
+    potSrc = (char *)malloc(sizeof(char));
+    potDest = (char *)malloc(sizeof(char));
+    srcOperand = (Operand *)malloc(sizeof(Operand));
+    destOperand = (Operand *)malloc(sizeof(Operand));
+
     /* if two operands */
-    else if (opcodeOperandsNum == 2)
+    if (opcodeOperandsNum == 2)
     {
         int commaOccurences = countOccurrences(parsedLine->operands, ',');
         if (commaOccurences == 0)
@@ -362,7 +364,6 @@ int parseOperands(struct AssemblyLine *parsedLine)
             return ERROR_UNKNOWN_OPCODE;
         } 
         else {
-            /* TODO: think what to do with this, maybe NULL are better */
             destOperand->adrType = -1;
             destOperand->value = '\0';
             srcOperand->adrType = -1;
