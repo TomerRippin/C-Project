@@ -194,14 +194,12 @@ int isValidRegisterOperand(const char *operand)
 
 int parseOperandAdressing(const char *operand, int *operandType)
 {
-    const char *labelEnd;
-    char *label;
-    char *index;
+    char *label, *index, *labelEnd, *indexStart, *indexEnd;
+    int labelLen;
 
     if (*operand == '\0')
     {
         *operandType = -1;
-        /* TODO: decide if return ERROR_OPERAND_IS_EMPTY; */
         return SUCCESS;
     }
 
@@ -216,7 +214,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
         }
         else
         {
-            *operandType = 0;
+            *operandType = 0;  /* TODO: TOMERRRR it is the same as in the if */
             return SUCCESS;
         }
     }
@@ -227,14 +225,15 @@ int parseOperandAdressing(const char *operand, int *operandType)
         *operandType = 3;
         return SUCCESS;
     }
+
     /* Check for straight addressing or index addressing */ 
     labelEnd = strchr(operand, '[');
     if (labelEnd != NULL)
     {
-        const int labelLen = labelEnd - operand;
+        labelLen = labelEnd - operand;
         /* Check if the label is followed by '[' and ']' */ 
-        const char *indexStart = labelEnd + 1;
-        const char *indexEnd = strchr(indexStart, ']');
+        indexStart = labelEnd + 1;
+        indexEnd = strchr(indexStart, ']');
         if (indexEnd != NULL && labelLen > 0 && indexEnd - indexStart > 0) {
             label = malloc(labelLen + 1);
             strncpy(label, operand, labelLen);

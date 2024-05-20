@@ -8,13 +8,7 @@
  * @brief A structure representing an operand in an assembly instruction.
  *
  * @var Operand::adrType
- * The addressing type of the operand. It can be one of the following:
- * -1 - if operand doesn't exist
- * 0  - Immediate addressing
- * 1  - Direct addressing
- * 2  - Index fixed addressing
- * 3  - Register direct addressing
- *
+ * The addressing type of the operand. It can be one of the following: {-1,0,1,2,3}
  * @var Operand::value
  * The value of the operand.
  */
@@ -116,9 +110,15 @@ int isValidLabel(const char *label);
 int isValidRegisterOperand(const char *operand);
 
 /**
- * Function to parse the adrType of operand.
- * This function also runs validations on each operand that matches an addressing, 
- * returns an ERROR if validation failes.
+ * @brief This function parses the adrType of operand into operandType.
+ *
+ * Operand addressing type, can be one of the following:
+ *  - -1 - if operand doesn't exist
+ *  -  0 - Immediate addressing
+ *  -  1 - Direct addressing
+ *  -  2 - Index fixed addressing
+ *  -  3 - Register direct addressing
+ * This function also runs validations on each operand that matches an addressing, returns an ERROR if validation failes.
  *
  * @param operand The input operand string to be parsed.
  * @return int SUCCESS code or ERROR code.
