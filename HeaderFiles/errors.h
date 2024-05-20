@@ -1,6 +1,8 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
+#include "logger.h"
+
 typedef enum ErrorCode
 {
     SUCCESS = 0,
@@ -29,6 +31,8 @@ typedef enum ErrorCode
     ERROR_REGISTER_NOT_VALID = 23
 } ErrorCode;
 
-/* TODO: maybe we will want for debugging, to print the errors name, maybe delete */
+const char *getErrorMessage(ErrorCode error);
+
+void printError(int lineNumber, ErrorCode errorCode);
 
 #endif  /* ERRORS_H */

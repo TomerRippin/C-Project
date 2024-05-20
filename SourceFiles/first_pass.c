@@ -210,7 +210,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_LABEL_NOT_VALID);
+                printError(lineNumber, ERROR_LABEL_NOT_VALID);
                 hasError = 1;
                 continue;
             }
@@ -251,9 +251,8 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
                 freeAssemblyLine(&parsedLine);
                 logger(LOG_LEVEL_ERROR, "Error while freeing the line %d", lineNumber);
             }
-            if (errorCode != SUCCESS){
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
-
+            if (errorCode != SUCCESS) {
+                printError(lineNumber, errorCode);
             } 
         }
         
@@ -270,9 +269,9 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         /* Log the Error of the line */
         if (errorCode != SUCCESS)
         {
-            freeAssemblyLine(&parsedLine);
-            logger(LOG_LEVEL_ERROR, "Found Error in line %d, Error code: %d", lineNumber, errorCode);
+            printError(lineNumber, errorCode);
             hasError = 1;
+            freeAssemblyLine(&parsedLine);
         }
     }
 

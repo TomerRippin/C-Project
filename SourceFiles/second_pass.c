@@ -10,9 +10,6 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     AssemblyLine parsedLine;
     SymbolNode *searchResult;
 
-    /* TODO: maybe init IC here and not in the main?
-     *IC = BASE_INSTRUCTIONS_COUNTER; */
-
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
@@ -28,7 +25,6 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         }
 
         parsedLine = parseAssemblyLine(line);
-        /* printAssemblyLine(&parsedLine); */
 
         if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 ||
             strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0 ||
@@ -45,13 +41,13 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
             }
             searchResult = searchSymbolNameInTable(symbolTable, parsedLine.operands);
             if (searchResult == NULL) {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_GIVEN_SYMBOL_NOT_EXIST);
+                printError(lineNumber, ERROR_GIVEN_SYMBOL_NOT_EXIST);
                 hasError = 1;
                 continue;
             }
             else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)  /* TODO: test this error */
             {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL);
+                printError(lineNumber, ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL);
                 hasError = 1;
                 continue;
             }
@@ -65,7 +61,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
             errorCode = parseOperands(&parsedLine);
             if (errorCode != SUCCESS)
             {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
+                printError(lineNumber, errorCode);
                 hasError = 1;
                 continue;
             }
@@ -73,7 +69,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
             errorCode = handleOperandsBinaryCode(&parsedLine, binaryCodesTable, symbolTable, *IC + 1);  /* NOTE: this will still work even if operands is null */
             if (errorCode != SUCCESS)
             {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
+                printError(lineNumber, errorCode);
                 hasError = 1;
                 continue;
             }
