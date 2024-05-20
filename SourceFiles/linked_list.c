@@ -62,7 +62,6 @@ void insertToList(LinkedList *list, char *name, char *data, int lineNumber)
 
     if (isAlreadyExist(list, name, data, lineNumber))
     {
-        logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
         return;
     }
 

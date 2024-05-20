@@ -125,7 +125,6 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
 
     if (isSymbolAlreadyExist(table, symbolName, symbolType, symbolValue))
     {
-        logger(LOG_LEVEL_WARNING, "Trying to insert a duplicate, Not inserting");
         return;
     }
 
