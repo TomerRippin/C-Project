@@ -87,7 +87,7 @@ int handleStringDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
     memset(binaryCode, '\0', sizeof(binaryCode));
 
     if (isValidString(parsedLine->operands) == 0) {
-        return ERROR_STRING_IS_NOT_VALID;
+        return ERROR_STRING_NOT_VALID;
     }
 
     for (i = 1; i < stringLen -1; i++) {
