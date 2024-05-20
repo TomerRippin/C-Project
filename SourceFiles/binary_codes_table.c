@@ -53,6 +53,7 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
     table->length++;
 
     logger(LOG_LEVEL_DEBUG, "Inserted to binaryCodesTable: source code - <%s> | binary code - <%s> | dec address: <%d>", sourceCode, binaryCode, decAddress);
+
     return SUCCESS;
 }
 

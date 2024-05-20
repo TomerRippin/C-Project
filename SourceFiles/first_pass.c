@@ -25,7 +25,6 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
         }
         else
         {
-            logger(LOG_LEVEL_DEBUG, "Inserting to symbol table: <%s>, type: <%s>, at location: <%d>\n", symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             insertToSymbolTable(symbolTable, symbol, SYMBOL_TYPE_MDEFINE, atoi(value));
             return SUCCESS;
         }
@@ -63,7 +62,6 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
                 else
                 {
                     value = searchResult->symbolValue;
-                    logger(LOG_LEVEL_DEBUG, "Found a symbol: <%s> in the symbolTable, converting to value: <%d>\n", token, value);
                 }
             }
         }
@@ -89,7 +87,7 @@ int handleStringDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
     memset(binaryCode, '\0', sizeof(binaryCode));
 
     if (isValidString(parsedLine->operands) == 0) {
-        return ERROR_STRING_IS_NOT_VALID;
+        return ERROR_STRING_NOT_VALID;
     }
 
     for (i = 1; i < stringLen -1; i++) {
@@ -138,10 +136,8 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
 
     if (parsedLine->label != NULL)
     {
-        logger(LOG_LEVEL_DEBUG, "label found, insert to symbol table: <%s>, type: <%s>, at location: <%d>", parsedLine->label, SYMBOL_TYPE_CODE, *IC);
         insertToSymbolTable(symbolTable, parsedLine->label, SYMBOL_TYPE_CODE, *IC);
     }
-    logger(LOG_LEVEL_DEBUG, "parsing operands");
     errorCode = parseOperands(parsedLine);
     if (errorCode != SUCCESS)
     {
@@ -196,8 +192,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
 
         logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
 
-        if (isEmptyLine(line) || isCommentedLine(line)){
-            logger(LOG_LEVEL_WARNING, "Empty or Commented Line! Line number: %d", lineNumber);
+        if (isEmptyLine(line) || isCommentedLine(line)) {
             continue;
         }
 
@@ -210,12 +205,12 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
             {
                 /* TODO think if this is legal to not do anything */
-                logger(LOG_LEVEL_WARNING, "symbol already exist");
+                logger(LOG_LEVEL_WARNING, "Symbol: `%s` already exists, continue", parsedLine.label);
                 /* return ERROR_SYMBOL_ALREADY_EXIST; */
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, ERROR_LABEL_NOT_VALID);
+                printError(lineNumber, ERROR_LABEL_NOT_VALID);
                 hasError = 1;
                 continue;
             }
@@ -256,9 +251,8 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
                 freeAssemblyLine(&parsedLine);
                 logger(LOG_LEVEL_ERROR, "Error while freeing the line %d", lineNumber);
             }
-            if (errorCode != SUCCESS){
-                logger(LOG_LEVEL_ERROR, "Error in line %d, error code: %d", lineNumber, errorCode);
-
+            if (errorCode != SUCCESS) {
+                printError(lineNumber, errorCode);
             } 
         }
         
@@ -267,8 +261,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
 
         else {
-            logger(LOG_LEVEL_ERROR, "unknown instruction type in line: %d", lineNumber);
-            freeAssemblyLine(&parsedLine);
+            /* Unknown instruction type in line */
             errorCode = ERROR_UNKNOWN_INSTRUCTION;
         }
         isLabel = 0;
@@ -276,9 +269,9 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         /* Log the Error of the line */
         if (errorCode != SUCCESS)
         {
-            freeAssemblyLine(&parsedLine);
-            logger(LOG_LEVEL_ERROR, "Found Error in line %d, Error code: %d", lineNumber, errorCode);
+            printError(lineNumber, errorCode);
             hasError = 1;
+            freeAssemblyLine(&parsedLine);
         }
     }
 
@@ -291,8 +284,6 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
         current = current->next;
     }
-
-    printSymbolTable(symbolTable);
 
     /* TODO - free things */
     return hasError;

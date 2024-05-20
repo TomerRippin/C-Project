@@ -137,11 +137,10 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     else {
         token = operand->value + 1;
         searchResult = searchSymbolNameInTable(symbolTable, token);
-        if (searchResult == NULL){
+        if (searchResult == NULL) {
             return ERROR_GIVEN_SYMBOL_NOT_EXIST;
         } 
-        else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) == 0){
-            logger(LOG_LEVEL_DEBUG, "Found a valid defiend label");
+        else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) == 0) {
             num = searchResult->symbolValue;
         }
         else {
@@ -321,7 +320,7 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
     /* Check if the register number is valid */
     /* TODO: maybe change to is valid register? maybe no need because the parse is checking this? */
     if (num < 0 || num > 7){
-        return ERROR_NOT_VALID_REGISTER;
+        return ERROR_REGISTER_NOT_VALID;
     }
 
     if (isSource){
@@ -346,7 +345,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
 
     if (isValidRegisterOperand(parsedLine->src->value) != 1 || isValidRegisterOperand(parsedLine->dst->value) != 1)
     {
-        return ERROR_NOT_VALID_REGISTER;
+        return ERROR_REGISTER_NOT_VALID;
     }
 
     /* Parse the number from the operand */
@@ -355,7 +354,7 @@ int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
 
     /* Check if the register number is valid
     if ((srcNum < 1 || srcNum > 8) || (dstNum < 1 || dstNum > 8)){
-        return ERROR_NOT_VALID_REGISTER;
+        return ERROR_REGISTER_NOT_VALID;
     }*/
 
     /* Add the bits representing the src number to bits 5-7 */

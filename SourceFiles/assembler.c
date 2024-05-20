@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     /* TODO: really need to change this, because ob file is wrong */
 
     inputFileName = argv[1];
-    inputFile = fopen(inputFileName, "r");
+    inputFile = fopen(inputFileName, "r");  /* TODO: create function to open file */
     if (!inputFile)
     {
         logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", inputFileName);
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     else if (isCRLF(inputFile) == 1)
     {
         logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
-        return ERROR_CRLF_FILE_FORMAT;
+        return ERROR_UNSUPPORTED_CRLF_FORMAT;
     }
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     fclose(cleanFile);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     funcRetVal = preAssembler(cleanFile, amFile);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
         return funcRetVal;
     }
     fclose(cleanFile);
@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
     amFile = fopen(amFileName, "r");
     if (!amFile)
     {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", amFileName);
+        logger(LOG_LEVEL_ERROR, "Error opening file: %s, EXIT", amFileName);
         return ERROR_OPEN_FILE;
     }
     funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured");
+        logger(LOG_LEVEL_ERROR, "An error as occured, EXIT");
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done first pass");
@@ -102,7 +102,8 @@ int main(int argc, char *argv[])
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured");
+        logger(LOG_LEVEL_ERROR, "An error as occured, EXIT");
+        /* TODO: use exit */
         return funcRetVal;
     }
     fclose(amFile);
@@ -114,7 +115,7 @@ int main(int argc, char *argv[])
     funcRetVal = handleEntryFile(entryFileName, symbolTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done creating file: %s", entryFileName);
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
     funcRetVal = handleExternFile(externalFileName, symbolTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done creating file: %s", externalFileName);
@@ -132,7 +133,7 @@ int main(int argc, char *argv[])
     funcRetVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d\n", funcRetVal);
+        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done creating file: %s", objectFileName);

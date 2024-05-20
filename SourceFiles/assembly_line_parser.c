@@ -324,11 +324,11 @@ int parseOperands(struct AssemblyLine *parsedLine)
         int commaOccurences = countOccurrences(parsedLine->operands, ',');
         if (commaOccurences == 0)
         {
-            return ERROR_MISSING_COMMA_BETWEEN_ARGUMENTS;
+            return ERROR_MISSING_COMMA_BETWEEN_OPERANDS;
         }
         else if (commaOccurences > 1)
         {
-            return ERROR_EXTRA_COMMAS_BETWEEN_ARGUMENTS;
+            return ERROR_EXTRA_COMMAS_BETWEEN_OPERANDS;
         }
         else
         {
@@ -346,7 +346,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     else if (opcodeOperandsNum == 1)
     {
         if (strchr(parsedLine->operands, ' ')) {
-            return ERROR_EXTRA_TEXT_AFTER_ARGUMENT;
+            return ERROR_EXTRA_TEXT_AFTER_OPERAND;
         }
         /* Only one argument, should be destination */
         strcpy(potDest, parsedLine->operands);
@@ -359,7 +359,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     {
         if (0)
         {   /* TODO: create the actual function extraText() */
-            return ERROR_OPCODE_NOT_FOUND;
+            return ERROR_UNKNOWN_OPCODE;
         } 
         else {
             /* TODO: think what to do with this, maybe NULL are better */
@@ -448,7 +448,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
 
         /* Could not find instruction */
         case -1:
-            return ERROR_OPCODE_NOT_FOUND;
+            return ERROR_UNKNOWN_OPCODE;
             break;
         default:
             break;
