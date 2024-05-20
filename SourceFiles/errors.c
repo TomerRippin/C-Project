@@ -52,6 +52,8 @@ const char *getErrorMessage(ErrorCode error)
         return "String not valid";
     case ERROR_REGISTER_NOT_VALID:
         return "Register not valid";
+    case ERROR_ENTRY_NOT_DEFINED:
+        return "Entry value is not defined";
     default:
         return "Unknown error";
     }
