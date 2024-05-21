@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", entryFileName);
 
     externalFileName = replaceFileNameExt(inputFileName, EXTENSION_EXT);
     funcRetVal = handleExternFile(externalFileName, symbolTable);
@@ -107,7 +106,6 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", externalFileName);
 
     objectFileName = replaceFileNameExt(inputFileName, EXTENSION_OB);
     funcRetVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
@@ -116,7 +114,6 @@ int main(int argc, char *argv[])
         logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", objectFileName);
 
     logger(LOG_LEVEL_INFO, "SUCCESS! Done assembler");
 

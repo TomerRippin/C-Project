@@ -75,12 +75,12 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
 
             L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             *IC = *IC + L;
+        }
 
-            if (*IC + *DC > MAX_MEMORY_WORDS)
-            {
-                logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_OVERFLOW), ERROR_MEMORY_OVERFLOW);
-                exit(ERROR_MEMORY_OVERFLOW);
-            }
+        if ((*IC + *DC) > MAX_MEMORY_WORDS)
+        {
+            logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_OVERFLOW), ERROR_MEMORY_OVERFLOW);
+            return ERROR_MEMORY_OVERFLOW;
         }
     }
 

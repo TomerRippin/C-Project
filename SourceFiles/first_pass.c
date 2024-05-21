@@ -271,12 +271,11 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         {
             printError(lineNumber, errorCode);
             hasError = 1;
-            freeAssemblyLine(&parsedLine);
         }
 
-        if (*IC + *DC > MAX_MEMORY_WORDS) {
+        if ((*IC + *DC) > MAX_MEMORY_WORDS) {
             logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_OVERFLOW), ERROR_MEMORY_OVERFLOW);
-            exit(ERROR_MEMORY_OVERFLOW);
+            return ERROR_MEMORY_OVERFLOW;
         }
     }
 
@@ -290,6 +289,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         current = current->next;
     }
 
+    freeAssemblyLine(&parsedLine);
     /* TODO - free things */
     return hasError;
 }

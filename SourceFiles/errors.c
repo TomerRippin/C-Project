@@ -57,7 +57,7 @@ const char *getErrorMessage(ErrorCode error)
     case ERROR_ENTRY_NOT_DEFINED:
         return "Entry value is not defined";
     case ERROR_MEMORY_OVERFLOW:
-        return "Exceeded memory limit, exiting";
+        return "Exceeded memory limit";
     default:
         return "Unknown error";
     }
