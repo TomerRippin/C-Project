@@ -29,7 +29,8 @@ typedef enum ErrorCode
     ERROR_ADDRESSING_TYPE_NOT_MATCHING = 21,
     ERROR_STRING_NOT_VALID = 22,
     ERROR_REGISTER_NOT_VALID = 23,
-    ERROR_ENTRY_NOT_DEFINED = 24
+    ERROR_ENTRY_NOT_DEFINED = 24,
+    ERROR_TOO_MANY_OBJECT_FILE_LINES = 25
 } ErrorCode;
 
 const char *getErrorMessage(ErrorCode error);
