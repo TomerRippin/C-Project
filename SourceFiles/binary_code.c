@@ -123,10 +123,12 @@ int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
 int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
-    int binaryCode, handlerRetVal;
-    int found = 1;
-    SymbolNode *searchResult = symbolTable->head;
+    int binaryCode, handlerRetVal, found;
+    SymbolNode *searchResult;
+
     binaryCode = handlerRetVal = 0;
+    found = 1;
+    searchResult = symbolTable->head;
 
     while (searchResult != NULL && found){
         if ((strcmp(searchResult->symbolName, operand->value) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0  || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0))
@@ -163,8 +165,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC)
 {
     int labelAddressBinaryCode, indexBinaryCode, handlerRetVal, found, labelLen, indexLen;
-    char *labelEnd, *indexEnd;
-    char *label, *index;
+    char *labelEnd, *indexEnd, *label, *index;
     SymbolNode *searchResult;
 
     labelEnd = strchr(operand->value, '[');
@@ -187,17 +188,15 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
 
     while (searchResult != NULL && found)
     {
-        /* if label exists with type data or code */
+        /* If symbol exists with type data or code */
         if ((strcmp(searchResult->symbolName, label) == 0)
-            && ((strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0
-                 || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)))
+             && ((strcmp(searchResult->symbolType, SYMBOL_TYPE_DATA) == 0
+                  || strcmp(searchResult->symbolType, SYMBOL_TYPE_CODE) == 0)))
         {
             /* bits 0-1: ARE codex - 'R' - 10, label is internal */
             labelAddressBinaryCode |= 2;
             /* bits 2-13 are the address of the label */
             labelAddressBinaryCode |= (searchResult->symbolValue << 2);
-            logger(LOG_LEVEL_WARNING, "search address found! decAddr: %d", searchResult->symbolValue);  /* TODO: TOMERRRR what is this? */
-
             found = 0;
         }
         else if ((strcmp(searchResult->symbolName, label) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL) == 0))
@@ -225,7 +224,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
 
     *IC = *IC + 1;
-    /* handles the index */
+    /* Handles the index */
     indexLen = indexEnd - labelEnd - 1; /* -1 to exclude the '[' character */
     index = malloc(indexLen + 1);
     strncpy(index, labelEnd + 1, indexLen); /* +1 to exclude the '[' character */
@@ -239,8 +238,8 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     }
     else
     {
-        /* searches for the index if it is defiend elsewhere in the code */
-        /* TODO: check if it can be only mdefine or LIST[2] also... */
+        /* Searches for the index if it is defiend elsewhere in the code */
+        /* NOTE: index can only be a mdefine symbol, or a number */
         searchResult = searchSymbolNameTypeInTable(symbolTable, index, SYMBOL_TYPE_MDEFINE);
         if (searchResult == NULL)
         {
@@ -263,7 +262,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
     return handlerRetVal;
 }
 
-int handleAdrType3(Operand *operand, int isSrcOperand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
+int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC)
 {
     int binaryCode, handlerRetVal, num;
 
@@ -276,7 +275,8 @@ int handleAdrType3(Operand *operand, int isSrcOperand, AssemblyLine *parsedLine,
         return ERROR_REGISTER_NOT_VALID;
     }
 
-    if (isSrcOperand){
+    if (isSource)
+    {
         /* Adds the bits representing the src number to bits 5-7 */
         binaryCode |= (num << 5);
     }

@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     }
     fclose(cleanFile);
     fclose(amFile);
+    remove("cleanFileName");
     logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
     /* First Pass */
