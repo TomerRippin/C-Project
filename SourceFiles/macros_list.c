@@ -2,19 +2,24 @@
 
 MacrosList *createMacrosList()
 {
-    MacrosList *list = (MacrosList *)malloc(sizeof(MacrosList));
+    MacrosList *list;
+
+    list = (MacrosList *)malloc(sizeof(MacrosList));
     if (list == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(GENERAL_ERROR);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
+
     list->head = NULL;
     return list;
 }
 
 MacroNode *searchMacrosList(MacrosList *list, char *targetName)
 {
-    MacroNode *current = list->head;
+    MacroNode *current;
+
+    current = list->head;
     while (current != NULL)
     {
         if (strcmp(current->name, targetName) == 0)
@@ -30,7 +35,9 @@ MacroNode *searchMacrosList(MacrosList *list, char *targetName)
 
 int isAlreadyExist(MacrosList *list, char *name, char *data)
 {
-    MacroNode *current = list->head;
+    MacroNode *current;
+
+    current = list->head;
     while (current != NULL)
     {
         if (strcmp(current->name, name) == 0 && strcmp(current->data, data) == 0)
@@ -51,12 +58,12 @@ void insertToMacrosList(MacrosList *list, char *name, char *data)
         return;
     }
 
-    /* Create a new node */
+    /* Creates a new node */
     new_node = (MacroNode *)malloc(sizeof(MacroNode));
     if (new_node == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
-        exit(GENERAL_ERROR);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
 
     /* Set data and next pointer */
@@ -77,7 +84,9 @@ void freeMacroNode(MacroNode *node)
 
 void freeMacrosList(MacrosList *list)
 {
-    MacroNode *current = list->head;
+    MacroNode *current;
+
+    current = list->head;
     while (current != NULL)
     {
         MacroNode *temp = current;
@@ -89,7 +98,9 @@ void freeMacrosList(MacrosList *list)
 
 void printMacrosList(MacrosList *list)
 {
-    MacroNode *current = list->head;
+    MacroNode *current;
+
+    current = list->head;
     printf("---------------------------\n");
     printf("|    Name    |    Data    |\n");
     printf("|------------|------------|\n");

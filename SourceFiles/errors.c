@@ -8,6 +8,8 @@ const char *getErrorMessage(ErrorCode error)
         return "Success";
     case GENERAL_ERROR:
         return "General error";
+    case ERROR_MEMORY_ALLOC_FAILED:
+        return "Memory allocation failed, exiting.";
     case ERROR_WRONG_ASSEMBLER_USAGE:
         return "Wrong assembler usage";
     case ERROR_FILE_NOT_FOUND:

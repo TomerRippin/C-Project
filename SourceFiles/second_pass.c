@@ -194,8 +194,8 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
     line = (char *)malloc(sizeof(char) * BINARY_CODE_LEN);
     if (line == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(GENERAL_ERROR);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
 
     /* First line is header - <IC> <DC> */
@@ -211,7 +211,7 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
             continue;
         }
         /* works only if symbol table is sorted - check if a line is already been inserted.*/
-        if (node->decAddress == state){
+        if (node->decAddress == state) {
             continue;
         }
         sprintf(line, "%04d %s\n", node->decAddress, decodeBinaryCode(node->binaryCode));
@@ -219,7 +219,7 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
         state = node->decAddress;
     }
 
-    /* Now insert all of the DC instructions in the end of the file */
+    /* Now inserts all of the DC instructions in the end of the file */
     count = 1;
     for (node = binaryCodesTable->head; count <= DC; node = node->next) {
 
