@@ -176,22 +176,37 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable) {
 
 int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC)
 {
-    int state, count;
+    int state;  /* Holds the ob line number, used to ignore writing duplicates to file */
+    int count;
     char *line;
     FILE *outputFile;
     BinaryCodesNode *node;
 
-    line = (char *)malloc(sizeof(char) * BINARY_CODE_LEN);
-    state = count = 1;
+    if (IC + DC > MAX_OBJECT_FILE_LINES)
+    {
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_TOO_MANY_OBJECT_FILE_LINES), ERROR_TOO_MANY_OBJECT_FILE_LINES);
+        return LOG_LEVEL_ERROR;
+    }
+
+    state = -1;
+    count = 1;
     outputFile = openFile(filename, "w");
+    line = (char *)malloc(sizeof(char) * BINARY_CODE_LEN);
+    if (line == NULL)
+    {
+        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
+        exit(GENERAL_ERROR);
+    }
 
     /* First line is header - <IC> <DC> */
     sprintf(line, "  %d %d  \n", IC - BASE_INSTRUCTIONS_COUNTER, DC);
     fputs(line, outputFile);
 
+    /** Rest of the lines are - <address> <decoded binary code> 
+      * First all IC is written and then all DC */
     for (node = binaryCodesTable->head; node != NULL; node = node->next) {
-        /* ignore all of the DC instructions in the start of the binaryCodesTable */
-        if (count <= DC){
+        /* Ignore all of the DC instructions in the start of the binaryCodesTable - will be written in the end */
+        if (count <= DC) {
             count++;
             continue;
         }
@@ -204,7 +219,7 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
         state = node->decAddress;
     }
 
-    /* now insert all of the DC instructions in the end of the file */
+    /* Now insert all of the DC instructions in the end of the file */
     count = 1;
     for (node = binaryCodesTable->head; count <= DC; node = node->next) {
 
