@@ -206,17 +206,8 @@ int parseOperandAdressing(const char *operand, int *operandType)
     /* Check for immediate addressing */ 
     if (*operand == '#')
     {
-        /* Check if the remaining characters are digits */ 
-        if (isNumber(operand+=1))
-        {
-            *operandType = 0;
-            return SUCCESS;
-        }
-        else
-        {
-            *operandType = 0;  /* TODO: TOMERRRR it is the same as in the if */
-            return SUCCESS;
-        }
+        *operandType = 0;
+        return SUCCESS;
     }
 
     /* Check for register addressing */
