@@ -20,7 +20,6 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
         logger(LOG_LEVEL_DEBUG, "%d IC: %d DC: %d read line: %s", lineNumber, *IC, *DC, line);
 
         if (isEmptyLine(line) || isCommentedLine(line)){
-            logger(LOG_LEVEL_WARNING, "Empty or Commented Line! Line number: %d", lineNumber);
             continue;
         }
 

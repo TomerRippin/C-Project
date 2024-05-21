@@ -1,9 +1,0 @@
-CCCCCCCC
-mcr m_mcr
-my first func
-my second func
-endmcr
-m_mcr
-AAAAAAAAAAAA
-m_mcr
-BBBBBBB
