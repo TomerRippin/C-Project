@@ -273,6 +273,11 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             hasError = 1;
             freeAssemblyLine(&parsedLine);
         }
+
+        if (*IC + *DC > MAX_MEMORY_WORDS) {
+            logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_OVERFLOW), ERROR_MEMORY_OVERFLOW);
+            exit(ERROR_MEMORY_OVERFLOW);
+        }
     }
 
     current = symbolTable->head;

@@ -56,8 +56,8 @@ const char *getErrorMessage(ErrorCode error)
         return "Register not valid";
     case ERROR_ENTRY_NOT_DEFINED:
         return "Entry value is not defined";
-    case ERROR_TOO_MANY_OBJECT_FILE_LINES:
-        return "Too many lines in object file, can't create file";
+    case ERROR_MEMORY_OVERFLOW:
+        return "Exceeded memory limit, exiting";
     default:
         return "Unknown error";
     }

@@ -19,7 +19,7 @@ void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
         else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
             macroSection = 0;
-            insertToList(macrosList, macroName, macroData, -1);
+            insertToMacrosList(macrosList, macroName, macroData);
             /* TODO: decide if give line number or not */
         }
         else if (macroSection)
@@ -90,7 +90,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
     }
 
     fclose(tempFile);
-    freeList(macrosList);
+    freeMacrosList(macrosList);
     free(macrosList);
     
     return SUCCESS;

@@ -75,6 +75,12 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
 
             L = calculateL(parsedLine.src->adrType, parsedLine.dst->adrType);
             *IC = *IC + L;
+
+            if (*IC + *DC > MAX_MEMORY_WORDS)
+            {
+                logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_OVERFLOW), ERROR_MEMORY_OVERFLOW);
+                exit(ERROR_MEMORY_OVERFLOW);
+            }
         }
     }
 
@@ -180,12 +186,6 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
     char *line;
     FILE *outputFile;
     BinaryCodesNode *node;
-
-    if (IC + DC > MAX_OBJECT_FILE_LINES)
-    {
-        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_TOO_MANY_OBJECT_FILE_LINES), ERROR_TOO_MANY_OBJECT_FILE_LINES);
-        return LOG_LEVEL_ERROR;
-    }
 
     state = -1;
     count = 1;

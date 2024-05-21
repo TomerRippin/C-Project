@@ -96,6 +96,7 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
  * using matching handle function.
  * The labels from the parsed lines are inserted to symbolTable.
  * The parsed lines are decoded to binary code and inserted to binaryCodesTable.
+ * Also, always validating that IC + DC is less then max memory words (to prevent memory overflow).
  *
  * @param inputFile Pointer to the input file containing the assembly code.
  * @param symbolTable Pointer to a symbol table to be populated.

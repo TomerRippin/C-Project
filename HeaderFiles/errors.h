@@ -31,7 +31,7 @@ typedef enum ErrorCode
     ERROR_STRING_NOT_VALID = 23,
     ERROR_REGISTER_NOT_VALID = 24,
     ERROR_ENTRY_NOT_DEFINED = 25,
-    ERROR_TOO_MANY_OBJECT_FILE_LINES = 26
+    ERROR_MEMORY_OVERFLOW = 26
 } ErrorCode;
 
 const char *getErrorMessage(ErrorCode error);
