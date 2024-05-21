@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     binaryCodesTable = createBinaryCodesTable();
     IC = BASE_INSTRUCTIONS_COUNTER;  /* Insturctions Counter */
     DC = 0;                          /* Data counter */
-    /* TODO: really need to change this, because ob file is wrong <<TOMERRRRRRR>> */
 
     inputFileName = argv[1];
     inputFile = openFile(inputFileName, "r");

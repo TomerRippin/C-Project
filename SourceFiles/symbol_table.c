@@ -6,7 +6,7 @@ SymbolTable *createSymbolTable()
     if (table == NULL)
     {
         logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exit(GENERAL_ERROR);
     }
     table->head = NULL;
     table->last = NULL;
@@ -132,7 +132,7 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
     newNode = (SymbolNode *)malloc(sizeof(SymbolNode));
     if (newNode == NULL) {
         logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
-        exit(EXIT_FAILURE);
+        exit(GENERAL_ERROR);
     }
 
     /* Set symbolType and next pointer */

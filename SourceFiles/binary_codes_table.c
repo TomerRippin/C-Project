@@ -6,7 +6,7 @@ BinaryCodesTable *createBinaryCodesTable()
     if (table == NULL)
     {
         logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exit(GENERAL_ERROR);
     }
     table->head = NULL;
     table->last = NULL;
@@ -21,7 +21,7 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
     if (newNode == NULL)
     {
         logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exit(GENERAL_ERROR);
     }
     if (binaryCode == NULL || sourceCode == NULL)
     {
