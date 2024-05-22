@@ -94,14 +94,14 @@ int isCommandLine(AssemblyLine *parsedLine);
 int isValidString(char *str);
 
 /**
- * @brief Checks if a label is valid.
- * A valid label starts with an alphabetic letter (big or small),
+ * @brief Checks if a symbol (label) is valid.
+ * A valid symbol starts with an alphabetic letter (big or small),
  * followed by alphabetic letters or numbers, and its maximum length is 31.
  *
  * @param label The label to check.
  * @return int 1 if the label is valid, and 0 otherwise.
  */
-int isValidLabel(const char *label);
+int isValidSymbol(const char *label);
 
 /**
  * @brief Checks if a register operand is valid.

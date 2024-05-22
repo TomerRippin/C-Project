@@ -115,7 +115,7 @@ void freeAssemblyLine(AssemblyLine *line)
     free(line->operands);
 }
 
-int isValidLabel(const char *label)
+int isValidSymbol(const char *label)
 {
     int i;
 
@@ -237,7 +237,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
             index[indexEnd - indexStart] = '\0';
 
             /* Validate label and validate index (number or a valid label) */
-            if ((!isValidLabel(label)) || (!isNumber(index) && !isValidLabel(index)))
+            if ((!isValidSymbol(label)) || (!isNumber(index) && !isValidSymbol(index)))
             {
                 free(label);
                 free(index);
@@ -252,7 +252,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     }
     else
     {
-        if (!isValidLabel(operand)) {
+        if (!isValidSymbol(operand)) {
             return ERROR_SYMBOL_NOT_VALID;
         }
         *operandType = 1;

@@ -40,7 +40,7 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
             value = atoi(token);
         }
         else {
-            if (isValidLabel(token) != 1)
+            if (isValidSymbol(token) != 1)
             {
                 return ERROR_SYMBOL_NOT_VALID;
             }
@@ -195,7 +195,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             {
                 logger(LOG_LEVEL_WARNING, "Symbol: `%s` already exists, continue", parsedLine.label);
             }
-            else if (isValidLabel(parsedLine.label) != 1)
+            else if (isValidSymbol(parsedLine.label) != 1)
             {
                 printError(lineNumber, ERROR_SYMBOL_NOT_VALID);
                 hasError = 1;
