@@ -29,8 +29,14 @@ int main(int argc, char *argv[])
 
     if (isCRLF(inputFile) == 1)
     {
-        logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
+        logger(LOG_LEVEL_ERROR, "Error file is in unsupported Windows format (CRLF) instead of Unix (LF)");
         return ERROR_UNSUPPORTED_CRLF_FORMAT;
+    }
+    fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
+    if (areLinesTooLong(inputFile) == 1)
+    {
+        logger(LOG_LEVEL_ERROR, "Error line in file exceed the length limit: %d, exit", MAX_LINE_LEN);
+        return ERROR_MEMORY_OVERFLOW;
     }
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
 

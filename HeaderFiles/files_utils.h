@@ -25,6 +25,14 @@ FILE *openFile(const char *fileName, const char *mode);
 int isCRLF(FILE *file);
 
 /**
+ * Detects if the lines in the file are longer then \MAX_LINE_LEN\.
+ *
+ * @param file The input file to check.
+ * @return 1 if there are at least one too long line in the file, 0 otherwise.
+ */
+int areLinesTooLong(FILE *file);
+
+/**
  * @brief Replaces the extension of a file name with a new extension.
  * If searches for last '.' in the file name and removes it and everything after it.
  * If there's no extension in the original file name, it appends the new extension at the end.

@@ -30,6 +30,23 @@ int isCRLF(FILE *file)
     return 0; /* LF detected */
 }
 
+int areLinesTooLong(FILE *file)
+{
+    char biggerLine[MAX_LINE_LEN + 100]; /* 100 is arbitrary, could be 1 */
+    int isLong;
+
+    isLong = 0;
+
+    while ((fgets(biggerLine, sizeof(biggerLine), file) != NULL) && !isLong)
+    {
+        if (strlen(biggerLine) > MAX_LINE_LEN)
+        {
+            isLong = 1;
+        }
+    }
+    return isLong;
+}
+
 char *replaceFileNameExt(const char *fileName, char *newExtension)
 {
     char *lastPeriod, *newFileName, *temp;

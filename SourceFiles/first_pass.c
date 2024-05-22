@@ -165,10 +165,10 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
 int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC)
 {
     char line[MAX_LINE_LEN];
-    int isLabel, entryCount, externCount, hasError, errorCode, lineNumber;
+    int isSymbol, entryCount, externCount, hasError, errorCode, lineNumber;
     AssemblyLine parsedLine;
-    SymbolNode *current;
-    isLabel = entryCount = externCount = hasError = 0;
+    SymbolNode *current, *searchResult;
+    isSymbol = entryCount = externCount = hasError = 0;
     errorCode = SUCCESS;
 
     /* TODO: maybe check if line is too long */
@@ -186,11 +186,10 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         }
 
         parsedLine = parseAssemblyLine(line);
-        /* printAssemblyLine(&parsedLine); */
 
         if (parsedLine.label != NULL)
         {
-            isLabel = 1;
+            isSymbol = 1;
             if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
             {
                 logger(LOG_LEVEL_WARNING, "Symbol: `%s` already exists, continue", parsedLine.label);
@@ -211,9 +210,16 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         {
             if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
             {
-                if (isLabel) {
-                    /* TODO: check if already exist with type data */
-                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
+                if (isSymbol) {
+                    searchResult = searchSymbolNameTypeInTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA);
+                    if (searchResult != NULL)
+                    {
+                        errorCode = ERROR_SYMBOL_ALREADY_EXIST;
+                    }
+                    else
+                    {
+                        insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
+                    }
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
@@ -235,10 +241,10 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
                 entryCount += 1;
             }
             else {
-                /* TODO; not supposed to come here, but just in case */
-                freeAssemblyLine(&parsedLine);
-                logger(LOG_LEVEL_ERROR, "Error while freeing the line %d", lineNumber);
+                /* Not supposed to come here, but just in case */
+                errorCode = ERROR_UNKNOWN_INSTRUCTION;
             }
+
             if (errorCode != SUCCESS) {
                 printError(lineNumber, errorCode);
             } 
@@ -252,7 +258,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             /* Unknown instruction type in line */
             errorCode = ERROR_UNKNOWN_INSTRUCTION;
         }
-        isLabel = 0;
+        isSymbol = 0;
 
         /* Log the Error of the line */
         if (errorCode != SUCCESS)
@@ -278,6 +284,6 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     }
 
     freeAssemblyLine(&parsedLine);
-    /* TODO - free things */
+
     return hasError;
 }
