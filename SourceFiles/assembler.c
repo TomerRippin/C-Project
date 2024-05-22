@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     BinaryCodesTable *binaryCodesTable;
     FILE *cleanFile, *inputFile, *amFile;
     int funcRetVal, IC, DC;
-    char* cleanFileName;
+    char *cleanFileName;
     const char *inputFileName;
     const char *amFileName;
     const char *entryFileName;
@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
 
     symbolTable = createSymbolTable();
     binaryCodesTable = createBinaryCodesTable();
-    IC = BASE_INSTRUCTIONS_COUNTER;  /* Insturctions Counter */
-    DC = 0;                          /* Data counter */
+    IC = BASE_INSTRUCTIONS_COUNTER; /* Insturctions Counter */
+    DC = 0;                         /* Data counter */
 
     inputFileName = argv[1];
     inputFile = openFile(inputFileName, "r");
@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     if (funcRetVal != SUCCESS)
     {
         logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
+        remove(cleanFileName);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
@@ -54,14 +55,15 @@ int main(int argc, char *argv[])
     amFile = openFile(amFileName, "w");
     cleanFile = openFile(cleanFileName, "r");
     funcRetVal = preAssembler(cleanFile, amFile);
+    fclose(cleanFile);
+    fclose(amFile);
     if (funcRetVal != SUCCESS)
     {
+        remove(cleanFileName);
         logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    fclose(cleanFile);
-    fclose(amFile);
-    remove("cleanFileName");
+    remove(cleanFileName);
     logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
     /* First Pass */
