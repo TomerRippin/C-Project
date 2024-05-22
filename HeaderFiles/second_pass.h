@@ -6,8 +6,8 @@
 
 /**
  * @brief This function performs the second pass over the assembly code.
- *
- * TODO: write what this function does
+ * It completes the first_pass actions and now parses entry symbols.
+ * Also, always validating that IC + DC is less then max memory words (to prevent memory overflow).
  *
  * @param inputFile Pointer to the input file containing the assembly code.
  * @param symbolTable Pointer to a symbol table to be populated.

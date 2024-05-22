@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "constants.h"
 #include "logger.h"
+#include "errors.h"
 
 /**
  * Checks whether a given string represents a valid number.
@@ -53,19 +54,18 @@ int calculateL(int srcType, int dstType);
 /**
  * Checks if a line is empty or not (empty = containes only spaces)
  *
- * @param line The adressing type of the src Operand. 
+ * @param line A string line from a file
  *
- * @return is the line empty or not.
+ * @return 1 - if empty, 0 - if not
  */
 int isEmptyLine(const char *line);
-
 
 /**
  * Checks if a line starts with ";". if so it should be ignored.
  *
- * @param line The adressing type of the src Operand. 
+ * @param line A string line from a file
  *
- * @return does the line starts with comment or not.
+ * @return 1 - if commented, 0 - if not
  */
 int isCommentedLine(const char *line);
 

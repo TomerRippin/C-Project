@@ -1,7 +1,0 @@
-CCCCCCCC
-my first func
-my second func
-AAAAAAAAAAAA
-my first func
-my second func
-BBBBBBB

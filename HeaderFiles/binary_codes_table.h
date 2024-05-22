@@ -9,9 +9,8 @@
 typedef struct BinaryCodesNode
 {
     int decAddress;
-    /* AssemblyLine *sourceLine; */  /* TODO: maybe delete */
     char *binaryCode;
-    char *sourceCode; /* TODO: used for pretty prints as in the book, and maybe can replace usage of sourceLine? */
+    char *sourceCode;
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
 

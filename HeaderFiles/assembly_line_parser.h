@@ -1,8 +1,6 @@
 #ifndef ASSEMBLY_LINE_PARSER_H
 #define ASSEMBLY_LINE_PARSER_H
 
-#include <ctype.h>
-#include "errors.h"
 #include "utils.h"
 
 /**
@@ -10,13 +8,7 @@
  * @brief A structure representing an operand in an assembly instruction.
  *
  * @var Operand::adrType
- * The addressing type of the operand. It can be one of the following:
- * -1 - if operand doesn't exist
- * 0  - Immediate addressing
- * 1  - Direct addressing
- * 2  - Index fixed addressing
- * 3  - Register direct addressing
- *
+ * The addressing type of the operand. It can be one of the following: {-1,0,1,2,3}
  * @var Operand::value
  * The value of the operand.
  */
@@ -28,7 +20,7 @@ typedef struct Operand
 
 /**
  * @struct AssemblyLine
- * @brief A structure representing a line of assembly code.
+ * @brief A structure representing a parsed line of assembly code.
  *
  * @var AssemblyLine::label
  * The label part of the assembly line. NULL if no label is present.
@@ -62,14 +54,30 @@ typedef struct AssemblyLine
  */
 struct AssemblyLine parseAssemblyLine(const char *line);
 
+/* Pretty print of assembly line */
 void printAssemblyLine(AssemblyLine *parsedLine);
 
+/* Pretty print operands */
 void printOperandsAfterParsing(AssemblyLine *parsedLine);
 
 void freeAssemblyLine(AssemblyLine *line);
 
+/**
+ * @brief Checks if a given AssemblyLine is a directive line.
+ * The instruction in a directive line is one of DIRECTIVES.
+ *
+ * @param parsedLine An AssemblyLine object representing a parsed assembly line.
+ * @return int 1 if the line is a directive line, and 0 otherwise.
+ */
 int isDirectiveLine(AssemblyLine *parsedLine);
 
+/**
+ * @brief Checks if a given AssemblyLine is a command line.
+ * The instruction in a command line is an OPCODE.
+ *
+ * @param parsedLine An AssemblyLine object representing a parsed assembly line.
+ * @return int 1 if the line is a command line, and 0 otherwise.
+ */
 int isCommandLine(AssemblyLine *parsedLine);
 
 /**
@@ -102,22 +110,36 @@ int isValidLabel(const char *label);
 int isValidRegisterOperand(const char *operand);
 
 /**
- * Function to parse the adrType of operand.
- * This function also runs validations on each operand that matches an addressing, 
- * returns an ERROR if validation failes.
+ * @brief This function parses the adrType of operand into operandType.
+ *
+ * Operand addressing type, can be one of the following:
+ *  - -1 - if operand doesn't exist
+ *  -  0 - Immediate addressing
+ *  -  1 - Direct addressing
+ *  -  2 - Index fixed addressing
+ *  -  3 - Register direct addressing
+ * This function also runs validations on each operand that matches an addressing, returns an ERROR if validation failes.
  *
  * @param operand The input operand string to be parsed.
- * @return SUCCESS code or ERROR code..
+ * @return int SUCCESS code or ERROR code.
  */
 int parseOperandAdressing(const char *operand, int *operandType);
 
+/**
+ * @brief This function sets src and dst variables of an AssemblyLine.
+ *
+ * This function parses the operands in an AssemblyLine to Operand objects.
+ * If operands doesn't exist, is sets default values to Operand: adrType = -1, value = '\0'.
+ *
+ * @param parsedLine An AssemblyLine object representing a parsed assembly line.
+ * @return int SUCCESS code or ERROR code.
+ */
 int parseOperands(struct AssemblyLine *parsedLine);
 
 /**
  * @brief This function returns the Opcode code for a given opcode (according to the table at page 18 in the book).
  *
  * @param instruction A pointer to a string representing the instruction
- *
  * @return Return the code attr of the matching opcode or -1 if the string does not match any known opcodes
  */
 int getOpcodeCode(char *instruction);
@@ -127,7 +149,6 @@ int getOpcodeCode(char *instruction);
  * It iterates through the list of known opcodes and compare the string with each opcode in the list.
  *
  * @param instruction A pointer to a string representing the instruction
- *
  * @return Return the number of operands of the matching opcode or -1 if the string does not match any known opcodes
  */
 int getOpcodeOperandsNumber(char *instruction);

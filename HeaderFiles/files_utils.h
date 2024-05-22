@@ -8,6 +8,15 @@
 #include "errors.h"
 
 /**
+ * `fopen` wrapper for handling open file error effectively.
+ *
+ * @param fileName file path to open.
+ * @param mode mode to open file (e.g: "r" for read or "w" for writing).
+ * @return if succeeded - an open file object, or exiting with error code.
+*/
+FILE *openFile(const char *fileName, const char *mode);
+
+/**
  * Detects if the line ending style is CRLF in a text file.
  *
  * @param file The input file to check.
@@ -30,9 +39,6 @@ char *replaceFileNameExt(const char *fileName, char *newExtension);
 /* Removes extra spaces and tabs from a string */
 void removeExtraSpacesTabs(char *str);
 
-/* Removes comments (lines starting with ';') from a string */
-void removeComments(char *str);
-
 /* Removes extra spaces in the end of the line */
 void removeTrailingSpaces(char *line);
 
@@ -43,7 +49,6 @@ void removeTrailingSpaces(char *line);
  * @param outputFile Pointer to the output file.
  *
  * @return int SUCCESS code.
- * TODO: check alll edge cases + maybe return error code?
  */
 int cleanAssemblyFile(FILE *inputFile, FILE *outputFile);
 

@@ -2,11 +2,12 @@
 
 BinaryCodesTable *createBinaryCodesTable()
 {
-    BinaryCodesTable *table = (BinaryCodesTable *)malloc(sizeof(BinaryCodesTable));
+    BinaryCodesTable *table;
+    table = (BinaryCodesTable *)malloc(sizeof(BinaryCodesTable));
     if (table == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
     table->head = NULL;
     table->last = NULL;
@@ -16,13 +17,15 @@ BinaryCodesTable *createBinaryCodesTable()
 
 int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLine *sourceLine, char *binaryCode, char *sourceCode)
 {
-    BinaryCodesNode *newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
-    /* TODO: is it really needed? maybe were Magzimim */
+    BinaryCodesNode *newNode;
+    newNode = (BinaryCodesNode *)malloc(sizeof(BinaryCodesNode));
+
     if (newNode == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
+    /* TODO: when will it happen? doc! */
     if (binaryCode == NULL || sourceCode == NULL)
     {
         return GENERAL_ERROR;
@@ -33,12 +36,6 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
 
     newNode->sourceCode = malloc(strlen(sourceCode) + 1);
     strcpy(newNode->sourceCode, sourceCode);
-
-    /*
-    logger(LOG_LEVEL_DEBUG, "3");
-    newNode->sourceLine = malloc(sizeof(AssemblyLine));
-    memcpy(newNode->sourceLine, sourceLine, sizeof(AssemblyLine));
-    */
 
     newNode->decAddress = decAddress;
 

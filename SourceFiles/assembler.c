@@ -23,16 +23,11 @@ int main(int argc, char *argv[])
     binaryCodesTable = createBinaryCodesTable();
     IC = BASE_INSTRUCTIONS_COUNTER;  /* Insturctions Counter */
     DC = 0;                          /* Data counter */
-    /* TODO: really need to change this, because ob file is wrong */
 
     inputFileName = argv[1];
-    inputFile = fopen(inputFileName, "r");  /* TODO: create function to open file */
-    if (!inputFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", inputFileName);
-        return ERROR_OPEN_FILE;
-    }
-    else if (isCRLF(inputFile) == 1)
+    inputFile = openFile(inputFileName, "r");
+
+    if (isCRLF(inputFile) == 1)
     {
         logger(LOG_LEVEL_ERROR, "Error file is in unsopported Windows format (CRLF) instead of Unix (LF)");
         return ERROR_UNSUPPORTED_CRLF_FORMAT;
@@ -42,18 +37,13 @@ int main(int argc, char *argv[])
     /* Clean File */
     logger(LOG_LEVEL_INFO, "Cleaning file");
     cleanFileName = replaceFileNameExt(inputFileName, EXTENSION_AS_CLEAN);
-    cleanFile = fopen(cleanFileName, "w");
-    if (!cleanFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s\n", cleanFileName);
-        return ERROR_OPEN_FILE;
-    }
+    cleanFile = openFile(cleanFileName, "w");
     funcRetVal = cleanAssemblyFile(inputFile, cleanFile);
     fclose(inputFile);
     fclose(cleanFile);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
@@ -61,35 +51,26 @@ int main(int argc, char *argv[])
     /* Pre Assembler */
     logger(LOG_LEVEL_INFO, "Pre assembler - unpacking macros");
     amFileName = replaceFileNameExt(inputFileName, EXTENSION_AM);
-    amFile = fopen(amFileName, "w");
-    cleanFile = fopen(cleanFileName, "r");
-    if (!cleanFile || !amFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s or %s\n", cleanFileName, amFileName);
-        return ERROR_OPEN_FILE;
-    }
+    amFile = openFile(amFileName, "w");
+    cleanFile = openFile(cleanFileName, "r");
     funcRetVal = preAssembler(cleanFile, amFile);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
     fclose(cleanFile);
     fclose(amFile);
+    remove("cleanFileName");
     logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
     /* First Pass */
     logger(LOG_LEVEL_INFO, "First pass");
-    amFile = fopen(amFileName, "r");
-    if (!amFile)
-    {
-        logger(LOG_LEVEL_ERROR, "Error opening file: %s, EXIT", amFileName);
-        return ERROR_OPEN_FILE;
-    }
+    amFile = openFile(amFileName, "r");
     funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured, EXIT");
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done first pass");
@@ -102,8 +83,7 @@ int main(int argc, char *argv[])
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured, EXIT");
-        /* TODO: use exit */
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
     fclose(amFile);
@@ -115,33 +95,29 @@ int main(int argc, char *argv[])
     funcRetVal = handleEntryFile(entryFileName, symbolTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", entryFileName);
 
     externalFileName = replaceFileNameExt(inputFileName, EXTENSION_EXT);
     funcRetVal = handleExternFile(externalFileName, symbolTable);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", externalFileName);
 
     objectFileName = replaceFileNameExt(inputFileName, EXTENSION_OB);
     funcRetVal = createObjectFile(objectFileName, binaryCodesTable, IC, DC);
     if (funcRetVal != SUCCESS)
     {
-        logger(LOG_LEVEL_ERROR, "An error as occured: %d, EXIT", funcRetVal);
+        logger(LOG_LEVEL_INFO, "Received an error, exit code: %d", funcRetVal);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done creating file: %s", objectFileName);
 
     logger(LOG_LEVEL_INFO, "SUCCESS! Done assembler");
 
     /* free and close files */
-    /* TODO: close file */
 
     freeSymbolTable(symbolTable);
     freeBinaryCodesTable(binaryCodesTable);

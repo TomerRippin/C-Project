@@ -194,31 +194,20 @@ int isValidRegisterOperand(const char *operand)
 
 int parseOperandAdressing(const char *operand, int *operandType)
 {
-    const char *labelEnd;
-    char *label;
-    char *index;
+    char *label, *index, *labelEnd, *indexStart, *indexEnd;
+    int labelLen;
 
     if (*operand == '\0')
     {
         *operandType = -1;
-        /* TODO: decide if return ERROR_OPERAND_IS_EMPTY; */
         return SUCCESS;
     }
 
     /* Check for immediate addressing */ 
     if (*operand == '#')
     {
-        /* Check if the remaining characters are digits */ 
-        if (isNumber(operand+=1))
-        {
-            *operandType = 0;
-            return SUCCESS;
-        }
-        else
-        {
-            *operandType = 0;
-            return SUCCESS;
-        }
+        *operandType = 0;
+        return SUCCESS;
     }
 
     /* Check for register addressing */
@@ -227,14 +216,15 @@ int parseOperandAdressing(const char *operand, int *operandType)
         *operandType = 3;
         return SUCCESS;
     }
+
     /* Check for straight addressing or index addressing */ 
     labelEnd = strchr(operand, '[');
     if (labelEnd != NULL)
     {
-        const int labelLen = labelEnd - operand;
+        labelLen = labelEnd - operand;
         /* Check if the label is followed by '[' and ']' */ 
-        const char *indexStart = labelEnd + 1;
-        const char *indexEnd = strchr(indexStart, ']');
+        indexStart = labelEnd + 1;
+        indexEnd = strchr(indexStart, ']');
         if (indexEnd != NULL && labelLen > 0 && indexEnd - indexStart > 0) {
             label = malloc(labelLen + 1);
             strncpy(label, operand, labelLen);
@@ -248,7 +238,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
             {
                 free(label);
                 free(index);
-                return ERROR_LABEL_NOT_VALID;
+                return ERROR_SYMBOL_NOT_VALID;
             }
 
             *operandType = 2;
@@ -261,7 +251,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     {
         /* TODO: is it okay that this is here? */
         if (!isValidLabel(operand)) {
-            return ERROR_LABEL_NOT_VALID;
+            return ERROR_SYMBOL_NOT_VALID;
         }
         *operandType = 1;
         return SUCCESS;
@@ -304,22 +294,24 @@ int getOpcodeOperandsNumber(char *instruction) {
 int parseOperands(struct AssemblyLine *parsedLine)
 {
     /* TODO: init memory */
-    char *potSrc = (char*)malloc(sizeof(char));
-    char *potDest = (char*)malloc(sizeof(char));
-    Operand *srcOperand = (Operand*)malloc(sizeof(Operand));
-    Operand *destOperand = (Operand*)malloc(sizeof(Operand));
-    int opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
-    int parseRetVal = 0;
-    int opcodeCode;
+    char *potSrc, *potDest;
+    Operand *srcOperand, *destOperand;
+    int opcodeOperandsNum, parseRetVal, opcodeCode;
 
-    /* Cannot find the operand */
+    opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
+    /* Shouldn't be returned because it can only be if opcode is NULL and it checked earlier */
     if (opcodeOperandsNum == -1)
     {
         return ERROR_OPERAND_NOT_VALID;
     }
 
+    potSrc = (char *)malloc(sizeof(char));
+    potDest = (char *)malloc(sizeof(char));
+    srcOperand = (Operand *)malloc(sizeof(Operand));
+    destOperand = (Operand *)malloc(sizeof(Operand));
+
     /* if two operands */
-    else if (opcodeOperandsNum == 2)
+    if (opcodeOperandsNum == 2)
     {
         int commaOccurences = countOccurrences(parsedLine->operands, ',');
         if (commaOccurences == 0)
@@ -362,7 +354,6 @@ int parseOperands(struct AssemblyLine *parsedLine)
             return ERROR_UNKNOWN_OPCODE;
         } 
         else {
-            /* TODO: think what to do with this, maybe NULL are better */
             destOperand->adrType = -1;
             destOperand->value = '\0';
             srcOperand->adrType = -1;

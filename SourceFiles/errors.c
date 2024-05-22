@@ -8,6 +8,8 @@ const char *getErrorMessage(ErrorCode error)
         return "Success";
     case GENERAL_ERROR:
         return "General error";
+    case ERROR_MEMORY_ALLOC_FAILED:
+        return "Memory allocation failed, exiting.";
     case ERROR_WRONG_ASSEMBLER_USAGE:
         return "Wrong assembler usage";
     case ERROR_FILE_NOT_FOUND:
@@ -20,10 +22,10 @@ const char *getErrorMessage(ErrorCode error)
         return "Error parsing define directive";
     case ERROR_SYMBOL_ALREADY_EXIST:
         return "Symbol already exists";
-    case ERROR_LABEL_NOT_VALID:
-        return "Label not valid";
-    case ERROR_LABEL_DECLARED_AS_ENTRY_AND_EXTERNAL:
-        return "Label declared as entry and external";
+    case ERROR_SYMBOL_NOT_VALID:
+        return "Symbol not valid";
+    case ERROR_SYMBOL_DECLARED_AS_ENTRY_AND_EXTERNAL:
+        return "Symbol declared as entry and external";
     case ERROR_GIVEN_SYMBOL_NOT_EXIST:
         return "Given symbol does not exist";
     case ERROR_SYMBOL_WRONG_TYPE:
@@ -52,6 +54,10 @@ const char *getErrorMessage(ErrorCode error)
         return "String not valid";
     case ERROR_REGISTER_NOT_VALID:
         return "Register not valid";
+    case ERROR_ENTRY_NOT_DEFINED:
+        return "Entry value is not defined";
+    case ERROR_MEMORY_OVERFLOW:
+        return "Exceeded memory limit";
     default:
         return "Unknown error";
     }

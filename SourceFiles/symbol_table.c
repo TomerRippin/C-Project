@@ -2,11 +2,13 @@
 
 SymbolTable *createSymbolTable()
 {
-    SymbolTable *table = (SymbolTable *)malloc(sizeof(SymbolTable));
+    SymbolTable *table;
+
+    table = (SymbolTable *)malloc(sizeof(SymbolTable));
     if (table == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
     table->head = NULL;
     table->last = NULL;
@@ -15,7 +17,9 @@ SymbolTable *createSymbolTable()
 
 SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *targetName)
 {
-    SymbolNode *current = table->head;
+    SymbolNode *current;
+
+    current = table->head;
     while (current != NULL)
     {
         if (strcmp(current->symbolName, targetName) == 0)
@@ -31,7 +35,9 @@ SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *targetName)
 
 SymbolNode *searchSymbolTableWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude)
 {
-    SymbolNode *current = table->head;
+    SymbolNode *current;
+   
+    current = table->head;
     while (current != NULL)
     {
         if ((strcmp(current->symbolName, labelName) == 0) && (strcmp(current->symbolType, labelType) != toInclude))
@@ -45,7 +51,8 @@ SymbolNode *searchSymbolTableWithType(SymbolTable *table, char *labelName, char 
 
 SymbolNode *searchSymbolNameTypeInTable(SymbolTable *table, char *symbolName, char *symbolType)
 {
-    SymbolNode *current = table->head;
+    SymbolNode *current;
+    current = table->head;
     while (current != NULL)
     {
         if (strcmp(current->symbolName, symbolName) == 0)
@@ -64,7 +71,9 @@ SymbolNode *searchSymbolNameTypeInTable(SymbolTable *table, char *symbolName, ch
 
 int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue)
 {
-    SymbolNode *current = table->head;
+    SymbolNode *current;
+
+    current = table->head;
     while (current != NULL)
     {
         if (strcmp(current->symbolName, symbolName) == 0 && strcmp(current->symbolType, symbolType) == 0 && current->symbolValue == symbolValue)
@@ -131,8 +140,8 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
     /* Create a new node */ 
     newNode = (SymbolNode *)malloc(sizeof(SymbolNode));
     if (newNode == NULL) {
-        logger(LOG_LEVEL_ERROR, "Memory allocation Failed");
-        exit(EXIT_FAILURE);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
     }
 
     /* Set symbolType and next pointer */
