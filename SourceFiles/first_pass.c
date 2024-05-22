@@ -171,7 +171,6 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     isSymbol = entryCount = externCount = hasError = 0;
     errorCode = SUCCESS;
 
-    /* TODO: maybe check if line is too long */
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
         lineNumber++;
