@@ -8,11 +8,11 @@
 #include "errors.h"
 
 /**
- * `fopen` wrapper for handling open file error effectively.
+ * Wrapper for `fopen` function, for handling open file errors effectively.
  *
  * @param fileName file path to open.
  * @param mode mode to open file (e.g: "r" for read or "w" for writing).
- * @return if succeeded - an open file object, or exiting with error code.
+ * @return if succeeded - an open file object, or exiting with an error code.
 */
 FILE *openFile(const char *fileName, const char *mode);
 
@@ -23,6 +23,14 @@ FILE *openFile(const char *fileName, const char *mode);
  * @return 1 if CRLF (Windows) line endings are detected, 0 if LF (Unix) line endings are detected.
  */
 int isCRLF(FILE *file);
+
+/**
+ * Detects if the lines in the file are longer then \MAX_LINE_LEN\.
+ *
+ * @param file The input file to check.
+ * @return 1 if there are at least one too long line in the file, 0 otherwise.
+ */
+int areLinesTooLong(FILE *file);
 
 /**
  * @brief Replaces the extension of a file name with a new extension.

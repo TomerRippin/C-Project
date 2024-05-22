@@ -16,7 +16,6 @@
  * @param DC Pointer to Data Counter
  *
  * @return int SUCCESS or Error code.
- *
  */
 int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC);
 
@@ -29,7 +28,7 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
  * @param filename - The name to call the new filename created.
  * @param symbolTable - The symbol table that was created after the two passes.
  *
- * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
+ * @return int SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
  */
 int handleEntryFile(const char *filename, SymbolTable *symbolTable);
 
@@ -42,7 +41,7 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable);
  * @param filename - The name to call the new filename created.
  * @param symbolTable - The symbol table that was created after the two passes.
  *
- * @return SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
+ * @return int SUCCESS code or ERROR code (symbol not exist or symbol wrong type or error open file).
  */
 int handleExternFile(const char *filename, SymbolTable *symbolTable);
 
@@ -58,7 +57,7 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable);
  * @param IC - the instructions counter.
  * @param DC - the data counter.
  *
- * @return SUCCESS code or ERROR code (error open file).
+ * @return int SUCCESS code or ERROR code (error open file).
  */
 int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, int IC, int DC);
 

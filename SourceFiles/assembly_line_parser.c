@@ -115,7 +115,7 @@ void freeAssemblyLine(AssemblyLine *line)
     free(line->operands);
 }
 
-int isValidLabel(const char *label)
+int isValidSymbol(const char *label)
 {
     int i;
 
@@ -155,7 +155,8 @@ int isDirectiveLine(AssemblyLine *parsedLine)
     return 0;
 }
 
-int isCommandLine(AssemblyLine *parsedLine) {
+int isCommandLine(AssemblyLine *parsedLine)
+{
     int i;
     for (i = 0; i < NUM_OPCODES; i++)
     {
@@ -167,7 +168,8 @@ int isCommandLine(AssemblyLine *parsedLine) {
     return 0;
 }
 
-int isValidString(char *str) {
+int isValidString(char *str)
+{
     if (str[0] != '"')
     {
         return 0;
@@ -225,7 +227,8 @@ int parseOperandAdressing(const char *operand, int *operandType)
         /* Check if the label is followed by '[' and ']' */ 
         indexStart = labelEnd + 1;
         indexEnd = strchr(indexStart, ']');
-        if (indexEnd != NULL && labelLen > 0 && indexEnd - indexStart > 0) {
+        if (indexEnd != NULL && labelLen > 0 && indexEnd - indexStart > 0)
+        {
             label = malloc(labelLen + 1);
             strncpy(label, operand, labelLen);
             label[labelLen] = '\0';
@@ -234,7 +237,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
             index[indexEnd - indexStart] = '\0';
 
             /* Validate label and validate index (number or a valid label) */
-            if ((!isValidLabel(label)) || (!isNumber(index) && !isValidLabel(index)))
+            if ((!isValidSymbol(label)) || (!isNumber(index) && !isValidSymbol(index)))
             {
                 free(label);
                 free(index);
@@ -249,8 +252,7 @@ int parseOperandAdressing(const char *operand, int *operandType)
     }
     else
     {
-        /* TODO: is it okay that this is here? */
-        if (!isValidLabel(operand)) {
+        if (!isValidSymbol(operand)) {
             return ERROR_SYMBOL_NOT_VALID;
         }
         *operandType = 1;
@@ -293,10 +295,9 @@ int getOpcodeOperandsNumber(char *instruction) {
 
 int parseOperands(struct AssemblyLine *parsedLine)
 {
-    /* TODO: init memory */
-    char *potSrc, *potDest;
+    char *potSrc, *potDest, *token;
     Operand *srcOperand, *destOperand;
-    int opcodeOperandsNum, parseRetVal, opcodeCode;
+    int opcodeOperandsNum, parseRetVal, opcodeCode, commaOccurences;
 
     opcodeOperandsNum = getOpcodeOperandsNumber(parsedLine->instruction);
     /* Shouldn't be returned because it can only be if opcode is NULL and it checked earlier */
@@ -305,15 +306,17 @@ int parseOperands(struct AssemblyLine *parsedLine)
         return ERROR_OPERAND_NOT_VALID;
     }
 
-    potSrc = (char *)malloc(sizeof(char));
-    potDest = (char *)malloc(sizeof(char));
+    potSrc = (char *)malloc(MAX_LINE_LEN);
+    potDest = (char *)malloc(MAX_LINE_LEN);
     srcOperand = (Operand *)malloc(sizeof(Operand));
     destOperand = (Operand *)malloc(sizeof(Operand));
+
+    potSrc[0] = potDest[0] = '\0';
 
     /* if two operands */
     if (opcodeOperandsNum == 2)
     {
-        int commaOccurences = countOccurrences(parsedLine->operands, ',');
+        commaOccurences = countOccurrences(parsedLine->operands, ',');
         if (commaOccurences == 0)
         {
             return ERROR_MISSING_COMMA_BETWEEN_OPERANDS;
@@ -324,13 +327,11 @@ int parseOperands(struct AssemblyLine *parsedLine)
         }
         else
         {
-            /* Find the position of the comma and space separator */
-            char *comma_pos = strstr(parsedLine->operands, ",");
-            /* Copy the first operand (before the comma) */
-            strncpy(potSrc, parsedLine->operands, comma_pos - parsedLine->operands);
-            potSrc[(comma_pos - parsedLine->operands)] = '\0'; /* Null-terminate the string */
-            /* Copy the second operand (after the comma and space) */
-            strcpy(potDest, comma_pos + 1);
+            token = strtok(parsedLine->operands, ",");
+            strcpy(potSrc, token);
+
+            token = strtok(NULL, ",");
+            strcpy(potDest, token);
         }
     }
 
@@ -349,11 +350,12 @@ int parseOperands(struct AssemblyLine *parsedLine)
     /* if no operands */
     else if (opcodeOperandsNum == 0)
     {
-        if (0)
-        {   /* TODO: create the actual function extraText() */
-            return ERROR_UNKNOWN_OPCODE;
+        if (parsedLine->operands != NULL)
+        {
+            return ERROR_EXTRA_TEXT_AFTER_OPERAND;
         } 
-        else {
+        else
+        {
             destOperand->adrType = -1;
             destOperand->value = '\0';
             srcOperand->adrType = -1;
@@ -380,7 +382,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     /*= parseOperandAdressing(potDest); */
     /* srcOperand->type = parseOperandAdressing(potSrc); */
     switch (opcodeCode)
-        {
+    {
         /* MOV (0), ADD (2), SUB (3)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
         case 0: 
         case 2:
@@ -443,12 +445,13 @@ int parseOperands(struct AssemblyLine *parsedLine)
             break;
         default:
             break;
-        }
-        /* Succesfully inserted parsed operands, now save them in the parsed line */
-        destOperand->value = potDest;
-        srcOperand->value = potSrc;
-        parsedLine->dst = destOperand;
-        parsedLine->src = srcOperand;
+    }
 
-        return SUCCESS;
+    /* Succesfully inserted parsed operands, now save them in the parsed line */
+    destOperand->value = potDest;
+    srcOperand->value = potSrc;
+    parsedLine->dst = destOperand;
+    parsedLine->src = srcOperand;
+
+    return SUCCESS;
 }

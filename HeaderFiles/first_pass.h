@@ -16,7 +16,6 @@
  * @param symbolTable Pointer to the symbol table.
  *
  * @return int SUCCESS or Error code.
- *
  */
 int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable);
 
@@ -30,7 +29,6 @@ int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable);
  * @param DC Pointer to the Data Counter.
  *
  * @return int SUCCESS or Error code.
- *
  */
 int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 
@@ -44,7 +42,6 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
  * @param DC Pointer to the Data Counter.
  *
  * @return int SUCCESS or Error code.
- *
  */
 int handleStringDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *DC);
 
@@ -70,7 +67,6 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
  * @param binaryCodesTable Pointer to the binary codes table.
  *
  * @return int SUCCESS or Error code.
- *
  */
 int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable);
 
@@ -84,7 +80,6 @@ int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bin
  * @param IC Pointer to the Instructions Counter.
  *
  * @return int SUCCESS or Error code.
- *
  */
 int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC);
 
@@ -105,7 +100,6 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
  * @param DC Pointer to Data Counter
  *
  * @return int SUCCESS or Error code.
- *
  */
 int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable, int *IC, int *DC);
 

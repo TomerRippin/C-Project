@@ -1,13 +1,13 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define MAX_LINES_NUM 1024  /* TODO: decide if size ok */
 #define MAX_LINE_LEN 81
 #define MAX_LABEL_LEN 31
 #define MAX_MACRO_LEN 1024
 #define MACRO_START "mcr"
 #define MACRO_END "endmcr"
 #define MAX_MEMORY_WORDS 4096
+#define MAX_NUM_LEN 5
 
 #define BASE_INSTRUCTIONS_COUNTER 100
 

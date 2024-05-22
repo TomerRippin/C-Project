@@ -30,6 +30,23 @@ int isCRLF(FILE *file)
     return 0; /* LF detected */
 }
 
+int areLinesTooLong(FILE *file)
+{
+    char biggerLine[MAX_LINE_LEN + 100]; /* 100 is arbitrary, could be 1 */
+    int isLong;
+
+    isLong = 0;
+
+    while ((fgets(biggerLine, sizeof(biggerLine), file) != NULL) && !isLong)
+    {
+        if (strlen(biggerLine) > MAX_LINE_LEN)
+        {
+            isLong = 1;
+        }
+    }
+    return isLong;
+}
+
 char *replaceFileNameExt(const char *fileName, char *newExtension)
 {
     char *lastPeriod, *newFileName, *temp;
@@ -37,7 +54,7 @@ char *replaceFileNameExt(const char *fileName, char *newExtension)
     newFileName = malloc((strlen(fileName) + strlen(newExtension) + 2) * sizeof(char));  /* +2 for the dot and null terminator */
     if (newFileName == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
         exit(ERROR_MEMORY_ALLOC_FAILED);
     }
     strcpy(newFileName, fileName);

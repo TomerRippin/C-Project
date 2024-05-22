@@ -86,8 +86,6 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
     sortSymbolTable(symbolTable);
     sortBinaryCodesTable(binaryCodesTable);
 
-    /* TODO: insert the below functions to second_pass - or maybe not?*/
-
     return hasError;
 }
 
@@ -111,8 +109,6 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable)
             searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL) {
-                /* TODO: here can't print error with line number, because there is no line number in symbolTable, consider adding */
-                /* Found an entry but it is not defined anywhere */
                 logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) - %s", getErrorMessage(ERROR_ENTRY_NOT_DEFINED), ERROR_ENTRY_NOT_DEFINED, current->symbolName);
                 return ERROR_ENTRY_NOT_DEFINED;
             }
@@ -145,7 +141,7 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable) {
     outputFile = openFile(filename, "w");
     current = symbolTable->head;
 
-    /* Search for an Entry in the symbol table*/
+    /* Searchs for an Entry in the symbol table*/
     while (current != NULL)
     {
         if (strcmp(current->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
@@ -208,7 +204,7 @@ int createObjectFile(const char *filename, BinaryCodesTable *binaryCodesTable, i
             count++;
             continue;
         }
-        /* works only if symbol table is sorted - check if a line is already been inserted.*/
+        /* Works only if symbol table is sorted - check if a line is already been inserted.*/
         if (node->decAddress == state) {
             continue;
         }

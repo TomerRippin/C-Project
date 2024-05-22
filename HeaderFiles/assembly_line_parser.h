@@ -10,7 +10,7 @@
  * @var Operand::adrType
  * The addressing type of the operand. It can be one of the following: {-1,0,1,2,3}
  * @var Operand::value
- * The value of the operand.
+ * The value of the operand. If no operand, value is '\0'.
  */
 typedef struct Operand
 {
@@ -28,6 +28,10 @@ typedef struct Operand
  * The instruction part of the assembly line. NULL if no instruction is present.
  * @var AssemblyLine::operands
  * The operands part of the assembly line. NULL if no operands are present.
+ * @var AssemblyLine::src
+ * The src operand - holds adr type and value of the dst operand.
+ * @var AssemblyLine::dst
+ * The dst operand - holds adr type and value of the dst operand.
  */
 typedef struct AssemblyLine
 {
@@ -90,14 +94,14 @@ int isCommandLine(AssemblyLine *parsedLine);
 int isValidString(char *str);
 
 /**
- * @brief Checks if a label is valid.
- * A valid label starts with an alphabetic letter (big or small),
+ * @brief Checks if a symbol (label) is valid.
+ * A valid symbol starts with an alphabetic letter (big or small),
  * followed by alphabetic letters or numbers, and its maximum length is 31.
  *
  * @param label The label to check.
  * @return int 1 if the label is valid, and 0 otherwise.
  */
-int isValidLabel(const char *label);
+int isValidSymbol(const char *label);
 
 /**
  * @brief Checks if a register operand is valid.

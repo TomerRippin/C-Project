@@ -1,6 +1,6 @@
 #include "../HeaderFiles/pre_assembler.h"
 
-void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
+int extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
 {
     char line[MAX_LINE_LEN];
     char macroData[MAX_MACRO_LEN];
@@ -17,7 +17,6 @@ void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
             macroSection = 1;
             strtok(line, " ");
             strcpy(macroName, strtok(NULL, " ")); /* Get the second word */
-            /* TODO: copy the specific length of the name, without null bytes */
         }
         else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
@@ -28,8 +27,15 @@ void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
         else if (macroSection)
         {
             strcat(macroData, line);
+            /* If Macro is too long - return an error */
+            if (strlen(macroData) > MAX_MACRO_LEN)
+            {
+                return ERROR_MEMORY_OVERFLOW;
+            }
         }
     }
+
+    return SUCCESS;
 }
 
 void removeMacrosFromFile(FILE *inputFile, FILE *outputFile)
@@ -62,9 +68,16 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
     FILE *tempFile = tmpfile();
     char line[MAX_LINE_LEN];
     MacroNode *result;
-    int index = 0;
+    int index, retCode;
 
-    extractMacrosFromFile(inputFile, macrosList);
+    index = 0;
+    retCode = SUCCESS;
+
+    retCode = extractMacrosFromFile(inputFile, macrosList);
+    if (retCode != SUCCESS) {
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m", getErrorMessage(retCode), retCode);
+        return retCode;
+    }
 
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     if (tempFile == NULL)
@@ -78,7 +91,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
 
     while (fgets(line, sizeof(line), tempFile) != NULL)
     {
-        result = searchMacrosList(macrosList, line); /* TODO: now not working because null bytes... */
+        result = searchMacrosList(macrosList, line);
         if (result != NULL)
         {
             /* Replaces line with macro content */

@@ -44,13 +44,13 @@ char* decodeBinaryCode(char *binaryCode);
  * @brief Creates the binary code of an opcode and inserts to binaryCodesTable.
  *
  * The structure of an opcode's binary code is:
- * - bits 0-1: ARE codex - 'A'
+ * - bits 0-1: ARE codex: 'A' - 00
  * - bits 2-3: src operand address type
  * - bits 4-5: dst operand address type
  * - bits 6-9: the opcode code
  * - bits 10-13: 0 (not in use)
  *
- * @return SUCCESS code or ERROR code.
+ * @return int SUCCESS code or ERROR code.
  */
 int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
@@ -62,7 +62,7 @@ int handleOpcodeBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCod
  * - bits 0-1: ARE code: 'A' - 00
  * - bits 2-13: the number in Two's complement method
  *
- * @return SUCCESS code or ERROR code.
+ * @return int SUCCESS code or ERROR code.
  */
 int handleAdrType0(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC);
 
@@ -99,7 +99,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
  *                         - 'R' - 10 - for internal symbol
  * - bits 2-13: the index's value
  *
- * @return SUCCESS code or ERROR code.
+ * @return int SUCCESS code or ERROR code.
  */
 int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int *IC);
 
@@ -108,14 +108,14 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
  *
  * The structure of an operand in adr type 3 is: r<1-8>, e.g: r5.
  * The structure of the binary code is:
- * - bits 0-1: ARE codex - 'A' - 00
+ * - bits 0-1: ARE codex: 'A' - 00
  * - bits 2-4: if isSource=0 -> the dst register number, else -> 0
  * - bits 5-7: if isSource=0 -> the src register number, else -> 0
  * - bist 8-13: 0 (not in use)
  *
  * @param isSource 1/0 - determines if the operand is src or dst
  *
- * @return SUCCESS code or ERROR code.
+ * @return int SUCCESS code or ERROR code.
  */
 int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
@@ -129,10 +129,23 @@ int handleAdrType3(Operand *operand, int isSource, AssemblyLine *parsedLine, Bin
  * - bits 5-7: the src register number
  * - bist 8-13: 0 (not in use)
  *
- * @return SUCCESS code or ERROR code.
+ * @return int SUCCESS code or ERROR code.
  */
 int handleAdrType3EdgeCase(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, int *IC);
 
+/**
+ * @brief Main function for creating binary code for src and dst operands.
+ *
+ * This function calls the matching function to each operand address type.
+ * Then, a binary code is creates for each operand and inserted to binary codes table.
+ *
+ * @param parsedLine An AssemblyLine object representing a parsed assembly line.
+ * @param binaryCodesTable Pointer to the binary codes table.
+ * @param symbolTable Pointer to the symbol table.
+ * @param IC Pointer to the Instructions Counter.
+ * 
+ * @return int SUCCESS code or ERROR code.
+ */
 int handleOperandsBinaryCode(AssemblyLine *parsedLine, BinaryCodesTable *binaryCodesTable, SymbolTable *symbolTable, int IC);
 
 #endif /* BINARY_CODE_H */

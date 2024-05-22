@@ -6,7 +6,7 @@ BinaryCodesTable *createBinaryCodesTable()
     table = (BinaryCodesTable *)malloc(sizeof(BinaryCodesTable));
     if (table == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
         exit(ERROR_MEMORY_ALLOC_FAILED);
     }
     table->head = NULL;
@@ -22,10 +22,11 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
 
     if (newNode == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
         exit(ERROR_MEMORY_ALLOC_FAILED);
     }
-    /* TODO: when will it happen? doc! */
+
+    /* Shouldn't happen but just in case */
     if (binaryCode == NULL || sourceCode == NULL)
     {
         return GENERAL_ERROR;
