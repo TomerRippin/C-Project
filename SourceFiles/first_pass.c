@@ -1,8 +1,5 @@
 #include "../HeaderFiles/first_pass.h"
 
-/* TODO: rename this file */
-/* TODO: delete all debug prints - starting with "DEBUG" */
-
 const char *DIRECTIVES[NUM_DIRECTIVES] = {".data", ".string", ".extern", ".entry"};
 
 int handleDefine(AssemblyLine *parsedLine, SymbolTable *symbolTable)
@@ -112,8 +109,7 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
         logger(LOG_LEVEL_WARNING, "extern line contains label: <%s>", parsedLine->label);
     }
 
-    /* TODO: handle multiple labeles */
-    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    /* SymbolValue is 0 doesn't have meaning */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_EXTERNAL, 0);
     return SUCCESS;
 }
@@ -121,11 +117,10 @@ int handleExternDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bi
 int handleEntryDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, BinaryCodesTable *binaryCodesTable)
 {
     if (parsedLine->label != NULL) {
-        logger(LOG_LEVEL_WARNING, "entry line contains label: <%s>", parsedLine->label);
+        logger(LOG_LEVEL_WARNING, "Entry line contains label: <%s>", parsedLine->label);
     }
 
-    /* TODO: handle multiple labeles */
-    /* TODO: wanted to insert NULL instead of 0 but it didnt work */
+    /* SymbolValue is 0 doesn't have meaning */
     insertToSymbolTable(symbolTable, parsedLine->operands, SYMBOL_TYPE_ENTRY, 0);
     return SUCCESS;
 }
@@ -143,7 +138,6 @@ int handleCommandLine(AssemblyLine *parsedLine, SymbolTable *symbolTable, Binary
     {
         return errorCode;
     }
-    /* printOperandsAfterParsing(parsedLine); */
 
     errorCode = handleOpcodeBinaryCode(parsedLine, binaryCodesTable, IC);
     if (errorCode != SUCCESS)
@@ -225,6 +219,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
             {
                 if (isLabel) {
+                    /* TODO: check if already exist with type data */
                     insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)

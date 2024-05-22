@@ -3,9 +3,10 @@
 void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
 {
     char line[MAX_LINE_LEN];
-    char macroData[MAX_MACRO_LEN] = "";  /* TODO: maybe don't assume the macro size and use realloc? */ 
-    int macroSection = 0;
-    char macroName[MAX_LINE_LEN] = "";
+    char macroData[MAX_MACRO_LEN]; /* TODO: maybe don't assume the macro size and use realloc? */
+    char macroName[MAX_LINE_LEN];
+    int macroSection;
+    macroSection = 0;
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
     {
@@ -20,7 +21,6 @@ void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
         {
             macroSection = 0;
             insertToMacrosList(macrosList, macroName, macroData);
-            /* TODO: decide if give line number or not */
         }
         else if (macroSection)
         {

@@ -32,9 +32,14 @@ int isCRLF(FILE *file)
 
 char *replaceFileNameExt(const char *fileName, char *newExtension)
 {
-    char *lastPeriod, *newFileName;
+    char *lastPeriod, *newFileName, *temp;
 
-    newFileName = malloc((sizeof(fileName) + sizeof(newExtension)) * sizeof(char));
+    newFileName = malloc((strlen(fileName) + strlen(newExtension) + 2) * sizeof(char));  /* +2 for the dot and null terminator */
+    if (newFileName == NULL)
+    {
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        exit(ERROR_MEMORY_ALLOC_FAILED);
+    }
     strcpy(newFileName, fileName);
 
     /* Find the last occurrence of '.' in the new file name  in order to remove it */
@@ -47,15 +52,23 @@ char *replaceFileNameExt(const char *fileName, char *newExtension)
     /* Check if newExtension starts with a dot. If not, prepend one. */
     if (newExtension[0] != '.')
     {
-        char *temp = malloc((strlen(newExtension) + 2) * sizeof(char)); /* +2 for the dot and null terminator */
+        temp = malloc((strlen(newExtension) + 2) * sizeof(char)); /* +2 for the dot and null terminator */
+        if (temp == NULL)
+        {
+            logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+            exit(ERROR_MEMORY_ALLOC_FAILED);
+        }
         sprintf(temp, ".%s", newExtension);
         newExtension = temp;
     }
 
-    /* TODO: maybe free temp? */
-
     /* Append the new extension to the file name */
     strcat(newFileName, newExtension);
+
+    if (newExtension[0] != '.')
+    {
+        free(temp);
+    }
 
     return newFileName;
 }
