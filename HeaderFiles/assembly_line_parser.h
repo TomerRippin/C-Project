@@ -10,7 +10,7 @@
  * @var Operand::adrType
  * The addressing type of the operand. It can be one of the following: {-1,0,1,2,3}
  * @var Operand::value
- * The value of the operand.
+ * The value of the operand. If no operand, value is '\0'.
  */
 typedef struct Operand
 {
@@ -28,6 +28,10 @@ typedef struct Operand
  * The instruction part of the assembly line. NULL if no instruction is present.
  * @var AssemblyLine::operands
  * The operands part of the assembly line. NULL if no operands are present.
+ * @var AssemblyLine::src
+ * The src operand - holds adr type and value of the dst operand.
+ * @var AssemblyLine::dst
+ * The dst operand - holds adr type and value of the dst operand.
  */
 typedef struct AssemblyLine
 {

@@ -350,11 +350,12 @@ int parseOperands(struct AssemblyLine *parsedLine)
     /* if no operands */
     else if (opcodeOperandsNum == 0)
     {
-        if (0)
-        {   /* TODO: create the actual function extraText() - check weather more text after the parsed onjects - rrr,rrr ejkfkew*/
-            return ERROR_UNKNOWN_OPCODE;
+        if (parsedLine->operands != NULL)
+        {
+            return ERROR_EXTRA_TEXT_AFTER_OPERAND;
         } 
-        else {
+        else
+        {
             destOperand->adrType = -1;
             destOperand->value = '\0';
             srcOperand->adrType = -1;
@@ -381,7 +382,7 @@ int parseOperands(struct AssemblyLine *parsedLine)
     /*= parseOperandAdressing(potDest); */
     /* srcOperand->type = parseOperandAdressing(potSrc); */
     switch (opcodeCode)
-        {
+    {
         /* MOV (0), ADD (2), SUB (3)  have dest instructions 1,2,3 and src instructions 0,1,2,3*/
         case 0: 
         case 2:
@@ -444,12 +445,13 @@ int parseOperands(struct AssemblyLine *parsedLine)
             break;
         default:
             break;
-        }
-        /* Succesfully inserted parsed operands, now save them in the parsed line */
-        destOperand->value = potDest;
-        srcOperand->value = potSrc;
-        parsedLine->dst = destOperand;
-        parsedLine->src = srcOperand;
+    }
 
-        return SUCCESS;
+    /* Succesfully inserted parsed operands, now save them in the parsed line */
+    destOperand->value = potDest;
+    srcOperand->value = potSrc;
+    parsedLine->dst = destOperand;
+    parsedLine->src = srcOperand;
+
+    return SUCCESS;
 }
