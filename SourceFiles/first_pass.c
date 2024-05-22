@@ -198,9 +198,7 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
             isLabel = 1;
             if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
             {
-                /* TODO think if this is legal to not do anything */
                 logger(LOG_LEVEL_WARNING, "Symbol: `%s` already exists, continue", parsedLine.label);
-                /* return ERROR_SYMBOL_ALREADY_EXIST; */
             }
             else if (isValidLabel(parsedLine.label) != 1)
             {

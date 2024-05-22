@@ -25,7 +25,8 @@ int insertToBinaryCodesTable(BinaryCodesTable *table, int decAddress, AssemblyLi
         logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
         exit(ERROR_MEMORY_ALLOC_FAILED);
     }
-    /* TODO: when will it happen? doc! */
+
+    /* Shouldn't happen but just in case */
     if (binaryCode == NULL || sourceCode == NULL)
     {
         return GENERAL_ERROR;

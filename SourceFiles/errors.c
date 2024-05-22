@@ -65,5 +65,5 @@ const char *getErrorMessage(ErrorCode error)
 
 void printError(int lineNumber, ErrorCode errorCode)
 {
-    logger(LOG_LEVEL_ERROR, "Error in line: %d | \x1b[1m%s (%d) ", lineNumber, getErrorMessage(errorCode), errorCode);
+    logger(LOG_LEVEL_ERROR, "Error in line: %d | \x1b[1m%s (%d)\x1b[0m ", lineNumber, getErrorMessage(errorCode), errorCode);
 }

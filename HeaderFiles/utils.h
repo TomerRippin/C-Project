@@ -11,6 +11,7 @@
 
 /**
  * Checks whether a given string represents a valid number.
+ * Tries to convert each char to a number and also checks that the number's length is less then \MAX_NUM_LEN\.
  *
  * @param str The string to be checked.
  * @return 1 if the string represents a valid number, 0 otherwise.

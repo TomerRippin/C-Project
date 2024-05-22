@@ -4,7 +4,7 @@ int isNumber(const char *str)
 {
     char *endptr;
     strtol(str, &endptr, 10); /* Try to convert the string to a long integer */
-    return *endptr == '\0'; /* Return 1 if the conversion reaches the end of the string */
+    return (*endptr == '\0') && (strlen(str) <= MAX_NUM_LEN); /* Return 1 if the conversion reaches the end of the string */
 }
 
 char *strdup(const char *source)
@@ -88,7 +88,7 @@ int isEmptyLine(const char *line)
 
 int isCommentedLine(const char *line)
 {
-    if (*line == ';'){
+    if (*line == ';') {
         return 1; /* Commented line*/
     }
     return 0;

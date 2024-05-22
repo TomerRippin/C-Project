@@ -8,6 +8,7 @@
 #define MACRO_START "mcr"
 #define MACRO_END "endmcr"
 #define MAX_MEMORY_WORDS 4096
+#define MAX_NUM_LEN 5
 
 #define BASE_INSTRUCTIONS_COUNTER 100
 
