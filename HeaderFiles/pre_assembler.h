@@ -8,11 +8,14 @@
  * This function reads an input file line by line. When it finds a line with \MACRO_START\,
  * it starts recording lines until it encounters a line with \MACRO_END\.
  * Then, it appends the recorded lines (the macro) to the linked list.
+ * NOTE: this function also validates that macro length is valid. If not - returns an error.
  *
  * @param inputFile A pointer to the input file.
  * @param macrosList A pointer to the linked list where the macros will be stored.
+ *
+ * @return int SUCCESS code or ERROR code.
  */
-void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList);
+int extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList);
 
 /**
  * @brief Reads a file, calls extractMacrosFromFile and remove all the macros from the file.

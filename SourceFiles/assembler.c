@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         remove(cleanFileName);
         return funcRetVal;
     }
-    logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
+    logger(LOG_LEVEL_INFO, "Done cleaning file, created temp file: %s", cleanFileName);
 
     /* Pre Assembler */
     logger(LOG_LEVEL_INFO, "\x1b[1mPre assembler - unpacking macros\x1b[0m");

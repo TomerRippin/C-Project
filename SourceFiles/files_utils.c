@@ -37,7 +37,7 @@ char *replaceFileNameExt(const char *fileName, char *newExtension)
     newFileName = malloc((strlen(fileName) + strlen(newExtension) + 2) * sizeof(char));  /* +2 for the dot and null terminator */
     if (newFileName == NULL)
     {
-        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) ", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
+        logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d)\x1b[0m", getErrorMessage(ERROR_MEMORY_ALLOC_FAILED), ERROR_MEMORY_ALLOC_FAILED);
         exit(ERROR_MEMORY_ALLOC_FAILED);
     }
     strcpy(newFileName, fileName);

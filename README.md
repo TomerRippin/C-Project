@@ -8,6 +8,7 @@ This code is an assembler for an assembly-like language.
 make assembler
 assembler.exe <.as file path>
 ```
+NOTE: Only LF (unix) formats are supported.
 
 To clean output files (`.ent`, `.ext`, etc), run:
 ```bash
@@ -15,7 +16,7 @@ make clean
 ```
 
 ### Flow ###
-0. Cleans file - removing extra whitespaces, fixes spaces in each line. For example:
+0. Cleans file - removing extra whitespaces, fixes spaces in each line. For example: <br>
                  line: `LAB:  .data         7, 8,  5`<br>
                  turns into: `LAB: .data 7,8,5`<br>
                  creates a new file - `.as-clean`
