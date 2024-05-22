@@ -56,6 +56,8 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
 /* Searches a symbol in the symbol table by name */
 SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *symbolName);
 
+/** Searches a symbol in the symbol table by name and by type
+* @param toInclude whether to search for the exact type or all of the types that are not the type insertd to the function */
 SymbolNode* searchSymbolTableWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude);
 
 /* Searches a symbol in the symbol table by name AND type */
