@@ -143,7 +143,7 @@ int handleAdrType1(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         {
             /* bits 1-2: ARE codex - 'E' - 01, label is external */
             binaryCode |= 1;
-            /* insert to list that the external label was used in this IC */
+            /* insert to the SymbolTable that the external label was used in this IC */
             insertToSymbolTable(symbolTable, operand->value, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
             
             found = 0;
@@ -203,7 +203,7 @@ int handleAdrType2(Operand *operand, AssemblyLine *parsedLine, BinaryCodesTable 
         {
             /* bits 0-1: ARE codex - 'E' - 01, label is external */
             labelAddressBinaryCode |= 1;
-            /* insert to list that the external label was used in this IC */
+            /* insert to the SymbolTable that the external label was used in this IC */
             insertToSymbolTable(symbolTable, label, SYMBOL_TYPE_EXTERNAL_USAGE, *IC);
 
             found = 0;
