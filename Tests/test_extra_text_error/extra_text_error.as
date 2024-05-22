@@ -1,4 +1,4 @@
-; file ps.as
+; file ps.as 
 .entry LIST 
 .extern W 
 .define sz = 2 
@@ -12,7 +12,7 @@ LOOP: 	jmp W
 L1: 	inc L3 
 .entry LOOP
 	bne LOOP 
-END: hlt
+END: hlt asdsad
 .define len = 4
 STR: .string "abcdef" 
 LIST: .data 6, -9, len 
