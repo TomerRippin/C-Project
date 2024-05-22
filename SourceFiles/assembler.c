@@ -34,8 +34,10 @@ int main(int argc, char *argv[])
     }
     fseek(inputFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
 
+    logger(LOG_LEVEL_INFO, "\x1b[1mRunning assembler on file: %s\x1b[0m", inputFileName);
+
     /* Clean File */
-    logger(LOG_LEVEL_INFO, "Cleaning file");
+    logger(LOG_LEVEL_INFO, "\x1b[1mCleaning file");
     cleanFileName = replaceFileNameExt(inputFileName, EXTENSION_AS_CLEAN);
     cleanFile = openFile(cleanFileName, "w");
     funcRetVal = cleanAssemblyFile(inputFile, cleanFile);
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
     logger(LOG_LEVEL_INFO, "Done cleaning file, created new file: %s", cleanFileName);
 
     /* Pre Assembler */
-    logger(LOG_LEVEL_INFO, "Pre assembler - unpacking macros");
+    logger(LOG_LEVEL_INFO, "\x1b[1mPre assembler - unpacking macros\x1b[0m");
     amFileName = replaceFileNameExt(inputFileName, EXTENSION_AM);
     amFile = openFile(amFileName, "w");
     cleanFile = openFile(cleanFileName, "r");
@@ -67,7 +69,7 @@ int main(int argc, char *argv[])
     logger(LOG_LEVEL_INFO, "Done pre assembler, created new file: %s", amFileName);
 
     /* First Pass */
-    logger(LOG_LEVEL_INFO, "First pass");
+    logger(LOG_LEVEL_INFO, "\x1b[1mFirst pass\x1b[0m");
     amFile = openFile(amFileName, "r");
     funcRetVal = firstPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
     if (funcRetVal != SUCCESS)
@@ -76,10 +78,9 @@ int main(int argc, char *argv[])
         return funcRetVal;
     }
     logger(LOG_LEVEL_INFO, "Done first pass");
-    /* printBinaryCodesTable(binaryCodesTable); */
 
     /* Second Pass */
-    logger(LOG_LEVEL_INFO, "Second pass");
+    logger(LOG_LEVEL_INFO, "\x1b[1mSecond pass\x1b[0m");
     fseek(amFile, 0, SEEK_SET); /* Resets the file pointer to the beginning of the file */
     IC = 100;
     funcRetVal = secondPass(amFile, symbolTable, binaryCodesTable, &IC, &DC);
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
     logger(LOG_LEVEL_INFO, "Done second pass");
 
     /* Export Files */
-    logger(LOG_LEVEL_INFO, "Export files");
+    logger(LOG_LEVEL_INFO, "\x1b[1mExport files\x1b[0m");
     entryFileName = replaceFileNameExt(inputFileName, EXTENSION_ENT);
     funcRetVal = handleEntryFile(entryFileName, symbolTable);
     if (funcRetVal != SUCCESS)
@@ -117,12 +118,10 @@ int main(int argc, char *argv[])
         return funcRetVal;
     }
 
-    logger(LOG_LEVEL_INFO, "SUCCESS! Done assembler");
-
-    /* free and close files */
-
     freeSymbolTable(symbolTable);
     freeBinaryCodesTable(binaryCodesTable);
+
+    logger(LOG_LEVEL_INFO, "\x1b[1mSUCCESS! Done assembler\x1b[0m");
 
     return SUCCESS;
 }

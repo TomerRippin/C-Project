@@ -46,15 +46,10 @@ int handleDataDirective(AssemblyLine *parsedLine, SymbolTable *symbolTable, Bina
             }
             else
             {
-                searchResult = searchSymbolNameInTable(symbolTable, token);
+                searchResult = searchSymbolNameTypeInTable(symbolTable, token, SYMBOL_TYPE_MDEFINE);
                 if (searchResult == NULL)
                 {
                     return ERROR_GIVEN_SYMBOL_NOT_EXIST;
-                }
-                /* TODO: add search to the rest of the params in linked list also */
-                else if (strcmp(searchResult->symbolType, SYMBOL_TYPE_MDEFINE) != 0)
-                {
-                    return ERROR_SYMBOL_WRONG_TYPE;
                 }
                 else
                 {

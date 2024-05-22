@@ -17,7 +17,6 @@ void extractMacrosFromFile(FILE *inputFile, MacrosList *macrosList)
             macroSection = 1;
             strtok(line, " ");
             strcpy(macroName, strtok(NULL, " ")); /* Get the second word */
-            /* TODO: copy the specific length of the name, without null bytes */
         }
         else if (strncmp(line, MACRO_END, strlen(MACRO_END)) == 0)
         {
@@ -78,7 +77,7 @@ int preAssembler(FILE *inputFile, FILE *outputFile)
 
     while (fgets(line, sizeof(line), tempFile) != NULL)
     {
-        result = searchMacrosList(macrosList, line); /* TODO: now not working because null bytes... */
+        result = searchMacrosList(macrosList, line);
         if (result != NULL)
         {
             /* Replaces line with macro content */
