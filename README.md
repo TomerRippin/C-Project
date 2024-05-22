@@ -1,11 +1,18 @@
 # C Lab Project
 Lilach's & Tomer's C Project for the Open University (mmn 14).
+<br>
 This code is an assembler for an assembly-like language. 
 
 ### Usage ###
-`make assembler`
-<br>
-`assembler.exe <.as file path>`
+```bash
+make assembler
+assembler.exe <.as file path>
+```
+
+To clean output files (`.ent`, `.ext`, etc), run:
+```bash
+make clean
+```
 
 ### Flow ###
 0. Cleans file - removing extra whitespaces, fixes spaces in each line. For example:
@@ -27,6 +34,6 @@ This code is an assembler for an assembly-like language.
 - BinaryCode
 
 ### Data Structures
-- LinkedList
+- MacrosList
 - SymbolTabel
 - BinaryCodesTable
