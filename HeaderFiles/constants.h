@@ -1,7 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define MAX_LINES_NUM 1024  /* TODO: decide if size ok */
 #define MAX_LINE_LEN 81
 #define MAX_LABEL_LEN 31
 #define MAX_MACRO_LEN 1024

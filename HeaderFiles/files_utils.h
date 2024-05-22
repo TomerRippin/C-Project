@@ -8,11 +8,11 @@
 #include "errors.h"
 
 /**
- * `fopen` wrapper for handling open file error effectively.
+ * Wrapper for `fopen` function, for handling open file errors effectively.
  *
  * @param fileName file path to open.
  * @param mode mode to open file (e.g: "r" for read or "w" for writing).
- * @return if succeeded - an open file object, or exiting with error code.
+ * @return if succeeded - an open file object, or exiting with an error code.
 */
 FILE *openFile(const char *fileName, const char *mode);
 

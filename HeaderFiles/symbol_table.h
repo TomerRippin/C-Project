@@ -3,6 +3,26 @@
 
 #include "utils.h"
 
+/**
+ * @struct SymbolNode
+ * @brief A structure representing a symbol node.
+ *
+ * A valid symbol in this assembly language starts with an alphabetic letter (big or small),
+ * followed by alphabetic letters or numbers, and its maximum length is 31.
+ *
+ * @var SymbolNode::symbolName
+ * Decimal address of the source code.
+ * @var SymbolNode::symbolType
+ * Symbol type, can be one of the following:
+ * - SYMBOL_TYPE_MDEFINE
+ * - SYMBOL_TYPE_DATA
+ * - SYMBOL_TYPE_EXTERNAL
+ * - SYMBOL_TYPE_ENTRY
+ * - SYMBOL_TYPE_CODE
+ * - SYMBOL_TYPE_EXTERNAL_USAGE
+ * @var SymbolNode::symbolValue
+ * Holds the address of the symbol.
+ */
 typedef struct SymbolNode
 {
     char *symbolName;
@@ -11,6 +31,15 @@ typedef struct SymbolNode
     struct SymbolNode *next;
 } SymbolNode;
 
+/**
+ * @struct SymbolTable
+ * @brief A structure representing a symbol table that holds symbol nodes (much like linked list).
+ *
+ * @var SymbolTable::head
+ * Holds the first node in the table.
+ * @var SymbolTable::last
+ * Holds the last node in the table.
+ */
 typedef struct SymbolTable
 {
     SymbolNode *head;

@@ -4,8 +4,17 @@
 #include "constants.h"
 #include "assembly_line_parser.h"
 
-/* TODO: move to a strctures folder */
-
+/**
+ * @struct BinaryCodesNode
+ * @brief A structure representing a binary code node.
+ *
+ * @var BinaryCodesNode::decAddress
+ * Decimal address of the source code.
+ * @var BinaryCodesNode::binaryCode
+ * The binary code of the source code, length: \BINARY_CODE_LEN\.
+ * @var BinaryCodesNode::sourceCode
+ * The source code.
+ */
 typedef struct BinaryCodesNode
 {
     int decAddress;
@@ -14,6 +23,15 @@ typedef struct BinaryCodesNode
     struct BinaryCodesNode *next;
 } BinaryCodesNode;
 
+/**
+ * @struct BinaryCodesTable
+ * @brief A structure representing a binary codes table that holds binary codes nodes (much like linked list).
+ *
+ * @var BinaryCodesTable::head
+ * Holds the first node in the table.
+ * @var BinaryCodesTable::last
+ * Holds the last node in the table.
+ */
 typedef struct BinaryCodesTable
 {
     BinaryCodesNode *head;
