@@ -51,9 +51,8 @@ int secondPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *bina
                 continue;
             }
             else {
-                /* NOTE: this is not neccessary because of the way we do the first pass (inserting as entries) and 
-                  create entries file (ignore duplicates), but still we decided to keep this way to make it more clear */
-                insertToSymbolTable(symbolTable, parsedLine.operands, SYMBOL_TYPE_ENTRY, searchResult->symbolValue);
+                /* NOTE: we have already inserted entry symbol to the symbolTable in the first_pass. */
+                continue;
             }
         }
         else {
@@ -112,7 +111,7 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable)
             searchResult = searchSymbolTableWithType(symbolTable, current->symbolName, SYMBOL_TYPE_ENTRY, 0);
             /* Search for the place the Entry is defiend */
             if (searchResult == NULL) {
-                /* TODO: here can't print error with line number, because there is no line number in symbolTAble, consider adding */
+                /* TODO: here can't print error with line number, because there is no line number in symbolTable, consider adding */
                 /* Found an entry but it is not defined anywhere */
                 logger(LOG_LEVEL_ERROR, "\x1b[1m%s (%d) - %s", getErrorMessage(ERROR_ENTRY_NOT_DEFINED), ERROR_ENTRY_NOT_DEFINED, current->symbolName);
                 return ERROR_ENTRY_NOT_DEFINED;
