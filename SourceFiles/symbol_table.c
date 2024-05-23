@@ -160,7 +160,7 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
     }
     table->last = newNode;
 
-    logger(LOG_LEVEL_DEBUG, "Inserted to symbolTable: symbol name - <%s> | symbol type - <%d> | symbol value: <%d>", symbolName, symbolType, symbolValue);
+    logger(LOG_LEVEL_DEBUG, "Inserted to symbolTable: symbol name - <%s> | symbol type - <%s> | symbol value: <%d>", symbolName, symbolType, symbolValue);
 }
 
 void freeSymbolNode(SymbolNode *node){
