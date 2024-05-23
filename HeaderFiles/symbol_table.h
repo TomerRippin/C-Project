@@ -19,7 +19,7 @@
  * - SYMBOL_TYPE_EXTERNAL
  * - SYMBOL_TYPE_ENTRY
  * - SYMBOL_TYPE_CODE
- * - SYMBOL_TYPE_EXTERNAL_USAGE
+ * - SYMBOL_TYPE_EXTERNAL_USAGE (determines the external symbol was in use)
  * @var SymbolNode::symbolValue
  * Holds the address of the symbol.
  */
@@ -50,12 +50,15 @@ typedef struct SymbolTable
   *@warning If memory allocation fails, the program will terminate with an error message. */
 SymbolTable *createSymbolTable();
 
-/* Inserts a SymbolNode at the beginning of the table */
+/* Inserts a SymbolNode at the beginning of the table. */
 void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType, int symbolValue);
 
-/* Searches a symbol in the symbol table by name */
+/* Searches a symbol in the symbol table by name. If found - returns the symbol, else NULL. */
 SymbolNode *searchSymbolNameInTable(SymbolTable *table, char *symbolName);
 
+/** Searches a symbol in the symbol table by name and by type. If found - returns the symbol, else NULL.
+* @param toInclude 1/0 - Determines whether to search for the exact given type (if 1),
+                  or to search for all the types that are not the given type (if 0) */
 SymbolNode* searchSymbolTableWithType(SymbolTable *table, char *labelName, char *labelType, int toInclude);
 
 /* Searches a symbol in the symbol table by name AND type */
@@ -67,13 +70,13 @@ int isSymbolAlreadyExist(SymbolTable *table, char *symbolName, char *symbolType,
  * NOTE: if table is very large this function might be a bit slow. */
 void sortSymbolTable(SymbolTable *table);
 
-/* Function to free memory from a node */
+/* Function to free memory from a node. */
 void freeSymbolNode(SymbolNode *node);
 
-/* Function to free memory allocated for the table */
+/* Function to free memory allocated for the table. */
 void freeSymbolTable(SymbolTable *table);
 
-/* Pretty print of symbol table */
+/* Pretty print of symbol table. */
 void printSymbolTable(SymbolTable *table);
 
 #endif /* SYMBOL_TABLE_H */

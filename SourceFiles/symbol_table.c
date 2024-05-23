@@ -160,26 +160,32 @@ void insertToSymbolTable(SymbolTable *table, char *symbolName, char *symbolType,
     }
     table->last = newNode;
 
-    logger(LOG_LEVEL_DEBUG, "Inserted to symbolTable: symbol name - <%s> | symbol type - <%d> | symbol value: <%d>", symbolName, symbolType, symbolValue);
+    logger(LOG_LEVEL_DEBUG, "Inserted to symbolTable: symbol name - <%s> | symbol type - <%s> | symbol value: <%d>", symbolName, symbolType, symbolValue);
 }
 
-void freeSymbolNode(SymbolNode *node){
-    free(node->symbolName);
-    free(node->symbolType);
-    free(node);
+void freeSymbolNode(SymbolNode *node) {
+    if (node != NULL)
+    {
+        free(node->symbolName);
+        free(node->symbolType);
+        free(node);
+    }
 }
 
 void freeSymbolTable(SymbolTable *table) {
-    SymbolNode *current = table->head;
-    SymbolNode *tempNodeToFree;
-    while (current != NULL)
+    if (table != NULL)
     {
-        tempNodeToFree = current;
-        current = current->next;
-        freeSymbolNode(tempNodeToFree);
+        SymbolNode *current = table->head;
+        SymbolNode *tempNodeToFree;
+        while (current != NULL)
+        {
+            tempNodeToFree = current;
+            current = current->next;
+            freeSymbolNode(tempNodeToFree);
+        }
+        table->head = NULL;
+        table->last = NULL;
     }
-    table->head = NULL;
-    table->last = NULL;
 }
 
 void printSymbolTable(SymbolTable *table)

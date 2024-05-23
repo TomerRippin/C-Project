@@ -141,19 +141,22 @@ int handleExternFile(const char *filename, SymbolTable *symbolTable) {
     outputFile = openFile(filename, "w");
     current = symbolTable->head;
 
-    /* Searchs for an Entry in the symbol table*/
+    /* Searchs for an Extern label in the symbol table */
     while (current != NULL)
     {
         if (strcmp(current->symbolType, SYMBOL_TYPE_EXTERNAL) == 0)
         {
-            /* Found an Entry, should create a file */
+            /* Search for a usage of this external label */
             SymbolNode *searchResult = symbolTable->head;
+            
             while (searchResult != NULL)
             {
                 if ((strcmp(current->symbolName, searchResult->symbolName) == 0) && (strcmp(searchResult->symbolType, SYMBOL_TYPE_EXTERNAL_USAGE) == 0)){
+                    /* Found an Extern label usage, should create a file */
+                    found = 1;
+
                     logger(LOG_LEVEL_DEBUG, "inserting label <%s> to extern file at location <%d>", current->symbolName, searchResult->symbolValue);
                     fprintf(outputFile, "%s     %04d\n", searchResult->symbolName, searchResult->symbolValue);
-                    found = 1;
                 }
                 searchResult = searchResult->next;
             }

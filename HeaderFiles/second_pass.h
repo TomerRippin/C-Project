@@ -35,7 +35,9 @@ int handleEntryFile(const char *filename, SymbolTable *symbolTable);
 /**
  * @brief Handler for the extern file.
  *
- * The function creates an extern file (.ext) that contains the external symbols and their addresses .
+ * The function creates an extern file (.ext) that contains the external symbols and their addresses.
+ * The function searches for each external label it's usages in the code.
+ * Therefor searching the SymbolTable for EXTERNAL_USAGE type that determines the external symbol _was_ in use.
  * If no external symbols - then a file is not created.
  *
  * @param filename - The name to call the new filename created.

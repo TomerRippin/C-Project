@@ -66,6 +66,8 @@ void printOperandsAfterParsing(AssemblyLine *parsedLine);
 
 void freeAssemblyLine(AssemblyLine *line);
 
+void freeOperand(Operand *operand);
+
 /**
  * @brief Checks if a given AssemblyLine is a directive line.
  * The instruction in a directive line is one of DIRECTIVES.

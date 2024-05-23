@@ -167,8 +167,8 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
     char line[MAX_LINE_LEN];
     int isSymbol, entryCount, externCount, hasError, errorCode, lineNumber;
     AssemblyLine parsedLine;
-    SymbolNode *current, *searchResult;
-    isSymbol = entryCount = externCount = hasError = 0;
+    SymbolNode *current;
+    lineNumber = isSymbol = entryCount = externCount = hasError = 0;
     errorCode = SUCCESS;
 
     while (fgets(line, sizeof(line), inputFile) != NULL)
@@ -188,17 +188,23 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
 
         if (parsedLine.label != NULL)
         {
-            isSymbol = 1;
-            if (searchSymbolNameInTable(symbolTable, parsedLine.label) != NULL)
+            /* If symbol already defined and exists in the symbolTable with type data / code / mdefine */
+            if ((searchSymbolNameTypeInTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA) != NULL)
+                 || (searchSymbolNameTypeInTable(symbolTable, parsedLine.label, SYMBOL_TYPE_CODE) != NULL)
+                 || (searchSymbolNameTypeInTable(symbolTable, parsedLine.label, SYMBOL_TYPE_MDEFINE) != NULL))
             {
-                logger(LOG_LEVEL_WARNING, "Symbol: `%s` already exists, continue", parsedLine.label);
+                errorCode = ERROR_SYMBOL_ALREADY_EXIST;
+                printError(lineNumber, errorCode);
+                continue;
             }
             else if (isValidSymbol(parsedLine.label) != 1)
             {
-                printError(lineNumber, ERROR_SYMBOL_NOT_VALID);
-                hasError = 1;
+                errorCode = ERROR_SYMBOL_NOT_VALID;
+                printError(lineNumber, errorCode);
                 continue;
             }
+            /* Symbol is unique and valid */
+            isSymbol = 1;
         }
 
         if (strcmp(parsedLine.instruction, DEFINE_DIRECTIVE) == 0)
@@ -209,16 +215,9 @@ int firstPass(FILE *inputFile, SymbolTable *symbolTable, BinaryCodesTable *binar
         {
             if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0 || strcmp(parsedLine.instruction, STRING_DIRECTIVE) == 0)
             {
-                if (isSymbol) {
-                    searchResult = searchSymbolNameTypeInTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA);
-                    if (searchResult != NULL)
-                    {
-                        errorCode = ERROR_SYMBOL_ALREADY_EXIST;
-                    }
-                    else
-                    {
-                        insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
-                    }
+                if (isSymbol)
+                {
+                    insertToSymbolTable(symbolTable, parsedLine.label, SYMBOL_TYPE_DATA, *DC);
                 }
                 if (strcmp(parsedLine.instruction, DATA_DIRECTIVE) == 0)
                 {
