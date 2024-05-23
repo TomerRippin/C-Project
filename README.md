@@ -42,5 +42,7 @@ make clean
 - **AssemblyLine**: Represents a parsed assembly line, with a label, instruction and operands.
 - **Operand**: Represents an operand, with a value and address type.
 - **MacrosList**: A linked list representing the list of macros in the file.
-- **SymbolTable**: A linked list represnting the symbol in the file.
+- **SymbolTable**: A linked list represnting the symbols in the file.
 - **BinaryCodesTable**: A linked list representing the binary codes of all of the source file code.
+
+# Thank You!
