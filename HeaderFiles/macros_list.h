@@ -15,8 +15,7 @@ typedef struct MacrosList
     MacroNode *head;
 } MacrosList;
 
-/** Creates a new MacrosList - allocates memory, initializes it and returns a pointer to the head
- * @warning If memory allocation fails, the program will terminate with an error message. */
+/* Creates a new MacrosList - allocates memory, initializes it and returns a pointer to the head */
 MacrosList *createMacrosList();
 
 /* Inserts a node at the beginning of the list */

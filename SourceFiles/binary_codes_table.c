@@ -100,24 +100,30 @@ void sortBinaryCodesTable(BinaryCodesTable *table)
 
 void freeBinaryCodesNode(BinaryCodesNode *node)
 {
-    free(node->binaryCode);
-    free(node->sourceCode);
-    free(node);
+    if (node != NULL)
+    {
+        free(node->binaryCode);
+        free(node->sourceCode);
+        free(node);
+        node = NULL;
+    }
 }
 
 /* Function to free memory allocated for the list */
 void freeBinaryCodesTable(BinaryCodesTable *table) {
-    BinaryCodesNode *current = table->head;
-    BinaryCodesNode *tempNodeToFree;
-    while (current != NULL)
+    if (table != NULL)
     {
-        tempNodeToFree = current;
-        current = current->next;
-        freeBinaryCodesNode(tempNodeToFree);
+        BinaryCodesNode *current = table->head;
+        BinaryCodesNode *tempNodeToFree;
+        while (current != NULL)
+        {
+            tempNodeToFree = current;
+            current = current->next;
+            freeBinaryCodesNode(tempNodeToFree);
+        }
+        table->head = NULL;
+        table->last = NULL;
     }
-    table->head = NULL;
-    table->last = NULL;
-    free(table);
 }
 
 void printBinaryCodesTable(BinaryCodesTable *table)

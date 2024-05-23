@@ -77,23 +77,29 @@ void insertToMacrosList(MacrosList *list, char *name, char *data)
 
 void freeMacroNode(MacroNode *node)
 {
-    free(node->name);
-    free(node->data);
-    free(node);
+    if (node != NULL)
+    {
+        free(node->name);
+        free(node->data);
+        free(node);
+    }
 }
 
 void freeMacrosList(MacrosList *list)
 {
-    MacroNode *current;
-
-    current = list->head;
-    while (current != NULL)
+    if (list != NULL)
     {
-        MacroNode *temp = current;
-        current = current->next;
-        freeMacroNode(temp);
+        MacroNode *current;
+
+        current = list->head;
+        while (current != NULL)
+        {
+            MacroNode *temp = current;
+            current = current->next;
+            freeMacroNode(temp);
+        }
+        list->head = NULL;
     }
-    list->head = NULL;
 }
 
 void printMacrosList(MacrosList *list)

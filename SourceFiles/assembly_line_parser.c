@@ -110,9 +110,31 @@ void printOperandsAfterParsing(AssemblyLine *parsedLine) {
 
 void freeAssemblyLine(AssemblyLine *line)
 {
-    free(line->label);
-    free(line->instruction);
-    free(line->operands);
+    if (line != NULL)
+    {
+        free(line->label);
+        free(line->instruction);
+        free(line->operands);
+        if (line->src != NULL)
+        {
+            freeOperand(line->src);
+        }
+        if (line->dst != NULL)
+        {
+            freeOperand(line->dst);
+        }
+        line = NULL;
+    }
+}
+
+void freeOperand(Operand *operand)
+{
+    if (operand != NULL)
+    {
+        free(operand->value);
+        free(operand);
+        operand = NULL;
+    }
 }
 
 int isValidSymbol(const char *label)
